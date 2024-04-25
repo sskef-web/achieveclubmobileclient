@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
     runApp(MyApp());
@@ -25,27 +26,51 @@ class AuthenticationPage extends StatefulWidget {
 class _AuthenticationPageState extends State<AuthenticationPage> {
     bool _isLoggedIn = false;
 
-    void _login() {
-        // Add your logic here to check the entered credentials and perform the login
-        // The check can be done either with a server or locally
+    @override
+    void initState() {
+        super.initState();
+        _checkLoginStatus();
+    }
 
-        // Example of successful login
+    void _checkLoginStatus() async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+        setState(() {
+            _isLoggedIn = isLoggedIn;
+        });
+    }
+
+    void _login() async {
+        // Здесь можно добавить логику для проверки введенных данных и выполнения входа в систему
+        // Проверка может быть выполнена с помощью сервера или локально
+
+        // Пример успешного входа в систему
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+
         setState(() {
             _isLoggedIn = true;
         });
     }
 
-    void _register() {
-        // Add your logic here to register a new user
-        // The registration can be done either with a server or locally
+    Future<void> _register() async {
+        // Здесь можно добавить логику для регистрации нового пользователя
+        // Регистрация может быть выполнена с помощью сервера или локально
 
-        // Example of successful registration
+        // Пример успешной регистрации
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+
         setState(() {
             _isLoggedIn = true;
         });
     }
 
-    void _logout() {
+    void _logout() async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', false);
+
         setState(() {
             _isLoggedIn = false;
         });
@@ -130,10 +155,7 @@ class LoginPage extends StatelessWidget {
                                             ),
                                             actions: [
                                                 ElevatedButton(
-                                                    onPressed: () {
-                                                        registerCallback();
-                                                        Navigator.of(context).pop();
-                                                    },
+                                                    onPressed: registerCallback,
                                                     child: Text('Register'),
                                                 ),
                                             ],
@@ -172,8 +194,8 @@ class _HomePageState extends State<HomePage> {
     Widget build(BuildContext context) {
         return Scaffold(
             appBar: AppBar(
-                title: Text('Home Page'),
-            ),
+            title: Text('Home Page'),
+        ),
             body: _tabs[_currentIndex],
             bottomNavigationBar: BottomNavigationBar(
                 currentIndex: _currentIndex,
