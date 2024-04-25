@@ -1,6 +1,6 @@
 # achieveclubmobileclient
 
-Mobile Client for Achieve CLub
+Mobile Client for Achieve Club
 
 ## Getting Started
 
