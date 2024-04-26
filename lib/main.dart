@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 String appTitle = "User";
+late Future<Ping> _ping;
 
 void main() {
     runApp(const MyApp());
+
+    _ping = testfetch();
 }
 
 class MyApp extends StatelessWidget {
@@ -304,8 +310,8 @@ class Tab1Page extends StatelessWidget {
                         const SizedBox(height: 16.0),
                         Container(
                             decoration: BoxDecoration(
-                                color: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(
-                                    11, 106, 108, 0.14) : Color.fromRGBO(
+                                color: Theme.of(context).brightness == Brightness.dark ? const Color.fromRGBO(
+                                    11, 106, 108, 0.14) : const Color.fromRGBO(
                                     11, 106, 108, 0.05),
                                 borderRadius: BorderRadius.circular(8.0),
                             ),
@@ -394,6 +400,19 @@ class AchievementItem extends StatelessWidget {
                         Text('XP: $xp'),
                         const SizedBox(height: 4.0),
                         Text('Процент выполнения: $completionPercentage%'),
+                        FutureBuilder<Ping>(
+                            future: _ping,
+                            builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                    return Text(snapshot.data!.pong);
+                                } else if (snapshot.hasError) {
+                                    return Text('${snapshot.error}');
+                                }
+
+                                // By default, show a loading spinner.
+                                return const CircularProgressIndicator();
+                            },
+                        )
                     ],
                 ),
             ),
@@ -423,3 +442,41 @@ class Tab3Page extends StatelessWidget {
         );
     }
 }
+
+class Ping {
+    final String pong;
+
+    const Ping({
+        required this.pong,
+    });
+
+    factory Ping.fromJson(Map<String, dynamic> json) {
+        return switch (json) {
+            {
+            'pong': String pong,
+            } =>
+                Ping(
+                    pong: pong,
+                ),
+            _ => throw const FormatException('Failed to load album.'),
+        };
+    }
+}
+
+Future<Ping> testfetch() async {
+    final response = await http
+        .get(Uri.parse('https://sskef.site/api/ping'));
+
+    if (response.statusCode == 200) {
+        // If the server did return a 200 OK response,
+        // then parse the JSON.
+        return Ping.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    else {
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to load album');
+    }
+}
+
+
