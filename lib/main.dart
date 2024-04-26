@@ -304,7 +304,9 @@ class Tab1Page extends StatelessWidget {
                         const SizedBox(height: 16.0),
                         Container(
                             decoration: BoxDecoration(
-                                color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[200],
+                                color: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(
+                                    11, 106, 108, 0.14) : Color.fromRGBO(
+                                    11, 106, 108, 0.05),
                                 borderRadius: BorderRadius.circular(8.0),
                             ),
                             padding: const EdgeInsets.all(16.0),
