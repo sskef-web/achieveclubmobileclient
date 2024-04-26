@@ -1,19 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+String appTitle = "Achieve Club";
 
 void main() {
     runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+
     @override
     Widget build(BuildContext context) {
-        return MaterialApp(
-            title: 'Tab Navigation Demo',
+        return Center(
+          child: MaterialApp(
+            title: '$appTitle',
             theme: ThemeData(
-                primarySwatch: Colors.blue,
-            ),
+                colorScheme: ColorScheme.fromSeed(seedColor: Color.fromRGBO(
+                    11, 106, 108, 1.0)),
+                    useMaterial3: true,
+              ),
+              darkTheme: ThemeData(
+                  colorScheme: ColorScheme.fromSeed(seedColor: Color.fromRGBO(
+                      11, 106, 108, 1.0), brightness: Brightness.dark),
+                  useMaterial3: true,
+              ),
             home: AuthenticationPage(),
+          ),
         );
     }
 }
@@ -54,7 +65,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         });
     }
 
-    Future<void> _register() async {
+    void _register() async {
         // Здесь можно добавить логику для регистрации нового пользователя
         // Регистрация может быть выполнена с помощью сервера или локально
 
@@ -101,7 +112,8 @@ class LoginPage extends StatelessWidget {
     Widget build(BuildContext context) {
         return Scaffold(
             appBar: AppBar(
-                title: Text('Login Page'),
+                title: Text('$appTitle'),
+                centerTitle: true,
             ),
             body: Padding(
                 padding: EdgeInsets.all(16.0),
@@ -123,9 +135,13 @@ class LoginPage extends StatelessWidget {
                             obscureText: true,
                         ),
                         SizedBox(height: 24.0),
-                        ElevatedButton(
-                            onPressed: loginCallback,
-                            child: Text('Login'),
+                        SizedBox(
+                            width: 150.0,
+                            height: 75.0,
+                            child: ElevatedButton(
+                                child: Text('Login', textAlign: TextAlign.center),
+                                onPressed: loginCallback,
+                            ),
                         ),
                         SizedBox(height: 16.0),
                         TextButton(
@@ -134,36 +150,55 @@ class LoginPage extends StatelessWidget {
                                     context: context,
                                     builder: (BuildContext context) {
                                         return AlertDialog(
-                                            title: Text('Register'),
-                                            content: Column(
-                                                children: [
-                                                    TextField(
-                                                        controller: _registerEmailController,
-                                                        decoration: InputDecoration(
-                                                            labelText: 'Email',
+                                            title: Text('Register', textAlign: TextAlign.center,),
+                                            content: Container(
+                                                width: 500,
+                                                height: 500,
+                                                child: Column(
+                                                    children: [
+                                                        TextField(
+                                                            controller: _registerEmailController,
+                                                            decoration: InputDecoration(
+                                                                labelText: 'Name',
+                                                            ),
                                                         ),
-                                                    ),
-                                                    SizedBox(height: 16.0),
-                                                    TextField(
-                                                        controller: _registerPasswordController,
-                                                        decoration: InputDecoration(
-                                                            labelText: 'Password',
+                                                        TextField(
+                                                            controller: _registerEmailController,
+                                                            decoration: InputDecoration(
+                                                                labelText: 'Surname',
+                                                            ),
                                                         ),
-                                                        obscureText: true,
-                                                    ),
-                                                ],
+                                                        TextField(
+                                                            controller: _registerEmailController,
+                                                            decoration: InputDecoration(
+                                                                labelText: 'Email',
+                                                            ),
+                                                        ),
+                                                        SizedBox(height: 16.0),
+                                                        TextField(
+                                                            controller: _registerPasswordController,
+                                                            decoration: InputDecoration(
+                                                                labelText: 'Password',
+                                                            ),
+                                                            obscureText: true,
+                                                        ),
+                                                    ],
+                                                ),
                                             ),
                                             actions: [
-                                                ElevatedButton(
-                                                    onPressed: registerCallback,
-                                                    child: Text('Register'),
+                                                SizedBox(
+                                                    width: 150.0,
+                                                    height: 75.0,
+                                                    child: ElevatedButton(
+                                                        child: Text('Registrate', textAlign: TextAlign.center),
+                                                        onPressed: registerCallback,
+                                                    ),
                                                 ),
-                                            ],
-                                        );
+                                        ]);
                                     },
                                 );
                             },
-                            child: Text('Register'),
+                            child: Text('Registration', textAlign: TextAlign.center),
                         ),
                     ],
                 ),
@@ -194,7 +229,8 @@ class _HomePageState extends State<HomePage> {
     Widget build(BuildContext context) {
         return Scaffold(
             appBar: AppBar(
-            title: Text('Home Page'),
+            title: Text(appTitle),
+                centerTitle: true,
         ),
             body: _tabs[_currentIndex],
             bottomNavigationBar: BottomNavigationBar(
@@ -202,20 +238,31 @@ class _HomePageState extends State<HomePage> {
                 onTap: (index) {
                     setState(() {
                         _currentIndex = index;
+                        switch (_currentIndex) {
+                            case 0:
+                                appTitle = 'User';
+                                break;
+                            case 1:
+                                appTitle = 'Top 100 users';
+                                break;
+                            case 2:
+                                appTitle = 'Top clubs';
+                                break;
+                        }
                     });
                 },
-                items: [
+                items: const [
                     BottomNavigationBarItem(
                         icon: Icon(Icons.tab),
-                        label: 'Tab 1',
+                        label: 'User',
                     ),
                     BottomNavigationBarItem(
                         icon: Icon(Icons.tab),
-                        label: 'Tab 2',
+                        label: 'Top 100 users',
                     ),
                     BottomNavigationBarItem(
                         icon: Icon(Icons.tab),
-                        label: 'Tab 3',
+                        label: 'Top clubs',
                     ),
                 ],
             ),
@@ -231,7 +278,7 @@ class Tab1Page extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
         return Center(
-            child: Text('Tab 1'),
+            child: Text('User'),
         );
     }
 }
@@ -240,7 +287,8 @@ class Tab2Page extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
         return Center(
-            child: Text('Tab 2'),
+            child:
+            Text('Top 100 users'),
         );
     }
 }
@@ -249,7 +297,7 @@ class Tab3Page extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
         return Center(
-            child: Text('Tab 3'),
+            child: Text('Top clubs'),
         );
     }
 }
