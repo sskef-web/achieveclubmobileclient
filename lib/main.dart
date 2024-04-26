@@ -277,8 +277,14 @@ class _HomePageState extends State<HomePage> {
 class Tab1Page extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
-        return Center(
-            child: Text('User'),
+        return Center (
+            child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(500.0)),
+                child: Image.network("https://scontent-fra3-2.xx.fbcdn.net/v/t39.30808-6/351172401_580626204259601_4702578806292022547_n.jpg?_nc_cat=1&ccb=1-7&_nc_sid=5f2048&_nc_ohc=y0Tz4XfPWqUAb5vSiGw&_nc_ht=scontent-fra3-2.xx&oh=00_AfA8xurik-zP7srJY1FEY9mvVABy5nN35NZ9ypvGJOrnUg&oe=6631C943",
+                height: 300.0,
+                width: 300.0,
+                ),
+        ),
         );
     }
 }
