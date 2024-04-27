@@ -271,26 +271,26 @@ class _HomePageState extends State<HomePage> {
                                 appTitle = 'Профиль';
                                 break;
                             case 1:
-                                appTitle = 'Top 100 users';
+                                appTitle = 'Топ 100 пользователей';
                                 break;
                             case 2:
-                                appTitle = 'Top clubs';
+                                appTitle = 'Топ клубов';
                                 break;
                         }
                     });
                 },
                 items: const [
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.tab),
+                        icon: Icon(Icons.person),
                         label: 'Профиль',
                     ),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.tab),
-                        label: 'Top 100 users',
+                        icon: Icon(Icons.groups),
+                        label: 'Топ 100 пользователей',
                     ),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.tab),
-                        label: 'Top clubs',
+                        icon: Icon(Icons.apartment),
+                        label: 'Топ клубов',
                     ),
                 ],
             ),
@@ -325,7 +325,7 @@ class _Tab1Page extends State<Tab1Page> {
     }
 
     Future<List<CompletedAchievement>> fetchCompletedAchievements() async {
-        final response = await http.get(Uri.parse('https://sskef.site/api/completedachievements/${userId}'));
+        final response = await http.get(Uri.parse('https://sskef.site/api/completedachievements/$userId'));
 
         if (response.statusCode == 200) {
             final List<dynamic> data = jsonDecode(response.body);
@@ -336,7 +336,7 @@ class _Tab1Page extends State<Tab1Page> {
     }
 
     Future<User> fetchUser() async {
-        final response = await http.get(Uri.parse('https://sskef.site/api/users/${userId}'));
+        final response = await http.get(Uri.parse('https://sskef.site/api/users/$userId'));
 
         if (response.statusCode == 200) {
             return User.fromJson(jsonDecode(response.body));
@@ -371,7 +371,7 @@ class _Tab1Page extends State<Tab1Page> {
                         final achievements = snapshot.data![1] as List<Achievement>;
                         final completedAchievements = snapshot.data![2] as List<CompletedAchievement>;
 
-                        return SingleChildScrollView(  // Оберните содержимое страницы в SingleChildScrollView
+                        return SingleChildScrollView(
                             child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
@@ -393,8 +393,8 @@ class _Tab1Page extends State<Tab1Page> {
                                         Column(
                                             children: [
                                                 Text(
-                                                    '${user.clubName}',
-                                                    textScaler: TextScaler.linear(1.5),
+                                                    user.clubName,
+                                                    textScaler: const TextScaler.linear(1.3),
                                                 ),
                                                 CircleAvatar(
                                                     radius: 40.0,
@@ -406,22 +406,23 @@ class _Tab1Page extends State<Tab1Page> {
                                         Container(
                                             decoration: BoxDecoration(
                                                 color: Theme.of(context).brightness == Brightness.dark
-                                                    ? Color.fromRGBO(11, 106, 108, 0.15)
-                                                    : Color.fromRGBO(11, 106, 108, 0.15),
+                                                    ? const Color.fromRGBO(11, 106, 108, 0.15)
+                                                    : const Color.fromRGBO(11, 106, 108, 0.15),
                                                 borderRadius: BorderRadius.circular(8.0),
                                             ),
                                             padding: const EdgeInsets.all(16.0),
-                                            child: const Column(
+                                            child: Column(
                                                 children: [
                                                     Text(
-                                                        'Выполнено достижений: 15',
+                                                        'Выполнено достижений: ${completedAchievements.length}',
                                                         style: TextStyle(
                                                             fontSize: 18.0,
                                                         ),
                                                     ),
                                                     SizedBox(height: 8.0),
                                                     Text(
-                                                        'Процент выполненных достижений: 15%',
+                                                        'Процент выполненных достижений: 100%',
+                                                        textAlign: TextAlign.center,
                                                         style: TextStyle(
                                                             fontSize: 18.0,
                                                         ),
@@ -440,7 +441,7 @@ class _Tab1Page extends State<Tab1Page> {
                                         const SizedBox(height: 8.0),
                                         ListView.builder(
                                             shrinkWrap: true,
-                                            physics: NeverScrollableScrollPhysics(),
+                                            physics: const NeverScrollableScrollPhysics(),
                                             itemCount: completedAchievements.length,
                                             itemBuilder: (context, index) {
                                                 final completedAchievement = completedAchievements[index];
@@ -467,7 +468,7 @@ class _Tab1Page extends State<Tab1Page> {
                                         const SizedBox(height: 8.0),
                                         ListView.builder(
                                             shrinkWrap: true,
-                                            physics: NeverScrollableScrollPhysics(),
+                                            physics: const NeverScrollableScrollPhysics(),
                                             itemCount: achievements.length,
                                             itemBuilder: (context, index)
                                             {
