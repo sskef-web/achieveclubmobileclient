@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-String appTitle = "User";
-
+String appTitle = "Профиль";
+String userId = '149';
 
 void main() {
     runApp(const MyApp());
@@ -16,19 +16,21 @@ class MyApp extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
         return Center(
-          child: MaterialApp(
-            title: appTitle,
-            theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(
-                    11, 106, 108, 1.0)),
-                    useMaterial3: true,
-              ),
-              darkTheme: ThemeData(
-                  colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(
-                      11, 106, 108, 1.0), brightness: Brightness.dark),
-                  useMaterial3: true,
-              ),
-            home: const AuthenticationPage(),
+            child: MaterialApp(
+                    title: appTitle,
+                    theme: ThemeData(
+                        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(
+                            11, 106, 108, 1.0)),
+                            useMaterial3: true,
+                            fontFamily: 'Exo2',
+                      ),
+                      darkTheme: ThemeData(
+                          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(
+                              11, 106, 108, 1.0), brightness: Brightness.dark),
+                          useMaterial3: true,
+                          fontFamily: 'Exo2',
+                      ),
+                    home: const AuthenticationPage(),
           ),
         );
     }
@@ -94,12 +96,19 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         });
     }
 
+    void _updateUserId(String value) {
+        setState(() {
+            userId = value;
+
+        });
+    }
+
     @override
     Widget build(BuildContext context) {
         if (_isLoggedIn) {
             return HomePage(logoutCallback: _logout);
         } else {
-            return LoginPage(loginCallback: _login, registerCallback: _register);
+            return LoginPage(loginCallback: _login, registerCallback: _register, updateUserId: _updateUserId);
         }
     }
 }
@@ -107,13 +116,17 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 class LoginPage extends StatelessWidget {
     final Function() loginCallback;
     final Function() registerCallback;
+    final Function(String) updateUserId;
 
-    LoginPage({super.key, required this.loginCallback, required this.registerCallback});
+    LoginPage({super.key, required this.loginCallback, required this.registerCallback, required this.updateUserId});
 
-    final TextEditingController _emailController = TextEditingController();
+    //final TextEditingController _emailController = TextEditingController(text: userId);
     final TextEditingController _passwordController = TextEditingController();
+    final TextEditingController _registerFirstnameController = TextEditingController();
+    final TextEditingController _registerLastnameController = TextEditingController();
     final TextEditingController _registerEmailController = TextEditingController();
     final TextEditingController _registerPasswordController = TextEditingController();
+
 
     @override
     Widget build(BuildContext context) {
@@ -128,10 +141,22 @@ class LoginPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                         TextField(
-                            controller: _emailController,
-                            decoration: const InputDecoration(
-                                labelText: 'Email',
+                            //controller: _emailController,
+                            controller: TextEditingController.fromValue(
+                                TextEditingValue(
+                                    text: userId,
+                                    selection: TextSelection.collapsed(offset: userId.length),
+                                ),
                             ),
+                            decoration: const InputDecoration(
+                                labelText: 'Email (временно загрузка пользователя по id, введенному ниже)',
+                            ),
+                            keyboardType: TextInputType.text,
+                            textAlign: TextAlign.left,
+                            textDirection: TextDirection.ltr,
+                            onChanged: (value) {
+                                updateUserId(value);
+                            },
                         ),
                         const SizedBox(height: 16.0),
                         TextField(
@@ -164,13 +189,13 @@ class LoginPage extends StatelessWidget {
                                                 child: Column(
                                                     children: [
                                                         TextField(
-                                                            controller: _registerEmailController,
+                                                            controller: _registerFirstnameController,
                                                             decoration: const InputDecoration(
                                                                 labelText: 'Name',
                                                             ),
                                                         ),
                                                         TextField(
-                                                            controller: _registerEmailController,
+                                                            controller: _registerLastnameController,
                                                             decoration: const InputDecoration(
                                                                 labelText: 'Surname',
                                                             ),
@@ -243,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                         _currentIndex = index;
                         switch (_currentIndex) {
                             case 0:
-                                appTitle = 'User';
+                                appTitle = 'Профиль';
                                 break;
                             case 1:
                                 appTitle = 'Top 100 users';
@@ -257,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                 items: const [
                     BottomNavigationBarItem(
                         icon: Icon(Icons.tab),
-                        label: 'User',
+                        label: 'Профиль',
                     ),
                     BottomNavigationBarItem(
                         icon: Icon(Icons.tab),
@@ -300,7 +325,7 @@ class _Tab1Page extends State<Tab1Page> {
     }
 
     Future<List<CompletedAchievement>> fetchCompletedAchievements() async {
-        final response = await http.get(Uri.parse('https://sskef.site/api/completedachievements/149'));
+        final response = await http.get(Uri.parse('https://sskef.site/api/completedachievements/${userId}'));
 
         if (response.statusCode == 200) {
             final List<dynamic> data = jsonDecode(response.body);
@@ -311,7 +336,7 @@ class _Tab1Page extends State<Tab1Page> {
     }
 
     Future<User> fetchUser() async {
-        final response = await http.get(Uri.parse('https://sskef.site/api/users/149'));
+        final response = await http.get(Uri.parse('https://sskef.site/api/users/${userId}'));
 
         if (response.statusCode == 200) {
             return User.fromJson(jsonDecode(response.body));
@@ -346,104 +371,124 @@ class _Tab1Page extends State<Tab1Page> {
                         final achievements = snapshot.data![1] as List<Achievement>;
                         final completedAchievements = snapshot.data![2] as List<CompletedAchievement>;
 
-
-                        return Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                    CircleAvatar(
-                                        radius: 80.0,
-                                        backgroundImage: NetworkImage('https://sskef.site/${user.avatar}'),
-                                    ),
-                                    const SizedBox(height: 16.0),
-                                    Text(
-                                        '${user.firstName} ${user.lastName}',
-                                        style: const TextStyle(
-                                            fontSize: 24.0,
-                                            fontWeight: FontWeight.bold,
+                        return SingleChildScrollView(  // Оберните содержимое страницы в SingleChildScrollView
+                            child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                        CircleAvatar(
+                                            radius: 80.0,
+                                            backgroundImage: NetworkImage('https://sskef.site/${user.avatar}'),
                                         ),
-                                    ),
-                                    const SizedBox(height: 16.0),
-                                    Container(
-                                        decoration: BoxDecoration(
-                                            color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[200],
-                                            borderRadius: BorderRadius.circular(8.0),
+                                        const SizedBox(height: 16.0),
+                                        Text(
+                                            '${user.firstName} ${user.lastName}',
+                                            style: const TextStyle(
+                                                fontSize: 24.0,
+                                                fontWeight: FontWeight.bold,
+                                            ),
                                         ),
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: const Column(
+                                        const SizedBox(height: 8.0),
+                                        Column(
                                             children: [
                                                 Text(
-                                                    'Выполнено достижений: 15',
-                                                    style: TextStyle(
-                                                        fontSize: 18.0,
-                                                    ),
+                                                    '${user.clubName}',
+                                                    textScaler: TextScaler.linear(1.5),
                                                 ),
-                                                SizedBox(height: 8.0),
-                                                Text(
-                                                    'Процент выполненных достижений: 15%',
-                                                    style: TextStyle(
-                                                        fontSize: 18.0,
-                                                    ),
+                                                CircleAvatar(
+                                                    radius: 40.0,
+                                                    backgroundImage: NetworkImage('https://sskef.site/${user.clubLogo}'),
                                                 ),
                                             ],
                                         ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    const Text(
-                                        'Завершенные достижения:',
-                                        style: TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.bold,
+                                        const SizedBox(height: 16.0),
+                                        Container(
+                                            decoration: BoxDecoration(
+                                                color: Theme.of(context).brightness == Brightness.dark
+                                                    ? Color.fromRGBO(11, 106, 108, 0.15)
+                                                    : Color.fromRGBO(11, 106, 108, 0.15),
+                                                borderRadius: BorderRadius.circular(8.0),
+                                            ),
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: const Column(
+                                                children: [
+                                                    Text(
+                                                        'Выполнено достижений: 15',
+                                                        style: TextStyle(
+                                                            fontSize: 18.0,
+                                                        ),
+                                                    ),
+                                                    SizedBox(height: 8.0),
+                                                    Text(
+                                                        'Процент выполненных достижений: 15%',
+                                                        style: TextStyle(
+                                                            fontSize: 18.0,
+                                                        ),
+                                                    ),
+                                                ],
+                                            ),
                                         ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    Expanded(
-                                        child: ListView.builder(
+                                        const SizedBox(height: 8.0),
+                                        const Text(
+                                            'Завершенные достижения:',
+                                            style: TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold,
+                                            ),
+                                        ),
+                                        const SizedBox(height: 8.0),
+                                        ListView.builder(
+                                            shrinkWrap: true,
+                                            physics: NeverScrollableScrollPhysics(),
                                             itemCount: completedAchievements.length,
                                             itemBuilder: (context, index) {
-                                                final completedAchievement = completedAchievements;
-                                                final achievement = achievements;
+                                                final completedAchievement = completedAchievements[index];
+                                                final achievement = achievements.firstWhere((achieve) => achieve.id == completedAchievement.achievementId);
 
-                                                for (var i in completedAchievement)
-                                                {
-                                                            final _achieve = achievements[index];
-
-                                                            return AchievementItem(
-                                                                logo: 'https://sskef.site/${_achieve.logoURL}',
-                                                                title: '${_achieve.title}',
-                                                                description: '${_achieve.description}',
-                                                                xp: _achieve.xp,
-                                                                completionPercentage: 8,
-                                                            );
-                                                }
-                                            },
-                                        ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    const Text(
-                                        'Достижения:',
-                                        style: TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.bold,
-                                        ),
-                                    ),
-                                    Expanded(
-                                        child: ListView.builder(
-                                            itemCount: achievements.length,
-                                            itemBuilder: (context, index) {
-                                                final achievement = achievements[index];
                                                 return AchievementItem(
                                                     logo: 'https://sskef.site/${achievement.logoURL}',
                                                     title: achievement.title,
                                                     description: achievement.description,
                                                     xp: achievement.xp,
                                                     completionPercentage: 8,
+                                                    //id: achievement.id,
                                                 );
                                             },
                                         ),
-                                    ),
-                                ],
+                                        const SizedBox(height: 8.0),
+                                        const Text(
+                                            'Достижения:',
+                                            style: TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold,
+                                            ),
+                                        ),
+                                        const SizedBox(height: 8.0),
+                                        ListView.builder(
+                                            shrinkWrap: true,
+                                            physics: NeverScrollableScrollPhysics(),
+                                            itemCount: achievements.length,
+                                            itemBuilder: (context, index)
+                                            {
+                                                final achievement = achievements[index];
+                                                final isCompleted = completedAchievements.any((completed) => completed.achievementId == achievement.id);
+
+                                                if (!isCompleted) {
+                                                    return AchievementItem(
+                                                        logo: 'https://sskef.site/${achievement.logoURL}',
+                                                        title: achievement.title,
+                                                        description: achievement.description,
+                                                        xp: achievement.xp,
+                                                        completionPercentage: 8,
+                                                        //id: achievement.id,
+                                                    );
+                                                }
+                                                return Container();
+                                            },
+                                        ),
+                                    ],
+                                ),
                             ),
                         );
                     } else if (snapshot.hasError) {
@@ -463,12 +508,13 @@ class _Tab1Page extends State<Tab1Page> {
 
 class AchievementItem extends StatelessWidget {
     final String logo;
+    //final int id;
     final String title;
     final String description;
     final int xp;
     final int completionPercentage;
 
-    const AchievementItem({super.key, required this.logo, required this.title, required this.description, required this.xp, required this.completionPercentage});
+    const AchievementItem({super.key, required this.logo, /*required this.id*/ required this.title, required this.description, required this.xp, required this.completionPercentage});
 
     @override
     Widget build(BuildContext context) {
@@ -480,6 +526,7 @@ class AchievementItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                         Text(description),
+                        //Text('$id'),
                         const SizedBox(height: 4.0),
                         Text('XP: $xp'),
                         const SizedBox(height: 4.0),
