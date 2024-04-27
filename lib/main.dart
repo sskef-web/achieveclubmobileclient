@@ -1,10 +1,14 @@
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 String appTitle = "Профиль";
 String userId = '149';
+String Avatar = "";
+String baseURL = 'https://sskef.site/';
 
 void main() {
     runApp(const MyApp());
@@ -99,7 +103,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     void _updateUserId(String value) {
         setState(() {
             userId = value;
-
         });
     }
 
@@ -162,17 +165,17 @@ class LoginPage extends StatelessWidget {
                         TextField(
                             controller: _passwordController,
                             decoration: const InputDecoration(
-                                labelText: 'Password',
+                                labelText: 'Пароль',
                             ),
                             obscureText: true,
                         ),
                         const SizedBox(height: 24.0),
                         SizedBox(
                             width: 150.0,
-                            height: 75.0,
+                            height: 50.0,
                             child: ElevatedButton(
                                 onPressed: loginCallback,
-                                child: const Text('Login', textAlign: TextAlign.center),
+                                child: const Text('Войти', textAlign: TextAlign.center),
                             ),
                         ),
                         const SizedBox(height: 16.0),
@@ -182,7 +185,7 @@ class LoginPage extends StatelessWidget {
                                     context: context,
                                     builder: (BuildContext context) {
                                         return AlertDialog(
-                                            title: const Text('Register', textAlign: TextAlign.center,),
+                                            title: const Text('Регистрация', textAlign: TextAlign.center,),
                                             content: SizedBox(
                                                 width: 500,
                                                 height: 500,
@@ -191,13 +194,13 @@ class LoginPage extends StatelessWidget {
                                                         TextField(
                                                             controller: _registerFirstnameController,
                                                             decoration: const InputDecoration(
-                                                                labelText: 'Name',
+                                                                labelText: 'Имя',
                                                             ),
                                                         ),
                                                         TextField(
                                                             controller: _registerLastnameController,
                                                             decoration: const InputDecoration(
-                                                                labelText: 'Surname',
+                                                                labelText: 'Фамиллия',
                                                             ),
                                                         ),
                                                         TextField(
@@ -210,7 +213,7 @@ class LoginPage extends StatelessWidget {
                                                         TextField(
                                                             controller: _registerPasswordController,
                                                             decoration: const InputDecoration(
-                                                                labelText: 'Password',
+                                                                labelText: 'Пароль',
                                                             ),
                                                             obscureText: true,
                                                         ),
@@ -218,19 +221,21 @@ class LoginPage extends StatelessWidget {
                                                 ),
                                             ),
                                             actions: [
-                                                SizedBox(
-                                                    width: 150.0,
-                                                    height: 75.0,
+                                                Center (
+                                                child: SizedBox(
+                                                    width: 200.0,
+                                                    height: 50.0,
                                                     child: ElevatedButton(
                                                         onPressed: registerCallback,
-                                                        child: const Text('Registrate', textAlign: TextAlign.center),
+                                                        child: const Text('Зарегистрироваться', textAlign: TextAlign.center),
                                                     ),
+                                                ),
                                                 ),
                                         ]);
                                     },
                                 );
                             },
-                            child: const Text('Registration', textAlign: TextAlign.center),
+                            child: const Text('Зарегистрироваться', textAlign: TextAlign.center),
                         ),
                     ],
                 ),
@@ -320,12 +325,17 @@ class _Tab1Page extends State<Tab1Page> {
     void initState() {
         super.initState();
         _userFuture = fetchUser();
+        _userFuture.then((user) {
+            setState(() {
+                Avatar = user.avatar;
+            });
+        });
         _achieveFuture = fetchAchievements();
         _completedAchievementsFuture = fetchCompletedAchievements();
     }
 
     Future<List<CompletedAchievement>> fetchCompletedAchievements() async {
-        final response = await http.get(Uri.parse('https://sskef.site/api/completedachievements/$userId'));
+        final response = await http.get(Uri.parse('${baseURL}api/completedachievements/$userId'));
 
         if (response.statusCode == 200) {
             final List<dynamic> data = jsonDecode(response.body);
@@ -336,7 +346,7 @@ class _Tab1Page extends State<Tab1Page> {
     }
 
     Future<User> fetchUser() async {
-        final response = await http.get(Uri.parse('https://sskef.site/api/users/$userId'));
+        final response = await http.get(Uri.parse('${baseURL}api/users/$userId'));
 
         if (response.statusCode == 200) {
             return User.fromJson(jsonDecode(response.body));
@@ -346,7 +356,7 @@ class _Tab1Page extends State<Tab1Page> {
     }
 
     Future<List<Achievement>> fetchAchievements() async {
-        final response = await http.get(Uri.parse('https://sskef.site/api/achievements'));
+        final response = await http.get(Uri.parse('${baseURL}api/achievements'));
 
         if (response.statusCode == 200) {
             final List<dynamic> data = jsonDecode(response.body);
@@ -356,6 +366,41 @@ class _Tab1Page extends State<Tab1Page> {
         }
     }
 
+    void _uploadAvatar(BuildContext context) async {
+        final picker = ImagePicker();
+        final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+        if (pickedImage != null) {
+            var request = http.MultipartRequest(
+                'POST',
+                Uri.parse('${baseURL}api/avatar/$userId'),
+            );
+
+            request.files.add(
+                await http.MultipartFile.fromPath(
+                    'file',
+                    pickedImage.path,
+                ),
+            );
+
+            try {
+                var streamedResponse = await request.send();
+                var response = await http.Response.fromStream(streamedResponse);
+
+                if (response.statusCode == 200) {
+                    var imageUrl = response.body;
+
+                    setState(() {
+                        Avatar = imageUrl;
+                    });
+                } else {
+                    print('Error uploading avatar. Status code: ${response.statusCode}');
+                }
+            } catch (error) {
+                print('Error uploading avatar: $error');
+            }
+        }
+    }
 
     @override
     Widget build(BuildContext context) {
@@ -379,7 +424,12 @@ class _Tab1Page extends State<Tab1Page> {
                                     children: [
                                         CircleAvatar(
                                             radius: 80.0,
-                                            backgroundImage: NetworkImage('https://sskef.site/${user.avatar}'),
+                                            backgroundImage: NetworkImage('https://sskef.site/$Avatar'),
+                                            child: InkWell(
+                                                onTap: () {
+                                                    _uploadAvatar(context);
+                                                },
+                                            ),
                                         ),
                                         const SizedBox(height: 16.0),
                                         Text(
@@ -396,6 +446,7 @@ class _Tab1Page extends State<Tab1Page> {
                                                     user.clubName,
                                                     textScaler: const TextScaler.linear(1.3),
                                                 ),
+                                                const SizedBox(height: 8.0),
                                                 CircleAvatar(
                                                     radius: 40.0,
                                                     backgroundImage: NetworkImage('https://sskef.site/${user.clubLogo}'),
