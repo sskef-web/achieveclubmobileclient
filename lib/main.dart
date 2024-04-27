@@ -4,17 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 String appTitle = "User";
-late Future<Ping> _ping;
+
 
 void main() {
     runApp(const MyApp());
-
-    _ping = testfetch();
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
 
     @override
     Widget build(BuildContext context) {
@@ -238,10 +235,6 @@ class _HomePageState extends State<HomePage> {
     @override
     Widget build(BuildContext context) {
         return Scaffold(
-            appBar: AppBar(
-            title: Text(appTitle),
-                centerTitle: true,
-        ),
             body: _tabs[_currentIndex],
             bottomNavigationBar: BottomNavigationBar(
                 currentIndex: _currentIndex,
@@ -284,113 +277,204 @@ class _HomePageState extends State<HomePage> {
     }
 }
 
-class Tab1Page extends StatelessWidget {
+
+class Tab1Page extends StatefulWidget {
   const Tab1Page({super.key});
+
+    @override
+    _Tab1Page createState() => _Tab1Page();
+
+}
+
+class _Tab1Page extends State<Tab1Page> {
+    late Future<User> _userFuture;
+    late Future<List<Achievement>> _achieveFuture;
+    late Future<List<CompletedAchievement>> _completedAchievementsFuture;
+
+    @override
+    void initState() {
+        super.initState();
+        _userFuture = fetchUser();
+        _achieveFuture = fetchAchievements();
+        _completedAchievementsFuture = fetchCompletedAchievements();
+    }
+
+    Future<List<CompletedAchievement>> fetchCompletedAchievements() async {
+        final response = await http.get(Uri.parse('https://sskef.site/api/completedachievements/149'));
+
+        if (response.statusCode == 200) {
+            final List<dynamic> data = jsonDecode(response.body);
+            return data.map((item) => CompletedAchievement.fromJson(item)).toList();
+        } else {
+            throw Exception('Failed to load completed achievements');
+        }
+    }
+
+    Future<User> fetchUser() async {
+        final response = await http.get(Uri.parse('https://sskef.site/api/users/149'));
+
+        if (response.statusCode == 200) {
+            return User.fromJson(jsonDecode(response.body));
+        } else {
+            throw Exception('Failed to load user');
+        }
+    }
+
+    Future<List<Achievement>> fetchAchievements() async {
+        final response = await http.get(Uri.parse('https://sskef.site/api/achievements'));
+
+        if (response.statusCode == 200) {
+            final List<dynamic> data = jsonDecode(response.body);
+            return data.map((item) => Achievement.fromJson(item)).toList();
+        } else {
+            throw Exception('Failed to load achievements');
+        }
+    }
+
 
     @override
     Widget build(BuildContext context) {
         return Scaffold(
-            body: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                        const CircleAvatar(
-                            radius: 80.0,
-                            backgroundImage: AssetImage(''),
-                        ),
-                        const SizedBox(height: 16.0),
-                        const Text(
-                            'Имя Фамилия',
-                            style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                            ),
-                        ),
-                        const SizedBox(height: 16.0),
-                        Container(
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).brightness == Brightness.dark ? const Color.fromRGBO(
-                                    11, 106, 108, 0.14) : const Color.fromRGBO(
-                                    11, 106, 108, 0.05),
-                                borderRadius: BorderRadius.circular(8.0),
-                            ),
+            appBar: AppBar(
+                title: Center(child: Text(appTitle)),
+            ),
+            body: FutureBuilder(
+                future: Future.wait([_userFuture, _achieveFuture, _completedAchievementsFuture]),
+                builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                    if (snapshot.hasData) {
+                        final user = snapshot.data![0] as User;
+                        final achievements = snapshot.data![1] as List<Achievement>;
+                        final completedAchievements = snapshot.data![2] as List<CompletedAchievement>;
+
+
+                        return Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: const Column(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
+                                    CircleAvatar(
+                                        radius: 80.0,
+                                        backgroundImage: NetworkImage('https://sskef.site/${user.avatar}'),
+                                    ),
+                                    const SizedBox(height: 16.0),
                                     Text(
-                                        'Выполнено достижений: 10',
-                                        style: TextStyle(
-                                            fontSize: 18.0,
+                                        '${user.firstName} ${user.lastName}',
+                                        style: const TextStyle(
+                                            fontSize: 24.0,
+                                            fontWeight: FontWeight.bold,
                                         ),
                                     ),
-                                    SizedBox(height: 8.0),
-                                    Text(
-                                        'Процент выполненных достижений: 80%',
+                                    const SizedBox(height: 16.0),
+                                    Container(
+                                        decoration: BoxDecoration(
+                                            color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[200],
+                                            borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: const Column(
+                                            children: [
+                                                Text(
+                                                    'Выполнено достижений: 15',
+                                                    style: TextStyle(
+                                                        fontSize: 18.0,
+                                                    ),
+                                                ),
+                                                SizedBox(height: 8.0),
+                                                Text(
+                                                    'Процент выполненных достижений: 15%',
+                                                    style: TextStyle(
+                                                        fontSize: 18.0,
+                                                    ),
+                                                ),
+                                            ],
+                                        ),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    const Text(
+                                        'Завершенные достижения:',
                                         style: TextStyle(
-                                            fontSize: 18.0,
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold,
+                                        ),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    Expanded(
+                                        child: ListView.builder(
+                                            itemCount: completedAchievements.length,
+                                            itemBuilder: (context, index) {
+                                                final completedAchievement = completedAchievements;
+                                                final achievement = achievements;
+
+                                                for (var i in completedAchievement)
+                                                {
+                                                            final _achieve = achievements[index];
+
+                                                            return AchievementItem(
+                                                                logo: 'https://sskef.site/${_achieve.logoURL}',
+                                                                title: '${_achieve.title}',
+                                                                description: '${_achieve.description}',
+                                                                xp: _achieve.xp,
+                                                                completionPercentage: 8,
+                                                            );
+                                                }
+                                            },
+                                        ),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    const Text(
+                                        'Достижения:',
+                                        style: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold,
+                                        ),
+                                    ),
+                                    Expanded(
+                                        child: ListView.builder(
+                                            itemCount: achievements.length,
+                                            itemBuilder: (context, index) {
+                                                final achievement = achievements[index];
+                                                return AchievementItem(
+                                                    logo: 'https://sskef.site/${achievement.logoURL}',
+                                                    title: achievement.title,
+                                                    description: achievement.description,
+                                                    xp: achievement.xp,
+                                                    completionPercentage: 8,
+                                                );
+                                            },
                                         ),
                                     ),
                                 ],
                             ),
-                        ),
-                        const SizedBox(height: 24.0),
-                        const Text(
-                            'Достижения:',
-                            style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                            ),
-                        ),
-                        const SizedBox(height: 8.0),
-                        Expanded(
-                            child: ListView(
-                                children: const [
-                                    AchievementItem(
-                                        icon: Icons.star,
-                                        title: 'Достижение 1',
-                                        description: 'Описание достижения 1',
-                                        xp: 100,
-                                        completionPercentage: 50,
-                                    ),
-                                    AchievementItem(
-                                        icon: Icons.star,
-                                        title: 'Достижение 2',
-                                        description: 'Описание достижения 2',
-                                        xp: 200,
-                                        completionPercentage: 70,
-                                    ),
-                                    AchievementItem(
-                                        icon: Icons.star,
-                                        title: 'Достижение 3',
-                                        description: 'Описание достижения 3',
-                                        xp: 300,
-                                        completionPercentage: 90,
-                                    ),
-                                ],
-                            ),
-                        ),
-                    ],
-                ),
+                        );
+                    } else if (snapshot.hasError) {
+                        return Center(
+                            child: Text('Error: ${snapshot.error}'),
+                        );
+                    } else {
+                        return const Center(
+                            child: CircularProgressIndicator(),
+                        );
+                    }
+                },
             ),
         );
     }
 }
 
 class AchievementItem extends StatelessWidget {
-    final IconData icon;
+    final String logo;
     final String title;
     final String description;
     final int xp;
     final int completionPercentage;
 
-    const AchievementItem({super.key, required this.icon, required this.title, required this.description, required this.xp, required this.completionPercentage});
+    const AchievementItem({super.key, required this.logo, required this.title, required this.description, required this.xp, required this.completionPercentage});
 
     @override
     Widget build(BuildContext context) {
         return Card(
             child: ListTile(
-                leading: Icon(icon),
+                leading: Image.network(logo),
                 title: Text(title),
                 subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,19 +484,6 @@ class AchievementItem extends StatelessWidget {
                         Text('XP: $xp'),
                         const SizedBox(height: 4.0),
                         Text('Процент выполнения: $completionPercentage%'),
-                        FutureBuilder<Ping>(
-                            future: _ping,
-                            builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                    return Text(snapshot.data!.pong);
-                                } else if (snapshot.hasError) {
-                                    return Text('${snapshot.error}');
-                                }
-
-                                // By default, show a loading spinner.
-                                return const CircularProgressIndicator();
-                            },
-                        )
                     ],
                 ),
             ),
@@ -443,40 +514,94 @@ class Tab3Page extends StatelessWidget {
     }
 }
 
-class Ping {
-    final String pong;
+class User {
+    final int id;
+    final String firstName;
+    final String lastName;
+    final String avatar;
+    final int clubId;
+    final String clubName;
+    final String clubLogo;
 
-    const Ping({
-        required this.pong,
+    const User({
+        required this.id,
+        required this.firstName,
+        required this.lastName,
+        required this.avatar,
+        required this.clubId,
+        required this.clubName,
+        required this.clubLogo,
     });
 
-    factory Ping.fromJson(Map<String, dynamic> json) {
-        return switch (json) {
-            {
-            'pong': String pong,
-            } =>
-                Ping(
-                    pong: pong,
-                ),
-            _ => throw const FormatException('Failed to load album.'),
-        };
+    factory User.fromJson(Map<String, dynamic> json) {
+        return User(
+            id: json['id'],
+            firstName: json['firstName'],
+            lastName: json['lastName'],
+            avatar: json['avatar'],
+            clubId: json['clubId'],
+            clubName: json['clubName'],
+            clubLogo: json['clubLogo'],
+        );
     }
 }
 
-Future<Ping> testfetch() async {
-    final response = await http
-        .get(Uri.parse('https://sskef.site/api/ping'));
+class CompletedAchievement {
+    final int achievementId;
 
-    if (response.statusCode == 200) {
-        // If the server did return a 200 OK response,
-        // then parse the JSON.
-        return Ping.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-    }
-    else {
-        // If the server did not return a 200 OK response,
-        // then throw an exception.
-        throw Exception('Failed to load album');
+    CompletedAchievement({
+        required this.achievementId,
+    });
+
+    factory CompletedAchievement.fromJson(Map<String, dynamic> json) {
+        return CompletedAchievement(
+            achievementId: json['achieveId'],
+        );
     }
 }
 
+CompletedAchievement findElementWithMaxId(List<CompletedAchievement> elements) {
+    if (elements.isEmpty) {
+        throw Exception("The list is empty!");
+    }
 
+    CompletedAchievement elementWithMaxId = elements[0];
+
+    for (var element in elements) {
+        if (element.achievementId > elementWithMaxId.achievementId) {
+            elementWithMaxId = element;
+        }
+    }
+
+    return elementWithMaxId;
+}
+
+class Achievement {
+    final int id;
+    final int xp;
+    final String title;
+    final String description;
+    final String logoURL;
+    final bool isMultiple;
+
+    Achievement({
+        required this.id,
+        required this.xp,
+        required this.title,
+        required this.description,
+        required this.logoURL,
+        required this.isMultiple,
+    });
+
+    factory Achievement.fromJson(Map<String, dynamic> json) {
+        return Achievement(
+            id: json['id'],
+            xp: json['xp'],
+            title: json['title'],
+            description: json['description'],
+            logoURL: json['logoURL'],
+            isMultiple: json['isMultiple'],
+        );
+    }
+
+}
