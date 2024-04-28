@@ -1,18 +1,13 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:achieveclubmobileclient/authenticationpage.dart';
-import 'package:achieveclubmobileclient/homepage.dart';
-import 'package:achieveclubmobileclient/loginpage.dart';
-import 'package:achieveclubmobileclient/tab1.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 String appTitle = "Профиль";
-String userId = '149';
+String email = '';
+String password = '';
 String Avatar = "";
-String baseURL = 'https://sskef.site/';
+String baseURL = 'https://sskef.site/api/';
+var userId;
+var token;
+var savedCookies;
 
 void main() {
     runApp(const MyApp());

@@ -6,6 +6,7 @@ import 'package:achieveclubmobileclient/data/user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'main.dart';
 
@@ -36,7 +37,12 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   Future<List<CompletedAchievement>> fetchCompletedAchievements() async {
-    final response = await http.get(Uri.parse('${baseURL}api/completedachievements/$userId'));
+    var url = Uri.parse('${baseURL}completedachievements');
+    var cookies = await loadCookies();
+
+    var response = await http.get(url, headers: {
+      'Cookie': cookies!,
+    });
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
@@ -46,8 +52,18 @@ class _Tab1Page extends State<Tab1Page> {
     }
   }
 
+  Future<String?> loadCookies() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('cookies');
+  }
+
   Future<User> fetchUser() async {
-    final response = await http.get(Uri.parse('${baseURL}api/users/$userId'));
+    var url = Uri.parse('${baseURL}users');
+    var cookies = await loadCookies();
+
+    var response = await http.get(url, headers: {
+      'Cookie': cookies!,
+    });
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
@@ -57,7 +73,7 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   Future<List<Achievement>> fetchAchievements() async {
-    final response = await http.get(Uri.parse('${baseURL}api/achievements'));
+    final response = await http.get(Uri.parse('${baseURL}achievements'));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
@@ -70,12 +86,14 @@ class _Tab1Page extends State<Tab1Page> {
   void _uploadAvatar(BuildContext context) async {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    var cookies = await loadCookies();
 
     if (pickedImage != null) {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('${baseURL}api/avatar/$userId'),
+        Uri.parse('${baseURL}avatar'),
       );
+      request.headers['Cookie'] = cookies!;
 
       request.files.add(
         await http.MultipartFile.fromPath(
@@ -167,12 +185,12 @@ class _Tab1Page extends State<Tab1Page> {
                         children: [
                           Text(
                             'Выполнено достижений: ${completedAchievements.length}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18.0,
                             ),
                           ),
-                          SizedBox(height: 8.0),
-                          Text(
+                          const SizedBox(height: 8.0),
+                          const Text(
                             'Процент выполненных достижений: 100%',
                             textAlign: TextAlign.center,
                             style: TextStyle(

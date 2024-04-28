@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 class LoginPage extends StatelessWidget {
   final Function() loginCallback;
   final Function() registerCallback;
-  final Function(String) updateUserId;
+  final Function(String) updateEmail;
+  final Function(String) updatePassword;
 
-  LoginPage({super.key, required this.loginCallback, required this.registerCallback, required this.updateUserId});
+  LoginPage({super.key, required this.loginCallback, required this.registerCallback, required this.updateEmail, required this.updatePassword});
 
   //final TextEditingController _emailController = TextEditingController(text: userId);
-  final TextEditingController _passwordController = TextEditingController();
+  //final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _registerFirstnameController = TextEditingController();
   final TextEditingController _registerLastnameController = TextEditingController();
   final TextEditingController _registerEmailController = TextEditingController();
@@ -20,7 +21,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(appTitle),
+        title: Text('$appTitle'),
         centerTitle: true,
       ),
       body: Padding(
@@ -32,27 +33,38 @@ class LoginPage extends StatelessWidget {
               //controller: _emailController,
               controller: TextEditingController.fromValue(
                 TextEditingValue(
-                  text: userId,
-                  selection: TextSelection.collapsed(offset: userId.length),
+                  text: email,
+                  selection: TextSelection.collapsed(offset: email.length),
                 ),
               ),
               decoration: const InputDecoration(
-                labelText: 'Email (временно загрузка пользователя по id, введенному ниже)',
+                labelText: 'Email',
               ),
               keyboardType: TextInputType.text,
               textAlign: TextAlign.left,
               textDirection: TextDirection.ltr,
               onChanged: (value) {
-                updateUserId(value);
+                updateEmail(value);
               },
             ),
             const SizedBox(height: 16.0),
             TextField(
-              controller: _passwordController,
+              //controller: _passwordController,
+              controller: TextEditingController.fromValue(
+                TextEditingValue(
+                  text: password,
+                  selection: TextSelection.collapsed(offset: password.length),
+                ),
+              ),
               decoration: const InputDecoration(
                 labelText: 'Пароль',
               ),
-              obscureText: true,
+              keyboardType: TextInputType.text,
+              textAlign: TextAlign.left,
+              textDirection: TextDirection.ltr,
+              onChanged: (value) {
+                updatePassword(value);
+              },
             ),
             const SizedBox(height: 24.0),
             SizedBox(

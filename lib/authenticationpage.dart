@@ -1,8 +1,19 @@
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 import 'package:achieveclubmobileclient/homepage.dart';
 import 'package:achieveclubmobileclient/loginpage.dart';
 import 'package:achieveclubmobileclient/main.dart';
+import 'package:achieveclubmobileclient/services/hashservice.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class LoginResponse {
+  String token;
+  String userId;
+
+  LoginResponse(this.token, this.userId);
+}
 
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
@@ -29,11 +40,74 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     });
   }
 
-  void _login() async {
-    // Здесь можно добавить логику для проверки введенных данных и выполнения входа в систему
-    // Проверка может быть выполнена с помощью сервера или локально
+  String? extractTokenFromCookies(String cookies) {
+    if (cookies != null) {
+      var cookieList = cookies.split(';');
+      for (var cookie in cookieList) {
+        if (cookie.contains('X-Access-Token')) {
+          var token = cookie.split('=')[1];
+          return token;
+        }
+      }
+    }
+    return null;
+  }
 
-    // Пример успешного входа в систему
+  String? extractUserIdFromCookies(String cookies) {
+    if (cookies != null) {
+      var cookieList = cookies.split(';');
+      for (var cookie in cookieList) {
+        if (cookie.contains('X-User-Id')) {
+          var userId = cookie.split('=')[1];
+          return userId;
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<void> saveCookies(String cookies) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('cookies', cookies);
+  }
+
+  Future<String?> loadCookies() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('cookies');
+  }
+
+  Future<LoginResponse> login(String email, String password) async {
+    var url = Uri.parse('${baseURL}auth/login');
+    var body = jsonEncode({
+      'email': email,
+      'passwordHash': password,
+    });
+
+    var response = await http.post(url, body: body, headers: {
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      var cookies = response.headers['set-cookie'];
+      await saveCookies(cookies!);
+      var token = extractTokenFromCookies(cookies!);
+      var userId = extractUserIdFromCookies(cookies!);
+      return LoginResponse(token!, userId!);
+    }
+    else {
+      throw Exception('Failed to login: ${response.statusCode}');
+    }
+  }
+
+
+  void _login() async {
+
+    await login(email, password);
+    savedCookies = await loadCookies();
+    print('${savedCookies}');
+
+    //password = HashService.generateHash(password,  );
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', true);
 
@@ -64,9 +138,15 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     });
   }
 
-  void _updateUserId(String value) {
+  void _updateEmail(String value) {
     setState(() {
-      userId = value;
+      email = value;
+    });
+  }
+
+  void _updatePassword(String value) {
+    setState(() {
+      password = value;
     });
   }
 
@@ -75,7 +155,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     if (_isLoggedIn) {
       return HomePage(logoutCallback: _logout);
     } else {
-      return LoginPage(loginCallback: _login, registerCallback: _register, updateUserId: _updateUserId);
+      return LoginPage(loginCallback: _login, registerCallback: _register, updateEmail: _updateEmail, updatePassword: _updatePassword);
     }
   }
 }
