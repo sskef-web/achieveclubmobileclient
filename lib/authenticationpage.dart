@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:achieveclubmobileclient/homepage.dart';
 import 'package:achieveclubmobileclient/loginpage.dart';
@@ -40,29 +39,25 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   String? extractTokenFromCookies(String cookies) {
-    if (cookies != null) {
-      var cookieList = cookies.split(';');
-      for (var cookie in cookieList) {
-        if (cookie.contains('X-Access-Token')) {
-          var token = cookie.split('=')[1];
-          return token;
-        }
+    var cookieList = cookies.split(';');
+    for (var cookie in cookieList) {
+      if (cookie.contains('X-Access-Token')) {
+        var token = cookie.split('=')[1];
+        return token;
       }
     }
-    return null;
+      return null;
   }
 
   String? extractUserIdFromCookies(String cookies) {
-    if (cookies != null) {
-      var cookieList = cookies.split(';');
-      for (var cookie in cookieList) {
-        if (cookie.contains('X-User-Id')) {
-          var userId = cookie.split('=')[1];
-          return userId;
-        }
+    var cookieList = cookies.split(';');
+    for (var cookie in cookieList) {
+      if (cookie.contains('X-User-Id')) {
+        var userId = cookie.split('=')[1];
+        return userId;
       }
     }
-    return null;
+      return null;
   }
 
   Future<void> saveCookies(String cookies) async {
@@ -89,8 +84,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     if (response.statusCode == 200) {
       var cookies = response.headers['set-cookie'];
       await saveCookies(cookies!);
-      var token = extractTokenFromCookies(cookies!);
-      var userId = extractUserIdFromCookies(cookies!);
+      var token = extractTokenFromCookies(cookies);
+      var userId = extractUserIdFromCookies(cookies);
       return LoginResponse(token!, userId!);
     }
     else {
@@ -103,7 +98,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 
     await login(email, password);
     savedCookies = await loadCookies();
-    print('${savedCookies}');
+    //print('${savedCookies}');
 
     //password = HashService.generateHash(password,  );
 

@@ -229,7 +229,7 @@ class _Tab1Page extends State<Tab1Page> {
                     ),
                     const SizedBox(height: 8.0),
                     const Text(
-                      'Достижения:',
+                      'Невыполненные достижения:',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
