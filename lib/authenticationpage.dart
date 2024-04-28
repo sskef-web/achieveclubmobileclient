@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:achieveclubmobileclient/homepage.dart';
 import 'package:achieveclubmobileclient/loginpage.dart';
 import 'package:achieveclubmobileclient/main.dart';
-import 'package:achieveclubmobileclient/services/hashservice.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
