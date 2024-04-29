@@ -4,6 +4,7 @@ import 'package:achieveclubmobileclient/homepage.dart';
 import 'package:achieveclubmobileclient/loginpage.dart';
 import 'package:achieveclubmobileclient/main.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginResponse {
@@ -74,7 +75,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     var url = Uri.parse('${baseURL}auth/login');
     var body = jsonEncode({
       'email': email,
-      'passwordHash': password,
+      'password': password,
     });
 
     var response = await http.post(url, body: body, headers: {
@@ -90,6 +91,33 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     }
     else {
       throw Exception('Failed to login: ${response.statusCode}');
+    }
+  }
+
+  Future<LoginResponse> registrate(String email, String password, String firstName, String lastName, String avatarPath, int clubId) async {
+    var url = Uri.parse('${baseURL}auth/registration');
+    var body = jsonEncode({
+      'firstName': firstName,
+      'lastName': lastName,
+      'clubId': clubId,
+      'email': email,
+      'password': password,
+      'avatarURL': avatarPath,
+    });
+
+    var response = await http.post(url, body: body, headers: {
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      var cookies = response.headers['set-cookie'];
+      await saveCookies(cookies!);
+      var token = extractTokenFromCookies(cookies);
+      var userId = extractUserIdFromCookies(cookies);
+      return LoginResponse(token!, userId!);
+    }
+    else {
+      throw Exception('Failed to registrate: ${response.statusCode}');
     }
   }
 
@@ -111,10 +139,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   void _register() async {
-    // Здесь можно добавить логику для регистрации нового пользователя
-    // Регистрация может быть выполнена с помощью сервера или локально
+    Navigator.pop(context, true);
 
-    // Пример успешной регистрации
+    await registrate(email, password, firstName, lastName, avatarPath, clubId);
+    savedCookies = await loadCookies();
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', true);
 
@@ -144,12 +173,77 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     });
   }
 
+  void _updateFirstName(String value) {
+    setState(() {
+      firstName = value;
+    });
+  }
+
+  void _updateLastName(String value) {
+    setState(() {
+      lastName = value;
+    });
+  }
+
+  void _updateClubId(int value) {
+    setState(() {
+      clubId = value;
+    });
+  }
+
+  void _uploadAvatar(BuildContext context) async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    var cookies = await loadCookies();
+
+    if (pickedImage != null) {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('${baseURL}avatar'),
+      );
+      request.headers['Cookie'] = cookies!;
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          pickedImage.path,
+        ),
+      );
+
+      try {
+        var streamedResponse = await request.send();
+        var response = await http.Response.fromStream(streamedResponse);
+
+        if (response.statusCode == 200) {
+          var imageUrl = response.body;
+
+          setState(() {
+            avatarPath = imageUrl;
+          });
+        } else {
+          print('Error uploading avatar. Status code: ${response.statusCode}');
+        }
+      } catch (error) {
+        print('Error uploading avatar: $error');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoggedIn) {
       return HomePage(logoutCallback: _logout);
     } else {
-      return LoginPage(loginCallback: _login, registerCallback: _register, updateEmail: _updateEmail, updatePassword: _updatePassword);
+      return LoginPage(
+          loginCallback: _login,
+          registerCallback: _register,
+          updateEmail: _updateEmail,
+          updatePassword: _updatePassword,
+          updateFirstName: _updateFirstName,
+          updateLastName: _updateLastName,
+          updateClubId: _updateClubId,
+          uploadAvatar: _uploadAvatar,
+      );
     }
   }
 }

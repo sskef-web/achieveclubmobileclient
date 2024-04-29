@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'main.dart';
 
+
 class Tab1Page extends StatefulWidget {
   const Tab1Page({super.key});
 
@@ -22,6 +23,8 @@ class _Tab1Page extends State<Tab1Page> {
   late Future<User> _userFuture;
   late Future<List<Achievement>> _achieveFuture;
   late Future<List<CompletedAchievement>> _completedAchievementsFuture;
+  int _completedAchievementsCount = 0;
+  int _totalAchievementsCount = 0;
 
   @override
   void initState() {
@@ -135,6 +138,12 @@ class _Tab1Page extends State<Tab1Page> {
             final achievements = snapshot.data![1] as List<Achievement>;
             final completedAchievements = snapshot.data![2] as List<CompletedAchievement>;
 
+            _completedAchievementsCount = completedAchievements.length;
+            _totalAchievementsCount = achievements.length;
+            double completionPercentage = _totalAchievementsCount > 0
+                ? (_completedAchievementsCount / _totalAchievementsCount) * 100
+                : 0;
+
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -191,7 +200,7 @@ class _Tab1Page extends State<Tab1Page> {
                           ),
                           const SizedBox(height: 8.0),
                           const Text(
-                            'Процент выполненных достижений: 100%',
+                            'Процент выполненных достижений: %',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18.0,
