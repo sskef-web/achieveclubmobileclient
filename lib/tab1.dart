@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:qr_flutter/qr_flutter.dart';
 import 'main.dart';
 
 
@@ -73,6 +73,55 @@ class _Tab1Page extends State<Tab1Page> {
     } else {
       throw Exception('Failed to load user');
     }
+  }
+
+  void generateQrCode(BuildContext context, userId, int achieveId) async{
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Достижение',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                Text(
+                  'Пожалуйста, покажите QR-код тренеру',
+                  style: TextStyle(fontSize: 16.0),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 16.0),
+                QrImageView(
+                  data: '$userId:$achieveId',
+                  version: QrVersions.auto,
+                  size: 200.0,
+                  padding: EdgeInsets.zero,
+                ),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                  },
+                  child: Text('Закрыть'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<List<Achievement>> fetchAchievements() async {
@@ -225,11 +274,15 @@ class _Tab1Page extends State<Tab1Page> {
                         final achievement = achievements.firstWhere((achieve) => achieve.id == completedAchievement.achievementId);
 
                         return AchievementItem(
+                          onTap: () {
+                            generateQrCode(context, user.id,achievement.id);
+                          },
                           logo: 'https://sskef.site/${achievement.logoURL}',
                           title: achievement.title,
                           description: achievement.description,
                           xp: achievement.xp,
                           completionPercentage: 8,
+                          id: achievement.id,
                           //id: achievement.id,
                         );
                       },
@@ -254,12 +307,15 @@ class _Tab1Page extends State<Tab1Page> {
 
                         if (!isCompleted) {
                           return AchievementItem(
+                            onTap: () {
+                              generateQrCode(context, user.id, achievement.id);
+                            },
                             logo: 'https://sskef.site/${achievement.logoURL}',
                             title: achievement.title,
                             description: achievement.description,
                             xp: achievement.xp,
                             completionPercentage: 8,
-                            //id: achievement.id,
+                            id: achievement.id,
                           );
                         }
                         return Container();

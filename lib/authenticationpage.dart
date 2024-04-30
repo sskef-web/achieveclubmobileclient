@@ -133,7 +133,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Ошибка'),
-              content: Text('Не удалось войти:\n${emailError}\n${passError}'),
+              content: Text('Не удалось войти:\n$emailError\n$passError'),
               actions: [
                 TextButton(
                   child: const Text('ОК'),
@@ -176,7 +176,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     else {
       final responseJson = jsonDecode(response.body);
       //throw Exception('Failed to registrate: ${response.statusCode}');
-      throw errorMessage = '${response.body}';
+      throw errorMessage = response.body;
     }
   }
 

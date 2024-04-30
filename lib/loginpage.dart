@@ -13,7 +13,7 @@ class LoginPage extends StatefulWidget {
   final Function(BuildContext) uploadAvatar;
 
   const LoginPage({
-    Key? key,
+    super.key,
     required this.loginCallback,
     required this.registerCallback,
     required this.updateEmail,
@@ -22,7 +22,7 @@ class LoginPage extends StatefulWidget {
     required this.updateLastName,
     required this.updateClubId,
     required this.uploadAvatar,
-  }) : super(key: key);
+  });
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -32,21 +32,26 @@ class _LoginPageState extends State<LoginPage> {
 
   bool isPasswordHidden = true;
   IconData passIcon = Icons.visibility;
+  final _formKey = GlobalKey<FormState>();
 
   void navigateToRegisterPage(BuildContext context) {
-    email = '';password = '';firstName = '';lastName = '';
+    email = '';
+    password = '';
+    firstName = '';
+    lastName = '';
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RegisterPage(
-          registerCallback: widget.registerCallback,
-          updateEmail: widget.updateEmail,
-          updatePassword: widget.updatePassword,
-          updateFirstName: widget.updateFirstName,
-          updateLastName: widget.updateLastName,
-          updateClubId: widget.updateClubId,
-          uploadAvatar: widget.uploadAvatar,
-        ),
+        builder: (context) =>
+            RegisterPage(
+              registerCallback: widget.registerCallback,
+              updateEmail: widget.updateEmail,
+              updatePassword: widget.updatePassword,
+              updateFirstName: widget.updateFirstName,
+              updateLastName: widget.updateLastName,
+              updateClubId: widget.updateClubId,
+              uploadAvatar: widget.uploadAvatar,
+            ),
       ),
     );
   }
@@ -78,56 +83,78 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 16.0),
-            TextField(
-              //controller: _emailController,
-              controller: TextEditingController.fromValue(
-                TextEditingValue(
-                  text: email,
-                  selection: TextSelection.collapsed(offset: email.length),
-                ),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: TextEditingController.fromValue(
+                      TextEditingValue(
+                        text: email,
+                        selection: TextSelection.collapsed(
+                            offset: email.length),
+                      ),
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      errorText:
+                      _formKey.currentState?.validate() == false ? 'Ввод email обязателен' : null,
+                    ),
+                    keyboardType: TextInputType.text,
+                    textAlign: TextAlign.left,
+                    textDirection: TextDirection.ltr,
+                    onChanged: (value) {
+                      widget.updateEmail(value);
+                    },
+                    validator: (value) {
+                      if (value?.isEmpty ?? true) {
+                        return 'Ввод email обязателен';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    //controller: _passwordController,
+                    controller: TextEditingController.fromValue(
+                      TextEditingValue(
+                        text: password,
+                        selection: TextSelection.collapsed(
+                            offset: password.length),
+                      ),
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Пароль',
+                      suffixIcon: IconButton(
+                        icon: Icon(passIcon),
+                        onPressed: () {
+                          updatePasswordVisibility();
+                        },
+                      ),
+                    ),
+                    obscureText: isPasswordHidden,
+                    keyboardType: TextInputType.text,
+                    textAlign: TextAlign.left,
+                    textDirection: TextDirection.ltr,
+                    onChanged: (value) {
+                      widget.updatePassword(value);
+                    },
+                    validator: (value) {
+                      if (value?.isEmpty ?? true) {
+                        return 'Ввод пароля обязателен';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ),
-              decoration: const InputDecoration(
-                labelText: 'Email',
-              ),
-              keyboardType: TextInputType.text,
-              textAlign: TextAlign.left,
-              textDirection: TextDirection.ltr,
-              onChanged: (value) {
-                widget.updateEmail(value);
-              },
-            ),
-            const SizedBox(height: 16.0),
-            TextField(
-              //controller: _passwordController,
-              controller: TextEditingController.fromValue(
-                TextEditingValue(
-                  text: password,
-                  selection: TextSelection.collapsed(offset: password.length),
-                ),
-              ),
-              decoration: InputDecoration(
-                labelText: 'Пароль',
-                suffixIcon: IconButton(
-                  icon: Icon(passIcon),
-                  onPressed: () {
-                    updatePasswordVisibility();
-                  },
-                ),
-              ),
-              obscureText: isPasswordHidden,
-              keyboardType: TextInputType.text,
-              textAlign: TextAlign.left,
-              textDirection: TextDirection.ltr,
-              onChanged: (value) {
-                widget.updatePassword(value);
-              },
             ),
             const SizedBox(height: 24.0),
             SizedBox(
               width: 150.0,
               height: 50.0,
               child: ElevatedButton(
-                onPressed: widget.loginCallback,
+                onPressed: _formKey.currentState?.validate() == false ? null : widget.loginCallback,
                 child: const Text('Войти', textAlign: TextAlign.center),
               ),
             ),
@@ -136,7 +163,8 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 navigateToRegisterPage(context);
               },
-              child: const Text('Зарегистрироваться', textAlign: TextAlign.center),
+              child: const Text(
+                  'Зарегистрироваться', textAlign: TextAlign.center),
             ),
           ],
         ),
