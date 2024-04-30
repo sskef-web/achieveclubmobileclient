@@ -10,8 +10,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LoginResponse {
   String token;
   String userId;
+  String refreshToken;
+  String response;
 
-  LoginResponse(this.token, this.userId);
+  LoginResponse(this.token, this.userId, this.refreshToken, this.response);
 }
 
 class AuthenticationPage extends StatefulWidget {
@@ -50,6 +52,17 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       return null;
   }
 
+  String? extractRefreshTokenFromCookies(String cookies) {
+    var cookieList = cookies.split(';');
+    for (var cookie in cookieList) {
+      if (cookie.contains('X-Refresh-Token')) {
+        var token = cookie.split('=')[1];
+        return token;
+      }
+    }
+    return null;
+  }
+
   String? extractUserIdFromCookies(String cookies) {
     var cookieList = cookies.split(';');
     for (var cookie in cookieList) {
@@ -81,21 +94,64 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     var response = await http.post(url, body: body, headers: {
       'Content-Type': 'application/json',
     });
-
     if (response.statusCode == 200) {
       var cookies = response.headers['set-cookie'];
       await saveCookies(cookies!);
       var token = extractTokenFromCookies(cookies);
       var userId = extractUserIdFromCookies(cookies);
-      return LoginResponse(token!, userId!);
+      var refreshToken = extractRefreshTokenFromCookies(cookies);
+      return LoginResponse(token!, userId!, refreshToken!, response.body);
     }
     else {
-      throw Exception('Failed to login: ${response.statusCode}');
+      final responseJson = jsonDecode(response.body);
+      if (responseJson['title'] == 'Bad Request') {
+        throw showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Ошибка'),
+              content: const Text('Почта или пароль указаны не верно.'),
+              actions: [
+                TextButton(
+                  child: const Text('ОК'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+      else {
+        String emailError = '${responseJson['errors']['Email']}';
+        String passError = '${responseJson['errors']['Password']}';
+        //throw Exception('Failed to login: ${response.statusCode}');
+        print(responseJson);
+        throw showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Ошибка'),
+              content: Text('Не удалось войти:\n${emailError}\n${passError}'),
+              actions: [
+                TextButton(
+                  child: const Text('ОК'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 
   Future<LoginResponse> registrate(String email, String password, String firstName, String lastName, String avatarPath, int clubId) async {
     var url = Uri.parse('${baseURL}auth/registration');
+
     var body = jsonEncode({
       'firstName': firstName,
       'lastName': lastName,
@@ -114,42 +170,90 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       await saveCookies(cookies!);
       var token = extractTokenFromCookies(cookies);
       var userId = extractUserIdFromCookies(cookies);
-      return LoginResponse(token!, userId!);
+      var refreshToken = extractRefreshTokenFromCookies(cookies);
+      return LoginResponse(token!, userId!, refreshToken!, response.body);
     }
     else {
-      throw Exception('Failed to registrate: ${response.statusCode}');
+      final responseJson = jsonDecode(response.body);
+      //throw Exception('Failed to registrate: ${response.statusCode}');
+      throw errorMessage = '${response.body}';
     }
   }
 
 
   void _login() async {
 
-    await login(email, password);
-    savedCookies = await loadCookies();
-    //print('${savedCookies}');
+    if (email == '' || password == '')
+    {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Ошибка'),
+            content: const Text('Пожалуйста, заполните все поля'),
+            actions: [
+              TextButton(
+                child: const Text('ОК'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+    else {
+      await login(email, password);
+      savedCookies = await loadCookies();
+      //print('${savedCookies}');
 
-    //password = HashService.generateHash(password,  );
+      //password = HashService.generateHash(password,  );
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', true);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
 
-    setState(() {
-      _isLoggedIn = true;
-    });
+      setState(() {
+        appTitle = 'Профиль';
+        _isLoggedIn = true;
+      });
+    }
   }
 
   void _register() async {
-    Navigator.pop(context, true);
 
-    await registrate(email, password, firstName, lastName, avatarPath, clubId);
-    savedCookies = await loadCookies();
+    if (email == '' || password == '' || firstName == '' || lastName == '' || clubId == 0)
+    {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Ошибка'),
+            content: const Text('Пожалуйста, заполните все поля'),
+            actions: [
+              TextButton(
+                child: const Text('ОК'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+    else {
+      Navigator.pop(context, true);
+      await registrate(email, password, firstName, lastName, avatarPath, clubId);
+      savedCookies = await loadCookies();
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', true);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
 
-    setState(() {
-      _isLoggedIn = true;
-    });
+      setState(() {
+        _isLoggedIn = true;
+      });
+    }
   }
 
   void _logout() async {
@@ -158,6 +262,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 
     setState(() {
       _isLoggedIn = false;
+      appTitle = 'Авторизация';
+      email = '';password = '';
     });
   }
 
@@ -188,6 +294,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   void _updateClubId(int value) {
     setState(() {
       clubId = value;
+      print('NEW CLUB ID: $clubId');
     });
   }
 
