@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:achieveclubmobileclient/main.dart';
 import 'package:achieveclubmobileclient/registerpage.dart';
 import 'package:flutter/material.dart';
@@ -85,6 +87,7 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 16.0),
             Form(
               key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
                 children: [
                   TextFormField(

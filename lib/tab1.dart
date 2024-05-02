@@ -110,21 +110,17 @@ class _Tab1Page extends State<Tab1Page> {
     var cookies = await loadCookies();
 
     var response = await http.get(refreshUrl, headers: {
-      'Cookie': 'X-Access-Token=${extractTokenFromCookies(cookies!)}; X-Refresh-Token=${extractRefreshTokenFromCookies(cookies)}; X-User-Id=${userId}',
+      'Cookie': cookies!,
     });
 
     if (response.statusCode == 200) {
       var newCookies = response.headers['set-cookie'];
       if (newCookies != null) {
         await saveCookies(newCookies);
-        print('\n\n\nTOKEN UPDATED\n\n\n');
       }
     }
     else {
-      throw Exception('Failed to refresh Token (StatusCode: ${response.statusCode})\n'
-          'X-Refresh-Token: ${extractRefreshTokenFromCookies(cookies)}\n'
-          'X-Access-Token: ${extractTokenFromCookies(cookies)}\n'
-          'X-User-Id: ${userId}');
+      throw Exception('Failed to refresh Token (StatusCode: ${response.statusCode})\n${response.body}');
     }
   }
 
@@ -182,7 +178,8 @@ class _Tab1Page extends State<Tab1Page> {
                   data: '$userId:$achieveId',
                   version: QrVersions.auto,
                   size: 200.0,
-                  padding: EdgeInsets.zero,
+                  padding: EdgeInsets.all(21),
+                  backgroundColor: Colors.white,
                 ),
                 const SizedBox(height: 16.0),
                 ElevatedButton(

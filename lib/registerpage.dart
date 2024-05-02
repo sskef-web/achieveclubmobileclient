@@ -71,6 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 8.0),
                 Form (
                   key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   child: Column (
                     children: [
                     /*CircleAvatar(
@@ -240,7 +241,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         width: 250.0,
                         height: 50.0,
                         child: ElevatedButton(
-                          onPressed: _formKey.currentState?.validate() == false ? null : widget.registerCallback,
+                          onPressed: _formKey.currentState?.validate() == false
+                              ? null
+                              : widget.registerCallback,
                           child: const Text('Зарегистрироваться', textAlign: TextAlign.center),
                         ),
                       ),
