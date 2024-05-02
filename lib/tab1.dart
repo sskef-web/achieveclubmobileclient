@@ -174,12 +174,15 @@ class _Tab1Page extends State<Tab1Page> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16.0),
-                QrImageView(
-                  data: '$userId:$achieveId',
-                  version: QrVersions.auto,
-                  size: 200.0,
-                  padding: EdgeInsets.all(21),
-                  backgroundColor: Colors.white,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: QrImageView(
+                    data: '$userId:$achieveId',
+                    version: QrVersions.auto,
+                    size: 200.0,
+                    padding: const EdgeInsets.all(21),
+                    backgroundColor: Colors.white,
+                  ),
                 ),
                 const SizedBox(height: 16.0),
                 ElevatedButton(

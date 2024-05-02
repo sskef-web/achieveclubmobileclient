@@ -25,6 +25,20 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: SizedBox(
+          width: 48.0,
+          height: 48.0,
+          child: IconButton(
+            iconSize: 32.0,
+            icon: Transform.rotate(
+              angle: 3.14, // 180 градусов в радианах
+              child: const Icon(Icons.logout),
+            ),
+            onPressed: widget.logoutCallback,
+          ),
+        ),
+      ),
       body: _tabs[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -58,10 +72,6 @@ class _HomePageState extends State<HomePage> {
             label: 'Топ клубов',
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: widget.logoutCallback,
-        child: const Icon(Icons.logout),
       ),
     );
   }
