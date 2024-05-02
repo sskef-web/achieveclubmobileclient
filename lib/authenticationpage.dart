@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:achieveclubmobileclient/data/loginresponse.dart';
 import 'package:http/http.dart' as http;
 import 'package:achieveclubmobileclient/homepage.dart';
 import 'package:achieveclubmobileclient/loginpage.dart';
@@ -6,15 +7,6 @@ import 'package:achieveclubmobileclient/main.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-class LoginResponse {
-  String token;
-  String userId;
-  String refreshToken;
-  String response;
-
-  LoginResponse(this.token, this.userId, this.refreshToken, this.response);
-}
 
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
@@ -97,10 +89,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     if (response.statusCode == 200) {
       var cookies = response.headers['set-cookie'];
       await saveCookies(cookies!);
-      var token = extractTokenFromCookies(cookies);
-      var userId = extractUserIdFromCookies(cookies);
-      var refreshToken = extractRefreshTokenFromCookies(cookies);
-      return LoginResponse(token!, userId!, refreshToken!, response.body);
+      token = extractTokenFromCookies(cookies);
+      userId = extractUserIdFromCookies(cookies);
+      refreshToken = extractRefreshTokenFromCookies(cookies);
+      return LoginResponse(token, userId, refreshToken, response.body);
     }
     else {
       final responseJson = jsonDecode(response.body);
@@ -174,7 +166,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       return LoginResponse(token!, userId!, refreshToken!, response.body);
     }
     else {
-      final responseJson = jsonDecode(response.body);
+      //final responseJson = jsonDecode(response.body);
       //throw Exception('Failed to registrate: ${response.statusCode}');
       throw errorMessage = response.body;
     }

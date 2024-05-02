@@ -7,12 +7,12 @@ String firstName = '';
 String lastName = '';
 String avatarPath = 'StaticFiles/';
 String errorMessage = '';
-var clubId = null;
+var clubId;
 String Avatar = "";
 String baseURL = 'https://sskef.site/api/';
 var userId;
 var token;
-var resreshToken;
+var refreshToken;
 var savedCookies;
 
 void main() {
