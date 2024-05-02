@@ -74,6 +74,25 @@ class _RegisterPageState extends State<RegisterPage> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   child: Column (
                     children: [
+                      SegmentedButton(
+                          segments: const [
+                            ButtonSegment(
+                              value: 1,
+                              label: Text('Клуб Двойной Чикаго'),
+                              icon: Icon(Icons.home),
+                            ),
+                            ButtonSegment(
+                              value: 2,
+                              label: Text('Клуб Дворец'),
+                              icon: Icon(Icons.home),
+                            ),
+                          ],
+                          selected: {clubId},
+                          onSelectionChanged: (value) {
+                            setState(() {
+                              widget.updateClubId(value.first);
+                            });
+                          }),
                     /*CircleAvatar(
                       radius: 40.0,
                       backgroundImage: NetworkImage('https://sskef.site/$avatarPath'),
@@ -194,25 +213,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                     const SizedBox(height: 16.0),
-                    SegmentedButton(
-                      segments: const [
-                        ButtonSegment(
-                            value: 1,
-                            label: Text('Клуб Двойной Чикаго'),
-                            icon: Icon(Icons.home),
-                            ),
-                        ButtonSegment(
-                            value: 2,
-                            label: Text('Клуб Дворец'),
-                            icon: Icon(Icons.home),
-                            ),
-                      ],
-                      selected: {clubId},
-                      onSelectionChanged: (value) {
-                        setState(() {
-                          widget.updateClubId(value.first);
-                        });
-                      }),
                     /*Container(
                       child: DropdownButton<int>(
                         value: clubId,
