@@ -128,6 +128,7 @@ class _Tab1Page extends State<Tab1Page> {
     var url = Uri.parse('${baseURL}users');
     var cookies = await loadCookies();
     userId = extractUserIdFromCookies(cookies!);
+    appTitle = 'Профиль';
 
     var response = await http.get(url, headers: {
       'Cookie': cookies,
@@ -146,7 +147,15 @@ class _Tab1Page extends State<Tab1Page> {
     }
   }
 
-  void generateQrCode(BuildContext context, userId, int achieveId) async{
+  void generateQrCode(BuildContext context,
+      int userId,
+      int achieveId,
+      String firstName,
+      String lastName,
+      String achievementName,
+      int experience,
+      String avatarPath) async
+  {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -160,20 +169,31 @@ class _Tab1Page extends State<Tab1Page> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  'Достижение',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 50.0,
+                      backgroundImage: NetworkImage('https://sskef.site/$avatarPath'),
+                    ),
+                    const SizedBox(width: 16.0),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$firstName $lastName',
+                          style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8.0),
-                const Text(
-                  'Пожалуйста, покажите QR-код тренеру',
+                Text('${achievementName} | XP: $experience',
                   style: TextStyle(fontSize: 16.0),
-                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 16.0),
+                const SizedBox(height: 8.0),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: QrImageView(
@@ -184,10 +204,17 @@ class _Tab1Page extends State<Tab1Page> {
                     backgroundColor: Colors.white,
                   ),
                 ),
+                const SizedBox(height: 8.0),
+                const Text(
+                  'Пожалуйста, покажите QR-код тренеру',
+                  style: TextStyle(fontSize: 16.0),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(dialogContext).pop();
+                    fetchCompletedAchievements();
                   },
                   child: const Text('Закрыть'),
                 ),
@@ -197,6 +224,15 @@ class _Tab1Page extends State<Tab1Page> {
         );
       },
     );
+  }
+
+  double calculateCompletionPercentage(int completedAchievements, int totalAchievements) {
+    if (totalAchievements == 0) {
+      return 0.0;
+    }
+
+    double percentage = (completedAchievements / totalAchievements) * 100;
+    return percentage;
   }
 
   Future<List<Achievement>> fetchAchievements() async {
@@ -251,9 +287,6 @@ class _Tab1Page extends State<Tab1Page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text(appTitle)),
-      ),
       body: FutureBuilder(
         future: Future.wait([_userFuture, _achieveFuture, _completedAchievementsFuture]),
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -262,44 +295,48 @@ class _Tab1Page extends State<Tab1Page> {
             final achievements = snapshot.data![1] as List<Achievement>;
             final completedAchievements = snapshot.data![2] as List<CompletedAchievement>;
 
-            //_completedAchievementsCount = completedAchievements.length;
-            //_totalAchievementsCount = achievements.length;
-            //double completionPercentage = _totalAchievementsCount > 0 ? (_completedAchievementsCount / _totalAchievementsCount) * 100 : 0;
-
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      radius: 80.0,
-                      backgroundImage: NetworkImage('https://sskef.site/$Avatar'),
-                      child: InkWell(
-                        onTap: () {
-                          _uploadAvatar(context);
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    Text(
-                      '${user.firstName} ${user.lastName}',
-                      style: const TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row (
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 80.0,
+                          backgroundImage: NetworkImage('https://sskef.site/$Avatar'),
+                          child: InkWell(
+                            onTap: () {
+                              _uploadAvatar(context);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 16.0),
+                        Text(
+                          '${user.firstName} ${user.lastName}',
+                          style: const TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8.0),
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          user.clubName,
-                          textScaler: const TextScaler.linear(1.3),
-                        ),
-                        const SizedBox(height: 8.0),
                         CircleAvatar(
                           radius: 40.0,
                           backgroundImage: NetworkImage('https://sskef.site/${user.clubLogo}'),
+                        ),
+                        const SizedBox(width: 16.0),
+                        Text(
+                          user.clubName,
+                          textScaler: const TextScaler.linear(1.5),
                         ),
                       ],
                     ),
@@ -321,12 +358,16 @@ class _Tab1Page extends State<Tab1Page> {
                             ),
                           ),
                           const SizedBox(height: 8.0),
-                          const Text(
-                            'Процент выполненных достижений: %',
+                          Text(
+                            'Процент выполненных достижений: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18.0,
                             ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          LinearProgressIndicator(
+                            value: calculateCompletionPercentage(completedAchievements.length, achievements.length) / 100,
                           ),
                         ],
                       ),
@@ -350,7 +391,7 @@ class _Tab1Page extends State<Tab1Page> {
 
                         return AchievementItem(
                           onTap: () {
-                            generateQrCode(context, user.id,achievement.id);
+                            generateQrCode(context, user.id , achievement.id, user.firstName, user.lastName, achievement.title, achievement.xp, user.avatar);
                           },
                           logo: 'https://sskef.site/${achievement.logoURL}',
                           title: achievement.title,
@@ -383,7 +424,7 @@ class _Tab1Page extends State<Tab1Page> {
                         if (!isCompleted) {
                           return AchievementItem(
                             onTap: () {
-                              generateQrCode(context, user.id, achievement.id);
+                              generateQrCode(context, user.id , achievement.id, user.firstName, user.lastName, achievement.title, achievement.xp, user.avatar);
                             },
                             logo: 'https://sskef.site/${achievement.logoURL}',
                             title: achievement.title,

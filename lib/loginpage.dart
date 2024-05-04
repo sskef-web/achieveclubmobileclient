@@ -1,5 +1,6 @@
 import 'package:achieveclubmobileclient/main.dart';
 import 'package:achieveclubmobileclient/registerpage.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -33,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
   bool isPasswordHidden = true;
   IconData passIcon = Icons.visibility;
   final _formKey = GlobalKey<FormState>();
+  bool isButtonEnabled = false;
 
   void navigateToRegisterPage(BuildContext context) {
     email = '';
@@ -70,6 +72,11 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  bool _isPasswordValid(String password) {
+    final RegExp passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d).{6,}$');
+    return passwordRegex.hasMatch(password);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +92,12 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 16.0),
             Form(
               key: _formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
+              autovalidateMode: AutovalidateMode.always,
+              onChanged: () {
+                setState(() {
+                  isButtonEnabled = _formKey.currentState?.validate() ?? false;
+                });
+              },
               child: Column(
                 children: [
                   TextFormField(
@@ -98,10 +110,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      errorText:
-                      _formKey.currentState?.validate() == false ? 'Ввод email обязателен' : null,
+                      errorText: email.isNotEmpty && !EmailValidator.validate(email)
+                          ? 'Некорректный адрес электронной почты'
+                          : null,
                     ),
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.emailAddress,
                     textAlign: TextAlign.left,
                     textDirection: TextDirection.ltr,
                     onChanged: (value) {
@@ -109,7 +122,10 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     validator: (value) {
                       if (value?.isEmpty ?? true) {
-                        return 'Ввод email обязателен';
+                        return 'Email обязателен для заполнения';
+                      }
+                      if (!EmailValidator.validate(value!)) {
+                        return 'Почта должна быть валидной';
                       }
                       return null;
                     },
@@ -132,6 +148,9 @@ class _LoginPageState extends State<LoginPage> {
                           updatePasswordVisibility();
                         },
                       ),
+                      errorText: password.isNotEmpty && (password.length < 6 || !_isPasswordValid(password))
+                          ? 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру'
+                          : null,
                     ),
                     obscureText: isPasswordHidden,
                     keyboardType: TextInputType.text,
@@ -142,7 +161,10 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     validator: (value) {
                       if (value?.isEmpty ?? true) {
-                        return 'Ввод пароля обязателен';
+                        return 'Пароль обязателен для заполнения';
+                      }
+                      if (value!.length < 6 || !_isPasswordValid(value)) {
+                        return 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру';
                       }
                       return null;
                     },
@@ -151,12 +173,18 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 24.0),
-            SizedBox(
-              width: 150.0,
-              height: 50.0,
-              child: ElevatedButton(
-                onPressed: _formKey.currentState?.validate() == false ? null : widget.loginCallback,
-                child: const Text('Войти', textAlign: TextAlign.center),
+            ElevatedButton(
+              onPressed: (_formKey.currentState?.validate() ?? false) && clubId != 0
+                  ? () {
+                widget.loginCallback();
+              }
+                  : null,
+              child: const Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Войти',
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
             ),
             const SizedBox(height: 16.0),

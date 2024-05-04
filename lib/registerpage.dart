@@ -44,6 +44,11 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  bool _isPasswordValid(String password) {
+    final RegExp passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d).{6,}$');
+    return passwordRegex.hasMatch(password);
+  }
+
   void registerCallback() {
     if (_formKey.currentState?.validate() == true) {
       widget.registerCallback();
@@ -214,14 +219,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: TextEditingController.fromValue(
                       TextEditingValue(
                         text: password,
-                        selection: TextSelection.collapsed(
-                            offset: password.length),
+                        selection: TextSelection.collapsed(offset: password.length),
                       ),
                     ),
                     decoration: InputDecoration(
                       labelText: 'Пароль',
-                      errorText: password.isNotEmpty && password.length < 6
-                          ? 'Фамилия должна содержать не менее 4 символов'
+                      errorText: password.isNotEmpty && (password.length < 6 || !_isPasswordValid(password))
+                          ? 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру'
                           : null,
                     ),
                     keyboardType: TextInputType.text,
@@ -235,8 +239,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       if (value?.isEmpty ?? true) {
                         return 'Пароль обязателен для заполнения';
                       }
-                      if (value!.length < 6) {
-                        return 'Пароль должен содержать не менее 6 символов';
+                      if (value!.length < 6 || !_isPasswordValid(value)) {
+                        return 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру';
                       }
                       return null;
                     },
@@ -278,14 +282,12 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: isButtonEnabled ? ()
-              {
-                if (_formKey.currentState?.validate() ?? false) {
-                  widget.registerCallback;
-                }
+              onPressed: (_formKey.currentState?.validate() ?? false) && clubId != 0
+                  ? () {
+                widget.registerCallback();
               }
                   : null,
-              child: Padding(
+              child: const Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
                   'Зарегистрироваться',
