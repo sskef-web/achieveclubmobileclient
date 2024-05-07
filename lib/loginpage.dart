@@ -174,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 24.0),
             ElevatedButton(
-              onPressed: (_formKey.currentState?.validate() ?? false) && clubId != 0
+              onPressed: (_formKey.currentState?.validate() ?? false)
                   ? () {
                 widget.loginCallback();
               }

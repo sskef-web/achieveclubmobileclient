@@ -3,6 +3,7 @@ import 'package:achieveclubmobileclient/data/achievementitem.dart';
 import 'package:achieveclubmobileclient/data/achievement.dart';
 import 'package:achieveclubmobileclient/data/completedachievement.dart';
 import 'package:achieveclubmobileclient/data/user.dart';
+import 'package:achieveclubmobileclient/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -214,7 +215,6 @@ class _Tab1Page extends State<Tab1Page> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(dialogContext).pop();
-                    fetchCompletedAchievements();
                   },
                   child: const Text('Закрыть'),
                 ),
