@@ -1,5 +1,6 @@
-import 'package:achieveclubmobileclient/authenticationpage.dart';
+import 'package:achieveclubmobileclient/pages/authenticationPage.dart';
 import 'package:flutter/material.dart';
+
 String appTitle = "Авторизация";
 String email = '';
 String password = '';

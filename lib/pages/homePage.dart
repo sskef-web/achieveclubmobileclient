@@ -1,7 +1,7 @@
 import 'package:achieveclubmobileclient/main.dart';
-import 'package:achieveclubmobileclient/tab1.dart';
-import 'package:achieveclubmobileclient/tab2.dart';
-import 'package:achieveclubmobileclient/tab3.dart';
+import 'package:achieveclubmobileclient/tabItems/tab1.dart';
+import 'package:achieveclubmobileclient/tabItems/tab2.dart';
+import 'package:achieveclubmobileclient/tabItems/tab3.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
           child: IconButton(
             iconSize: 32.0,
             icon: Transform.rotate(
-              angle: 3.14, // 180 градусов в радианах
+              angle: 3.14,
               child: const Icon(Icons.logout),
             ),
             onPressed: widget.logoutCallback,

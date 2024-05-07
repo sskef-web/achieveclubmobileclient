@@ -1,5 +1,5 @@
 import 'package:achieveclubmobileclient/main.dart';
-import 'package:achieveclubmobileclient/registerpage.dart';
+import 'package:achieveclubmobileclient/pages/registerPage.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
@@ -180,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
               }
                   : null,
               child: const Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0),
                 child: Text(
                   'Войти',
                   style: TextStyle(fontSize: 18),

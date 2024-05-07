@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class UserTopItem extends StatelessWidget {
   final int id;
@@ -50,8 +48,8 @@ class UserTopItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('$firstName $lastName'),
-                  Text('$userXP XP'),
+                  Text('$firstName $lastName', textScaler: const TextScaler.linear(1.3)),
+                  Text('$userXP XP', textScaler: const TextScaler.linear(1.3)),
                 ],
               ),
             ],
@@ -59,14 +57,6 @@ class UserTopItem extends StatelessWidget {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text('# $topPosition', textAlign: TextAlign.center),
-                ],
-              ),
-              const SizedBox(width: 16.0),
               Container(
                 width: 60.0,
                 height: 60.0,
@@ -77,6 +67,14 @@ class UserTopItem extends StatelessWidget {
                     image: NetworkImage('https://sskef.site/$clubLogo'),
                   ),
                 ),
+              ),
+              const SizedBox(width: 16.0),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text('# $topPosition', textAlign: TextAlign.center, textScaler: const TextScaler.linear(1.3)),
+                ],
               ),
             ],
           ),

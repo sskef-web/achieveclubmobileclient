@@ -1,15 +1,14 @@
 import 'dart:convert';
-import 'package:achieveclubmobileclient/data/achievementitem.dart';
+import 'package:achieveclubmobileclient/items/achievementItem.dart';
 import 'package:achieveclubmobileclient/data/achievement.dart';
 import 'package:achieveclubmobileclient/data/completedachievement.dart';
 import 'package:achieveclubmobileclient/data/user.dart';
-import 'package:achieveclubmobileclient/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'main.dart';
+import '../main.dart';
 
 
 class Tab1Page extends StatefulWidget {
@@ -184,15 +183,15 @@ class _Tab1Page extends State<Tab1Page> {
                       children: [
                         Text(
                           '$firstName $lastName',
-                          style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                   ],
                 ),
                 const SizedBox(height: 8.0),
-                Text('${achievementName} | XP: $experience',
-                  style: TextStyle(fontSize: 16.0),
+                Text('$achievementName | XP: $experience',
+                  style: const TextStyle(fontSize: 16.0),
                 ),
                 const SizedBox(height: 8.0),
                 ClipRRect(
