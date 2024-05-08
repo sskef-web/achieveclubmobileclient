@@ -27,16 +27,16 @@ class ClubPage extends StatelessWidget {
               Container(
                   decoration: BoxDecoration(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? const Color.fromRGBO(11, 106, 108, 0.15)
-                      : const Color.fromRGBO(11, 106, 108, 0.15),
-                    borderRadius: BorderRadius.circular(50.0)
+                      ? const Color.fromRGBO(255, 255, 0, 0.8)
+                      : const Color.fromRGBO(255, 255, 0, 0.8),
+                    borderRadius: BorderRadius.circular(25.0)
                   ),
                 padding: const EdgeInsets.all(16.0),
                   child: Row (
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text('# ${clubData['topPosition']}', textScaler: const TextScaler.linear(5),),
+                      Text('# ${clubData['topPosition']}', textScaler: const TextScaler.linear(5),style: TextStyle(color: Colors.white),),
                       const SizedBox(width: 15),
                       Container(
                         width: 200.0,

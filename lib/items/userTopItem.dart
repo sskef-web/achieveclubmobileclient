@@ -48,7 +48,23 @@ class UserTopItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('$firstName $lastName', textScaler: const TextScaler.linear(1.3)),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    children: [
+                      Text(
+                        '$firstName',
+                        textScaler: const TextScaler.linear(1.3),
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        '$lastName',
+                        textScaler: const TextScaler.linear(1.3),
+                        softWrap: true,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                   Text('$userXP XP', textScaler: const TextScaler.linear(1.3)),
                 ],
               ),
@@ -68,12 +84,12 @@ class UserTopItem extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 16.0),
+              const SizedBox(width: 4.0),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('# $topPosition', textAlign: TextAlign.center, textScaler: const TextScaler.linear(1.3)),
+                  Text('# $topPosition', textAlign: TextAlign.center, textScaler: const TextScaler.linear(1.8)),
                 ],
               ),
             ],
