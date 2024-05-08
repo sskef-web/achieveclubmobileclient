@@ -396,7 +396,7 @@ class _Tab1Page extends State<Tab1Page> {
                           title: achievement.title,
                           description: achievement.description,
                           xp: achievement.xp,
-                          completionPercentage: 8,
+                          completionRatio: achievement.completionRatio,
                           id: achievement.id,
                           //id: achievement.id,
                         );
@@ -429,7 +429,7 @@ class _Tab1Page extends State<Tab1Page> {
                             title: achievement.title,
                             description: achievement.description,
                             xp: achievement.xp,
-                            completionPercentage: 8,
+                            completionRatio: achievement.completionRatio,
                             id: achievement.id,
                           );
                         }

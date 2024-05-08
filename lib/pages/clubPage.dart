@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ClubPage extends StatelessWidget {
   final int clubId;
 
-  const ClubPage({Key? key, required this.clubId}) : super(key: key);
+  const ClubPage({super.key, required this.clubId});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,9 @@ class ClubPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Center(
-            child: Text('Клуб\n"${clubData?['clubName']}"',textAlign: TextAlign.center,)
+            child: Text(
+              'Клуб "${clubData?['clubName']}"',
+              textAlign: TextAlign.center)
         ),
       ),
       body: clubData != null
@@ -22,41 +24,59 @@ class ClubPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row (
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text('# ${clubData['topPosition']}', textScaler: TextScaler.linear(5),),
-                  const SizedBox(width: 15),
-                  Container(
-                    width: 200.0,
-                    height: 200.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage('https://sskef.site/${clubData['clubLogo']}'),
-                      ),
-                    ),
+              Container(
+                  decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color.fromRGBO(11, 106, 108, 0.15)
+                      : const Color.fromRGBO(11, 106, 108, 0.15),
+                    borderRadius: BorderRadius.circular(50.0)
                   ),
-                ],
+                padding: const EdgeInsets.all(16.0),
+                  child: Row (
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text('# ${clubData['topPosition']}', textScaler: const TextScaler.linear(5),),
+                      const SizedBox(width: 15),
+                      Container(
+                        width: 200.0,
+                        height: 200.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage('https://sskef.site/${clubData['clubLogo']}'),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
               ),
               const SizedBox(height: 16),
-              Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('История клуба:', textScaler: TextScaler.linear(1.8),),
-                    Text('${clubData['description']}'),
-                    const SizedBox(height: 16,),
-                    Text('${clubData['adress']}')
-                  ],
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color.fromRGBO(11, 106, 108, 0.15)
+                      : const Color.fromRGBO(11, 106, 108, 0.15),
+                  borderRadius: BorderRadius.circular(8.0)
+                ),
+                padding: const EdgeInsets.all(16.0),
+                  child:Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('История клуба:', textScaler: TextScaler.linear(1.8),),
+                        Text('${clubData['description']}', textAlign: TextAlign.justify,),
+                        const SizedBox(height: 16,),
+                        Text('${clubData['adress']}')
+                      ],
+                  ),
               ),
               const SizedBox(height: 16),
-              SizedBox(height: 16),
               ExpansionTile(
-                title: Text(
+                title: const Text(
                   'Топ 3 пользователей:',
                   style: TextStyle(fontSize: 24),
+                  textAlign: TextAlign.left,
                 ),
                 children: [
                   ListView.builder(
@@ -84,15 +104,15 @@ class ClubPage extends StatelessWidget {
           ),
         ),
       )
-          : Center(
-        child: CircularProgressIndicator(),
+          : const Center(
+            child: CircularProgressIndicator(),
       ),
     );
   }
 
   Map<String, dynamic>? _fetchClubData(int clubId) {
     final clubData = {
-      'clubName': 'Dvorec',
+      'clubName': 'Дворец',
       'clubLogo': 'StaticFiles/avatars/193ea883-5369-449f-8701-c828ec00e3dd.jpeg',
       'xp': 150195,
       'topPosition': 1,

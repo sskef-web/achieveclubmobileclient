@@ -4,7 +4,7 @@ class Achievement {
   final String title;
   final String description;
   final String logoURL;
-  final bool isMultiple;
+  final int completionRatio;
 
   Achievement({
     required this.id,
@@ -12,7 +12,7 @@ class Achievement {
     required this.title,
     required this.description,
     required this.logoURL,
-    required this.isMultiple,
+    required this.completionRatio,
   });
 
   factory Achievement.fromJson(Map<String, dynamic> json) {
@@ -22,7 +22,7 @@ class Achievement {
       title: json['title'],
       description: json['description'],
       logoURL: json['logoURL'],
-      isMultiple: json['isMultiple'],
+      completionRatio: json['completionRatio'],
     );
   }
 

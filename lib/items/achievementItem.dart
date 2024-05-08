@@ -6,7 +6,7 @@ class AchievementItem extends StatelessWidget {
   final String title;
   final String description;
   final int xp;
-  final int completionPercentage;
+  final int completionRatio;
   final VoidCallback? onTap;
 
   const AchievementItem({
@@ -16,7 +16,7 @@ class AchievementItem extends StatelessWidget {
     required this.title,
     required this.description,
     required this.xp,
-    required this.completionPercentage,
+    required this.completionRatio,
     required this.onTap
   });
 
@@ -35,7 +35,7 @@ class AchievementItem extends StatelessWidget {
             const SizedBox(height: 4.0),
             Text('XP: $xp'),
             const SizedBox(height: 4.0),
-            Text('Процент выполнения: $completionPercentage%'),
+            Text('Процент выполнения: $completionRatio%'),
           ],
         ),
       ),

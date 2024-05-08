@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:achieveclubmobileclient/data/club.dart';
 import 'package:achieveclubmobileclient/main.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 
@@ -32,6 +36,13 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   IconData passIcon = Icons.visibility;
   bool isButtonEnabled = false;
+  List<Club> _clubs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchClubTitles();
+  }
 
   String getClubName(int clubId) {
     switch (clubId) {
@@ -81,6 +92,25 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
+  Future<void> _fetchClubTitles() async {
+    final response = await http.get(Uri.parse('${baseURL}clubs/titles'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      List<Club> clubs = [];
+      for (final clubData in data) {
+        clubs.add(Club(
+          id: clubData['id'],
+          title: clubData['title'],
+        ));
+      }
+      setState(() {
+        _clubs = clubs;
+        clubId = clubs.isNotEmpty ? clubs[0].id : 0;
+      });
+    } else {
+      throw Exception('Failed to fetch club titles');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,23 +136,19 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 children: [
                   SegmentedButton(
-                    segments: const [
-                      ButtonSegment(
-                        value: 1,
-                        label: Text('Клуб Двойной Чикаго'),
+                    segments: _clubs.map((club) {
+                      return ButtonSegment(
+                        value: club.id,
+                        label: Text(club.title),
                         icon: Icon(Icons.home),
-                      ),
-                      ButtonSegment(
-                        value: 2,
-                        label: Text('Клуб Дворец'),
-                        icon: Icon(Icons.home),
-                      ),
-                    ],
+                      );
+                    }).toList(),
                     selected: {clubId},
                     onSelectionChanged: (value) {
                       setState(() {
-                        widget.updateClubId(value.first);
+                        clubId = value.first;
                       });
+                      widget.updateClubId(clubId);
                     },
                   ),
                   TextFormField(

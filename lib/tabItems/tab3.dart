@@ -30,32 +30,32 @@ class _Tab3Page extends State<Tab3Page> {
         future: null,
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
           return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ListView.builder(
+            child: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: 1,
                     itemBuilder: (context, index)
                     {
-                      return ClubTopItem(
-                        onTap: () {
-                          navigateToClubPage(clubId);
-                        },
-                        clubName: 'Dvorec',
-                        clubLogo: 'StaticFiles/avatars/193ea883-5369-449f-8701-c828ec00e3dd.jpeg',
-                        xp: 150195,
-                        topPosition: 1,
-                        id: 1,
+                      return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ClubTopItem(
+                              onTap: () {
+                                navigateToClubPage(clubId);
+                              },
+                              clubName: 'Дворец',
+                              clubLogo: 'StaticFiles/avatars/193ea883-5369-449f-8701-c828ec00e3dd.jpeg',
+                              xp: 150195,
+                              topPosition: 1,
+                              id: 18
+                              ),
+                            ],
+                          ),
                       );
                     },
                   ),
-                ],
-              ),
-            ),
           );
         },
       ),
