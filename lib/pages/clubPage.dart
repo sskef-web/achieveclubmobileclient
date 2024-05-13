@@ -1,24 +1,75 @@
 import 'package:flutter/material.dart';
 
+
+
 class ClubPage extends StatelessWidget {
   final int clubId;
+  final String title;
+  final String description;
+  final String address;
+  final String logoURL;
+  final String position;
 
-  const ClubPage({super.key, required this.clubId});
+  const ClubPage({
+    super.key,
+    required this.clubId,
+    required this.title,
+    required this.logoURL,
+    required this.address,
+    required this.description,
+    required this.position
+  });
+
+  LinearGradient getPositionColor(String position) {
+    if (position == "1") {
+      // Золотой цвет
+      return const LinearGradient(
+        colors: [Color(0xffedcf33), Color(0xffdaaa30)],
+        stops: [0.25, 0.75],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      );
+    }
+    else if (position == "2") {
+      // Серебряный цвет
+      return const LinearGradient(
+        colors: [Color(0xff6a6a6a), Color(0xffd1d1cf)],
+        stops: [0.25, 0.75],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      );
+    }
+    else if (position == "3") {
+      // Бронзовый цвет
+      return const LinearGradient(
+        colors: [Color(0xffe58f3f), Color(0xffbe7532)],
+        stops: [0.25, 0.75],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      );
+    }
+    else {
+      return const LinearGradient(
+        colors: [Color(0xffc9d6ff), Color(0xffe2e2e2)],
+        stops: [0, 1],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final clubData = _fetchClubData(clubId);
 
     return Scaffold(
       appBar: AppBar(
         title: Center(
             child: Text(
-              'Клуб "${clubData?['clubName']}"',
+              'Клуб "${title}"',
               textAlign: TextAlign.center)
         ),
       ),
-      body: clubData != null
-          ? SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -26,9 +77,7 @@ class ClubPage extends StatelessWidget {
             children: [
               Container(
                   decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? const Color.fromRGBO(255, 255, 0, 0.8)
-                      : const Color.fromRGBO(255, 255, 0, 0.8),
+                  gradient: getPositionColor(position),
                     borderRadius: BorderRadius.circular(25.0)
                   ),
                 padding: const EdgeInsets.all(16.0),
@@ -36,7 +85,7 @@ class ClubPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text('# ${clubData['topPosition']}', textScaler: const TextScaler.linear(5),style: TextStyle(color: Colors.white),),
+                      Text('# ${position}', textScaler: const TextScaler.linear(5),style: TextStyle(color: Colors.white),),
                       const SizedBox(width: 15),
                       Container(
                         width: 200.0,
@@ -45,7 +94,7 @@ class ClubPage extends StatelessWidget {
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: NetworkImage('https://sskef.site/${clubData['clubLogo']}'),
+                            image: NetworkImage('https://sskef.site/${logoURL}'),
                           ),
                         ),
                       ),
@@ -65,14 +114,14 @@ class ClubPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text('История клуба:', textScaler: TextScaler.linear(1.8),),
-                        Text('${clubData['description']}', textAlign: TextAlign.justify,),
+                        Text('${description}', textAlign: TextAlign.justify,),
                         const SizedBox(height: 16,),
-                        Text('${clubData['adress']}')
+                        Text('${address}')
                       ],
                   ),
               ),
               const SizedBox(height: 16),
-              ExpansionTile(
+              /*ExpansionTile(
                 title: const Text(
                   'Топ 3 пользователей:',
                   style: TextStyle(fontSize: 24),
@@ -99,44 +148,11 @@ class ClubPage extends StatelessWidget {
                     },
                   ),
                 ],
-              ),
+              ),*/
             ],
           ),
         ),
       )
-          : const Center(
-            child: CircularProgressIndicator(),
-      ),
     );
-  }
-
-  Map<String, dynamic>? _fetchClubData(int clubId) {
-    final clubData = {
-      'clubName': 'Дворец',
-      'clubLogo': 'StaticFiles/avatars/193ea883-5369-449f-8701-c828ec00e3dd.jpeg',
-      'xp': 150195,
-      'topPosition': 1,
-      'description': 'Господа, современная методология разработки не даёт нам иного выбора, кроме определения стандартных подходов. Высокий уровень вовлечения представителей целевой аудитории является четким доказательством простого факта: консультация с широким активом влечет за собой процесс внедрения и модернизации существующих финансовых и административных условий. ',
-      'adress': 'Минск, ул. Долгобродская 24',
-      'topUsers': [
-        {
-          'name': 'Name Surname1',
-          'avatar': 'https://sskef.site/StaticFiles/avatars/193ea883-5369-449f-8701-c828ec00e3dd.jpeg',
-          'xp': 5000,
-        },
-        {
-          'name': 'Name Surname2',
-          'avatar': 'https://sskef.site/StaticFiles/avatars/193ea883-5369-449f-8701-c828ec00e3dd.jpeg',
-          'xp': 4500,
-        },
-        {
-          'name': 'Name Surname3',
-          'avatar': 'https://sskef.site/StaticFiles/avatars/193ea883-5369-449f-8701-c828ec00e3dd.jpeg',
-          'xp': 4000,
-        },
-      ],
-    };
-
-    return clubData;
   }
 }

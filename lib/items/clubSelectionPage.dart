@@ -31,6 +31,10 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
         clubs.add(Club(
           id: clubData['id'],
           title: clubData['title'],
+          description: clubData['description'],
+          address: clubData['address'],
+          avgXp: 0,
+          logoURL: clubData['logoURL']
         ));
       }
       setState(() {

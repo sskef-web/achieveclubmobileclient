@@ -5,8 +5,8 @@ class ClubTopItem extends StatelessWidget {
   final String clubName;
   final String clubLogo;
   final int xp;
-  final int topPosition;
   final VoidCallback? onTap;
+  final String position;
 
   const ClubTopItem({
     super.key,
@@ -14,8 +14,8 @@ class ClubTopItem extends StatelessWidget {
     required this.clubName,
     required this.clubLogo,
     required this.xp,
-    required this.topPosition,
-    required this.onTap
+    required this.onTap,
+    required this.position
   });
 
   @override
@@ -57,7 +57,7 @@ class ClubTopItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('# $topPosition', textAlign: TextAlign.center, textScaler: const TextScaler.linear(2)),
+                  Text('# ${position}', textAlign: TextAlign.center, textScaler: const TextScaler.linear(2)),
                 ],
               ),
             ],

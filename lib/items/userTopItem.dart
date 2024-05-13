@@ -48,24 +48,14 @@ class UserTopItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    children: [
-                      Text(
-                        '$firstName',
-                        textScaler: const TextScaler.linear(1.3),
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        '$lastName',
-                        textScaler: const TextScaler.linear(1.3),
-                        softWrap: true,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                  Container(
+                    constraints: BoxConstraints(maxWidth: 200),
+                    child: Text(
+                      '$firstName $lastName',
+                      style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  Text('$userXP XP', textScaler: const TextScaler.linear(1.3)),
+                  Text('$userXP XP', style: const TextStyle(fontSize: 12.0)),
                 ],
               ),
             ],

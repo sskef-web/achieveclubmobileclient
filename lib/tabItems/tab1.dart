@@ -23,6 +23,7 @@ class _Tab1Page extends State<Tab1Page> {
   late Future<User> _userFuture;
   late Future<List<Achievement>> _achieveFuture;
   late Future<List<CompletedAchievement>> _completedAchievementsFuture;
+  List<int> selectedAchievementIds = [];
   //int _completedAchievementsCount = 0;
   //int _totalAchievementsCount = 0;
 
@@ -125,7 +126,7 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   Future<User> fetchUser() async {
-    var url = Uri.parse('${baseURL}users');
+    var url = Uri.parse('${baseURL}users/${userId}');
     var cookies = await loadCookies();
     userId = extractUserIdFromCookies(cookies!);
     appTitle = 'Профиль';
@@ -147,15 +148,36 @@ class _Tab1Page extends State<Tab1Page> {
     }
   }
 
-  void generateQrCode(BuildContext context,
-      int userId,
-      int achieveId,
+  Future<Achievement?> getAchievementById(int id) async {
+    final achievements = await _achieveFuture;
+
+    if (achievements != null && achievements.isNotEmpty) {
+      final achievement = achievements.firstWhere((a) => a.id == id);
+      return achievement;
+    }
+
+    return null;
+  }
+
+  void generateQrCode(
+      BuildContext context,
+      String userId,
+      List<int> selectedAchievementIds,
       String firstName,
       String lastName,
-      String achievementName,
-      int experience,
-      String avatarPath) async
-  {
+      String avatarPath,
+      ) async {
+    final selectedAchievements = <String>[];
+
+    for (final achievementId in selectedAchievementIds) {
+      final achievement = await getAchievementById(achievementId);
+      if (achievement != null) {
+        selectedAchievements.add(achievement.title);
+      }
+    }
+
+    final selectedAchievementsString = selectedAchievements.join(',');
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -181,23 +203,27 @@ class _Tab1Page extends State<Tab1Page> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '$firstName $lastName',
-                          style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                        Container(
+                          constraints: BoxConstraints(maxWidth: 150),
+                          child: Text(
+                            '$firstName $lastName',
+                            style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ],
                     ),
                   ],
                 ),
                 const SizedBox(height: 8.0),
-                Text('$achievementName | XP: $experience',
-                  style: const TextStyle(fontSize: 16.0),
+                Text(
+                  'Достижения: ${selectedAchievements.length}\n${selectedAchievements.join(", ")}',
+                  style: const TextStyle(fontSize: 16.0), textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8.0),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: QrImageView(
-                    data: '$userId:$achieveId',
+                    data: '$userId:${selectedAchievementIds.join(":")}',
                     version: QrVersions.auto,
                     size: 200.0,
                     padding: const EdgeInsets.all(21),
@@ -293,7 +319,6 @@ class _Tab1Page extends State<Tab1Page> {
             final user = snapshot.data![0] as User;
             final achievements = snapshot.data![1] as List<Achievement>;
             final completedAchievements = snapshot.data![2] as List<CompletedAchievement>;
-
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -314,11 +339,14 @@ class _Tab1Page extends State<Tab1Page> {
                           ),
                         ),
                         const SizedBox(width: 16.0),
-                        Text(
-                          '${user.firstName} ${user.lastName}',
-                          style: const TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Text(
+                            '${user.firstName} ${user.lastName}',
+                            style: const TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            softWrap: true,
                           ),
                         ),
                       ],
@@ -380,27 +408,57 @@ class _Tab1Page extends State<Tab1Page> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: completedAchievements.length,
-                      itemBuilder: (context, index) {
-                        final completedAchievement = completedAchievements[index];
-                        final achievement = achievements.firstWhere((achieve) => achieve.id == completedAchievement.achievementId);
+                    Stack(
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: completedAchievements.length,
+                          itemBuilder: (context, index) {
+                            final completedAchievement = completedAchievements[index];
+                            final achievement = achievements.firstWhere((achieve) => achieve.id == completedAchievement.achievementId);
 
-                        return AchievementItem(
-                          onTap: () {
-                            generateQrCode(context, user.id , achievement.id, user.firstName, user.lastName, achievement.title, achievement.xp, user.avatar);
+                            return AchievementItem(
+                              onTap: () {
+                                setState(() {
+                                  if (selectedAchievementIds.contains(achievement.id)) {
+                                    selectedAchievementIds.remove(achievement.id);
+                                  } else {
+                                    selectedAchievementIds.add(achievement.id);
+                                  }
+                                });
+                              },
+                              logo: 'https://sskef.site/${achievement.logoURL}',
+                              title: achievement.title,
+                              description: achievement.description,
+                              xp: achievement.xp,
+                              completionRatio: achievement.completionRatio,
+                              id: achievement.id,
+                              isSelected: selectedAchievementIds.contains(achievement.id),
+                            );
                           },
-                          logo: 'https://sskef.site/${achievement.logoURL}',
-                          title: achievement.title,
-                          description: achievement.description,
-                          xp: achievement.xp,
-                          completionRatio: achievement.completionRatio,
-                          id: achievement.id,
-                          //id: achievement.id,
-                        );
-                      },
+                        ),
+                        if (selectedAchievementIds.isNotEmpty)
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  generateQrCode(
+                                    context,
+                                    userId,
+                                    selectedAchievementIds,
+                                    user.firstName,
+                                    user.lastName,
+                                    user.avatar,
+                                  );
+                                },
+                                child: Text('Сгенерировать QR-код'),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 8.0),
                     const Text(
@@ -411,30 +469,57 @@ class _Tab1Page extends State<Tab1Page> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: achievements.length,
-                      itemBuilder: (context, index)
-                      {
-                        final achievement = achievements[index];
-                        final isCompleted = completedAchievements.any((completed) => completed.achievementId == achievement.id);
+                    Stack(
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: completedAchievements.length,
+                          itemBuilder: (context, index) {
+                            final completedAchievement = completedAchievements[index];
+                            final achievement = achievements.firstWhere((achieve) => achieve.id == completedAchievement.achievementId);
 
-                        if (!isCompleted) {
-                          return AchievementItem(
-                            onTap: () {
-                              generateQrCode(context, user.id , achievement.id, user.firstName, user.lastName, achievement.title, achievement.xp, user.avatar);
-                            },
-                            logo: 'https://sskef.site/${achievement.logoURL}',
-                            title: achievement.title,
-                            description: achievement.description,
-                            xp: achievement.xp,
-                            completionRatio: achievement.completionRatio,
-                            id: achievement.id,
-                          );
-                        }
-                        return Container();
-                      },
+                            return AchievementItem(
+                              onTap: () {
+                                setState(() {
+                                  if (selectedAchievementIds.contains(achievement.id)) {
+                                    selectedAchievementIds.remove(achievement.id);
+                                  } else {
+                                    selectedAchievementIds.add(achievement.id);
+                                  }
+                                });
+                              },
+                              logo: 'https://sskef.site/${achievement.logoURL}',
+                              title: achievement.title,
+                              description: achievement.description,
+                              xp: achievement.xp,
+                              completionRatio: achievement.completionRatio,
+                              id: achievement.id,
+                              isSelected: selectedAchievementIds.contains(achievement.id), // Передача состояния выбора
+                            );
+                          },
+                        ),
+                        if (selectedAchievementIds.isNotEmpty)
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  generateQrCode(
+                                    context,
+                                    userId,
+                                    selectedAchievementIds,
+                                    user.firstName,
+                                    user.lastName,
+                                    user.avatar,
+                                  );
+                                },
+                                child: Text('Сгенерировать QR-код'),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ],
                 ),

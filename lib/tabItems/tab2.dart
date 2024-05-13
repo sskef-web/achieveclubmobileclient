@@ -24,7 +24,7 @@ class _Tab2Page extends State<Tab2Page> {
   }
 
   Future<List<User>> fetchUsers() async {
-    var url = Uri.parse('${baseURL}users/all');
+    var url = Uri.parse('${baseURL}users');
 
     var response = await http.get(url);
 
@@ -83,7 +83,7 @@ class _Tab2Page extends State<Tab2Page> {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            return CircularProgressIndicator();
+            return const Center (child:CircularProgressIndicator());
           }
         },
       ),

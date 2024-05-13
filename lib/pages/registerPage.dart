@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    _fetchClubTitles();
+    fetchClubs();
   }
 
   String getClubName(int clubId) {
@@ -92,23 +92,34 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  Future<void> _fetchClubTitles() async {
-    final response = await http.get(Uri.parse('${baseURL}clubs/titles'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      List<Club> clubs = [];
-      for (final clubData in data) {
-        clubs.add(Club(
-          id: clubData['id'],
-          title: clubData['title'],
-        ));
+  Future<List<Club>> fetchClubs() async {
+    final url = Uri.parse('${baseURL}clubs');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<Club> clubs = [];
+
+        for (var clubData in data) {
+          final club = Club(
+              id: clubData['id'],
+              title: clubData['title'],
+              avgXp: 0,
+              logoURL: clubData['logoURL'],
+              description: '',
+              address: ''
+          );
+          clubs.add(club);
+        }
+
+        return clubs;
+      } else {
+        throw Exception('Ошибка при загрузке клубов: ${response.statusCode}');
       }
-      setState(() {
-        _clubs = clubs;
-        clubId = clubs.isNotEmpty ? clubs[0].id : 0;
-      });
-    } else {
-      throw Exception('Failed to fetch club titles');
+    } catch (e) {
+      throw Exception('Ошибка при загрузке клубов: $e');
     }
   }
 
@@ -121,210 +132,227 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 8.0),
-            Form(
-              key: _formKey,
-              autovalidateMode: AutovalidateMode.always,
-              onChanged: () {
-                setState(() {
-                  isButtonEnabled = _formKey.currentState?.validate() ?? false;
-                });
-              },
-              child: Column(
+        child: FutureBuilder<List<Club>>(
+          future: fetchClubs(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final clubs = snapshot.data!;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SegmentedButton(
-                    segments: _clubs.map((club) {
-                      return ButtonSegment(
-                        value: club.id,
-                        label: Text(club.title),
-                        icon: Icon(Icons.home),
-                      );
-                    }).toList(),
-                    selected: {clubId},
-                    onSelectionChanged: (value) {
+                  const SizedBox(height: 8.0),
+                  Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.always,
+                    onChanged: () {
                       setState(() {
-                        clubId = value.first;
+                        isButtonEnabled = _formKey.currentState?.validate() ??
+                            false;
                       });
-                      widget.updateClubId(clubId);
                     },
+                    child: Column(
+                      children: [
+                        SegmentedButton(
+                          segments: clubs.map((club) {
+                            return ButtonSegment(
+                              value: club.id,
+                              label: Text(club.title),
+                              icon: Container(
+                                width: 24,
+                                height: 24,
+                                child: Image.network('https://sskef.site/${club.logoURL}',),
+                              ),
+                            );
+                          }).toList(),
+                          selected: {clubId},
+                          onSelectionChanged: (value) {
+                            setState(() {
+                              clubId = value.first;
+                            });
+                            widget.updateClubId(clubId);
+                          },
+                        ),
+                        TextFormField(
+                          controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                              text: firstName,
+                              selection: TextSelection.collapsed(
+                                  offset: firstName.length),
+                            ),
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Имя',
+                            errorText: firstName.isNotEmpty && firstName.length < 2
+                                ? 'Имя должно содержать не менее 2 символов'
+                                : null,
+                          ),
+                          keyboardType: TextInputType.text,
+                          textAlign: TextAlign.left,
+                          textDirection: TextDirection.ltr,
+                          onChanged: (value) {
+                            widget.updateFirstName(value);
+                          },
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) {
+                              return 'Имя обязательно для заполнения';
+                            }
+                            if (value!.length < 2) {
+                              return 'Имя должно содержать не менее 2 символов';
+                            }
+                            return null;
+                          },
+                        ),
+                        TextFormField(
+                          controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                              text: lastName,
+                              selection: TextSelection.collapsed(
+                                  offset: lastName.length),
+                            ),
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Фамилия',
+                            errorText: lastName.isNotEmpty && lastName.length < 4
+                                ? 'Фамилия должна содержать не менее 4 символов'
+                                : null,
+                          ),
+                          keyboardType: TextInputType.text,
+                          textAlign: TextAlign.left,
+                          textDirection: TextDirection.ltr,
+                          onChanged: (value) {
+                            widget.updateLastName(value);
+                          },
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) {
+                              return 'Фамилия обязательна для заполнения';
+                            }
+                            if (value!.length < 4) {
+                              return 'Фамилия должна содержать не менее 4 символов';
+                            }
+                            return null;
+                          },
+                        ),
+                        TextFormField(
+                          controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                              text: email,
+                              selection: TextSelection.collapsed(
+                                  offset: email.length),
+                            ),
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            errorText: email.isNotEmpty && !EmailValidator.validate(email)
+                                ? 'Некорректный адрес электронной почты'
+                                : null,
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          textAlign: TextAlign.left,
+                          textDirection: TextDirection.ltr,
+                          onChanged: (value) {
+                            widget.updateEmail(value);
+                          },
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) {
+                              return 'Email обязателен для заполнения';
+                            }
+                            if (!EmailValidator.validate(value!)) {
+                              return 'Почта должна быть валидной';
+                            }
+                            return null;
+                          },
+                        ),
+                        TextFormField(
+                          controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                              text: password,
+                              selection: TextSelection.collapsed(offset: password.length),
+                            ),
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Пароль',
+                            errorText: password.isNotEmpty && (password.length < 6 || !_isPasswordValid(password))
+                                ? 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру'
+                                : null,
+                          ),
+                          keyboardType: TextInputType.text,
+                          obscureText: true,
+                          textAlign: TextAlign.left,
+                          textDirection: TextDirection.ltr,
+                          onChanged: (value) {
+                            widget.updatePassword(value);
+                          },
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) {
+                              return 'Пароль обязателен для заполнения';
+                            }
+                            if (value!.length < 6 || !_isPasswordValid(value)) {
+                              return 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру';
+                            }
+                            return null;
+                          },
+                        ),
+                        TextFormField(
+                          controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                              text: confirmPassword,
+                              selection: TextSelection.collapsed(
+                                  offset: confirmPassword.length),
+                            ),
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Подтвердите пароль',
+                            errorText: confirmPassword!=password
+                                ? 'Пароли должны совпадать'
+                                : null,
+                          ),
+                          keyboardType: TextInputType.text,
+                          obscureText: true,
+                          textAlign: TextAlign.left,
+                          textDirection: TextDirection.ltr,
+                          onChanged: (value) {
+                            updateConfirmPassword(value);
+                            updateButtonEnabled();
+                          },
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) {
+                              return 'Подтверждение пароля обязательно для заполнения';
+                            }
+                            if (value != password) {
+                              return 'Пароли не совпадают';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  TextFormField(
-                    controller: TextEditingController.fromValue(
-                      TextEditingValue(
-                        text: firstName,
-                        selection: TextSelection.collapsed(
-                            offset: firstName.length),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: (_formKey.currentState?.validate() ?? false) &&
+                        clubId != 0
+                        ? () {
+                      widget.registerCallback();
+                    }
+                        : null,
+                    child: const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'Зарегистрироваться',
+                        style: TextStyle(fontSize: 18),
                       ),
                     ),
-                    decoration: InputDecoration(
-                      labelText: 'Имя',
-                      errorText: firstName.isNotEmpty && firstName.length < 2
-                          ? 'Имя должно содержать не менее 2 символов'
-                          : null,
-                    ),
-                    keyboardType: TextInputType.text,
-                    textAlign: TextAlign.left,
-                    textDirection: TextDirection.ltr,
-                    onChanged: (value) {
-                      widget.updateFirstName(value);
-                    },
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Имя обязательно для заполнения';
-                      }
-                      if (value!.length < 2) {
-                        return 'Имя должно содержать не менее 2 символов';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: TextEditingController.fromValue(
-                      TextEditingValue(
-                        text: lastName,
-                        selection: TextSelection.collapsed(
-                            offset: lastName.length),
-                      ),
-                    ),
-                    decoration: InputDecoration(
-                      labelText: 'Фамилия',
-                      errorText: lastName.isNotEmpty && lastName.length < 4
-                          ? 'Фамилия должна содержать не менее 4 символов'
-                          : null,
-                    ),
-                    keyboardType: TextInputType.text,
-                    textAlign: TextAlign.left,
-                    textDirection: TextDirection.ltr,
-                    onChanged: (value) {
-                      widget.updateLastName(value);
-                    },
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Фамилия обязательна для заполнения';
-                      }
-                      if (value!.length < 4) {
-                        return 'Фамилия должна содержать не менее 4 символов';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: TextEditingController.fromValue(
-                      TextEditingValue(
-                        text: email,
-                        selection: TextSelection.collapsed(
-                            offset: email.length),
-                      ),
-                    ),
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      errorText: email.isNotEmpty && !EmailValidator.validate(email)
-                          ? 'Некорректный адрес электронной почты'
-                          : null,
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    textAlign: TextAlign.left,
-                    textDirection: TextDirection.ltr,
-                    onChanged: (value) {
-                      widget.updateEmail(value);
-                    },
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Email обязателен для заполнения';
-                      }
-                      if (!EmailValidator.validate(value!)) {
-                        return 'Почта должна быть валидной';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: TextEditingController.fromValue(
-                      TextEditingValue(
-                        text: password,
-                        selection: TextSelection.collapsed(offset: password.length),
-                      ),
-                    ),
-                    decoration: InputDecoration(
-                      labelText: 'Пароль',
-                      errorText: password.isNotEmpty && (password.length < 6 || !_isPasswordValid(password))
-                          ? 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру'
-                          : null,
-                    ),
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    textAlign: TextAlign.left,
-                    textDirection: TextDirection.ltr,
-                    onChanged: (value) {
-                      widget.updatePassword(value);
-                    },
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Пароль обязателен для заполнения';
-                      }
-                      if (value!.length < 6 || !_isPasswordValid(value)) {
-                        return 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: TextEditingController.fromValue(
-                      TextEditingValue(
-                        text: confirmPassword,
-                        selection: TextSelection.collapsed(
-                            offset: confirmPassword.length),
-                      ),
-                    ),
-                    decoration: InputDecoration(
-                      labelText: 'Подтвердите пароль',
-                      errorText: confirmPassword!=password
-                          ? 'Пароли должны совпадать'
-                          : null,
-                    ),
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    textAlign: TextAlign.left,
-                    textDirection: TextDirection.ltr,
-                    onChanged: (value) {
-                      updateConfirmPassword(value);
-                      updateButtonEnabled();
-                    },
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Подтверждение пароля обязательно для заполнения';
-                      }
-                      if (value != password) {
-                        return 'Пароли не совпадают';
-                      }
-                      return null;
-                    },
                   ),
                 ],
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: (_formKey.currentState?.validate() ?? false) && clubId != 0
-                  ? () {
-                widget.registerCallback();
-              }
-                  : null,
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Зарегистрироваться',
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
-          ],
+              );
+            } else if (snapshot.hasError) {
+              return Text('Ошибка при загрузке клубов');
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
         ),
       ),
-
     );
   }
 }
