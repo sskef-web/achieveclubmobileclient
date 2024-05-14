@@ -36,7 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   IconData passIcon = Icons.visibility;
   bool isButtonEnabled = false;
-  List<Club> _clubs = [];
+  final List<Club> _clubs = [];
 
   @override
   void initState() {
@@ -157,7 +157,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             return ButtonSegment(
                               value: club.id,
                               label: Text(club.title),
-                              icon: Container(
+                              icon: SizedBox(
                                 width: 24,
                                 height: 24,
                                 child: Image.network('https://sskef.site/${club.logoURL}',),
@@ -346,9 +346,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               );
             } else if (snapshot.hasError) {
-              return Text('Ошибка при загрузке клубов');
+              return const Text('Ошибка при загрузке клубов');
             } else {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             }
           },
         ),

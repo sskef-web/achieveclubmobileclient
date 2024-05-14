@@ -7,7 +7,7 @@ import 'dart:convert';
 class ClubSelectionPage extends StatefulWidget {
   final Function(int) updateClubId;
 
-  const ClubSelectionPage({Key? key, required this.updateClubId}) : super(key: key);
+  const ClubSelectionPage({super.key, required this.updateClubId});
 
   @override
   _ClubSelectionPageState createState() => _ClubSelectionPageState();
@@ -50,7 +50,7 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Club'),
+        title: const Text('Select Club'),
       ),
       body: Column(
         children: [
@@ -59,7 +59,7 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
               return ButtonSegment(
                 value: club.id,
                 label: Text(club.title),
-                icon: Icon(Icons.home),
+                icon: const Icon(Icons.home),
               );
             }).toList(),
             selected: {clubId},
@@ -70,7 +70,7 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
               widget.updateClubId(clubId);
             },
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text('Selected Club ID: $clubId'),
         ],
       ),

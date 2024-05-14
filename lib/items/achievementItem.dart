@@ -11,7 +11,7 @@ class AchievementItem extends StatefulWidget {
   final VoidCallback? onTap;
 
   const AchievementItem({
-    Key? key,
+    super.key,
     required this.logo,
     required this.id,
     required this.title,
@@ -20,7 +20,7 @@ class AchievementItem extends StatefulWidget {
     required this.completionRatio,
     required this.isSelected,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   _AchievementItemState createState() => _AchievementItemState();

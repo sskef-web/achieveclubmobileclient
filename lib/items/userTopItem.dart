@@ -49,7 +49,7 @@ class UserTopItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    constraints: BoxConstraints(maxWidth: 200),
+                    constraints: const BoxConstraints(maxWidth: 200),
                     child: Text(
                       '$firstName $lastName',
                       style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold),

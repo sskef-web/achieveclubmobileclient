@@ -57,7 +57,7 @@ class ClubTopItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('# ${position}', textAlign: TextAlign.center, textScaler: const TextScaler.linear(2)),
+                  Text('# $position', textAlign: TextAlign.center, textScaler: const TextScaler.linear(2)),
                 ],
               ),
             ],

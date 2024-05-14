@@ -126,7 +126,7 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   Future<User> fetchUser() async {
-    var url = Uri.parse('${baseURL}users/${userId}');
+    var url = Uri.parse('${baseURL}users/$userId');
     var cookies = await loadCookies();
     userId = extractUserIdFromCookies(cookies!);
     appTitle = 'Профиль';
@@ -151,7 +151,7 @@ class _Tab1Page extends State<Tab1Page> {
   Future<Achievement?> getAchievementById(int id) async {
     final achievements = await _achieveFuture;
 
-    if (achievements != null && achievements.isNotEmpty) {
+    if (achievements.isNotEmpty) {
       final achievement = achievements.firstWhere((a) => a.id == id);
       return achievement;
     }
@@ -204,7 +204,7 @@ class _Tab1Page extends State<Tab1Page> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          constraints: BoxConstraints(maxWidth: 150),
+                          constraints: const BoxConstraints(maxWidth: 150),
                           child: Text(
                             '$firstName $lastName',
                             style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
@@ -439,23 +439,21 @@ class _Tab1Page extends State<Tab1Page> {
                           },
                         ),
                         if (selectedAchievementIds.isNotEmpty)
-                          Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  generateQrCode(
-                                    context,
-                                    userId,
-                                    selectedAchievementIds,
-                                    user.firstName,
-                                    user.lastName,
-                                    user.avatar,
-                                  );
-                                },
-                                child: Text('Сгенерировать QR-код'),
-                              ),
+                          Positioned(
+                            bottom: 16.0,
+                            right: 16.0,
+                            child: FloatingActionButton(
+                              onPressed: () {
+                                generateQrCode(
+                                  context,
+                                  userId,
+                                  selectedAchievementIds,
+                                  user.firstName,
+                                  user.lastName,
+                                  user.avatar
+                                );
+                              },
+                              child: const Icon(Icons.qr_code),
                             ),
                           ),
                       ],
@@ -474,49 +472,50 @@ class _Tab1Page extends State<Tab1Page> {
                         ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: completedAchievements.length,
+                          itemCount: achievements.length,
                           itemBuilder: (context, index) {
-                            final completedAchievement = completedAchievements[index];
-                            final achievement = achievements.firstWhere((achieve) => achieve.id == completedAchievement.achievementId);
+                            final achievement = achievements[index];
+                            final isCompleted = completedAchievements.any((completed) => completed.achievementId == achievement.id);
 
-                            return AchievementItem(
-                              onTap: () {
-                                setState(() {
-                                  if (selectedAchievementIds.contains(achievement.id)) {
-                                    selectedAchievementIds.remove(achievement.id);
-                                  } else {
-                                    selectedAchievementIds.add(achievement.id);
-                                  }
-                                });
-                              },
-                              logo: 'https://sskef.site/${achievement.logoURL}',
-                              title: achievement.title,
-                              description: achievement.description,
-                              xp: achievement.xp,
-                              completionRatio: achievement.completionRatio,
-                              id: achievement.id,
-                              isSelected: selectedAchievementIds.contains(achievement.id), // Передача состояния выбора
-                            );
+                            if (!isCompleted) {
+                              return AchievementItem(
+                                onTap: () {
+                                  setState(() {
+                                    if (selectedAchievementIds.contains(achievement.id)) {
+                                      selectedAchievementIds.remove(achievement.id);
+                                    } else {
+                                      selectedAchievementIds.add(achievement.id);
+                                    }
+                                  });
+                                },
+                                logo: 'https://sskef.site/${achievement.logoURL}',
+                                title: achievement.title,
+                                description: achievement.description,
+                                xp: achievement.xp,
+                                completionRatio: achievement.completionRatio,
+                                id: achievement.id,
+                                isSelected: selectedAchievementIds.contains(achievement.id),
+                              );
+                            }
+                            return Container();
                           },
                         ),
                         if (selectedAchievementIds.isNotEmpty)
-                          Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  generateQrCode(
+                          Positioned(
+                            bottom: 16.0,
+                            right: 16.0,
+                            child: FloatingActionButton(
+                              onPressed: () {
+                                generateQrCode(
                                     context,
                                     userId,
                                     selectedAchievementIds,
                                     user.firstName,
                                     user.lastName,
-                                    user.avatar,
-                                  );
-                                },
-                                child: Text('Сгенерировать QR-код'),
-                              ),
+                                    user.avatar
+                                );
+                              },
+                              child: const Icon(Icons.qr_code),
                             ),
                           ),
                       ],

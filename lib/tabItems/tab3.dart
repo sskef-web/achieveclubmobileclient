@@ -32,10 +32,6 @@ class _Tab3Page extends State<Tab3Page> {
         builder: (context) =>
             ClubPage(
               clubId: clubId,
-              title: title,
-              logoURL: logoURL,
-              address: address,
-              description: description,
               position: position,
             ),
       ),
@@ -109,7 +105,7 @@ class _Tab3Page extends State<Tab3Page> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );
