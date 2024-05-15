@@ -329,6 +329,7 @@ class _Tab1Page extends State<Tab1Page> {
                 const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () {
+                    selectedAchievementIds = [];
                     Navigator.of(dialogContext).pop();
                     if (Navigator.canPop(context)) {
                       Navigator.pop(context);
