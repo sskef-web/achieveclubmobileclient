@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class HomePage extends StatefulWidget {
   final Function() logoutCallback;
 
-  const HomePage({super.key, required this.logoutCallback});
+  const HomePage({Key? key, required this.logoutCallback}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -17,11 +17,17 @@ class _HomePageState extends State<HomePage> {
 
   int _currentIndex = 0;
 
-  final List<Widget> _tabs = [
-    const Tab1Page(),
-    const Tab2Page(),
-    const Tab3Page(),
-  ];
+  late List<Widget> _tabs;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabs = [
+      Tab1Page(logoutCallback: widget.logoutCallback),
+      const Tab2Page(),
+      const Tab3Page(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {

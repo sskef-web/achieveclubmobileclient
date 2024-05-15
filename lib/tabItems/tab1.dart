@@ -3,6 +3,7 @@ import 'package:achieveclubmobileclient/items/achievementItem.dart';
 import 'package:achieveclubmobileclient/data/achievement.dart';
 import 'package:achieveclubmobileclient/data/completedachievement.dart';
 import 'package:achieveclubmobileclient/data/user.dart';
+import 'package:achieveclubmobileclient/pages/homePage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -11,7 +12,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../main.dart';
 
 class Tab1Page extends StatefulWidget {
-  const Tab1Page({super.key});
+  final Function() logoutCallback;
+
+  const Tab1Page({super.key, required this.logoutCallback});
 
   @override
   _Tab1Page createState() => _Tab1Page();
@@ -121,22 +124,34 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   Future<User> fetchUser() async {
-    var url = Uri.parse('${baseURL}users/$userId');
-    var cookies = await loadCookies();
-    userId = extractUserIdFromCookies(cookies!);
-    appTitle = 'Профиль';
+    try {
+      var url = Uri.parse('${baseURL}users/$userId');
+      var cookies = await loadCookies();
+      userId = extractUserIdFromCookies(cookies!);
+      appTitle = 'Профиль';
 
-    var response = await http.get(url, headers: {
-      'Cookie': cookies,
-    });
+      var response = await http.get(url, headers: {
+        'Cookie': cookies,
+      });
 
-    if (response.statusCode == 200) {
-      return User.fromJson(jsonDecode(response.body));
-    } else if (response.statusCode == 401) {
-      await refreshToken();
-      return fetchUser();
-    } else {
-      throw Exception('Failed to load user');
+      if (response.statusCode == 200) {
+        return User.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 401) {
+        await refreshToken();
+        return fetchUser();
+      } else {
+        throw Exception('Failed to load user');
+      }
+    }
+    catch (e) {
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => HomePage(logoutCallback: widget.logoutCallback)),
+      );
+      rethrow;
     }
   }
 
@@ -151,23 +166,58 @@ class _Tab1Page extends State<Tab1Page> {
     return null;
   }
 
+  void showAchievementDialog(BuildContext context, Achievement achievement) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.network(
+                  'https://sskef.site/${achievement.logoURL}',
+                  width: 50.0,
+                  height: 50.0,
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  achievement.title,
+                  style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  'XP: ${achievement.xp}',
+                  style: const TextStyle(fontSize: 16.0),
+                ),
+                const SizedBox(height: 8.0),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                  },
+                  child: const Text('Закрыть'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void generateQrCode(
-    BuildContext context,
-    String userId,
-    List<int> selectedAchievementIds,
-    String firstName,
-    String lastName,
-    String avatarPath,
-  ) async {
-    final selectedAchievements = <String>[];
-
-    for (final achievementId in selectedAchievementIds) {
-      final achievement = await getAchievementById(achievementId);
-      if (achievement != null) {
-        selectedAchievements.add(achievement.title);
-      }
-    }
-
+      BuildContext context,
+      String userId,
+      List<int> selectedAchievementIds,
+      String firstName,
+      String lastName,
+      String avatarPath,
+      ) async {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -187,8 +237,7 @@ class _Tab1Page extends State<Tab1Page> {
                   children: [
                     CircleAvatar(
                       radius: 50.0,
-                      backgroundImage:
-                          NetworkImage('https://sskef.site/$avatarPath'),
+                      backgroundImage: NetworkImage('https://sskef.site/$avatarPath'),
                     ),
                     const SizedBox(width: 16.0),
                     Column(
@@ -198,8 +247,7 @@ class _Tab1Page extends State<Tab1Page> {
                           constraints: const BoxConstraints(maxWidth: 150),
                           child: Text(
                             '$firstName $lastName',
-                            style: const TextStyle(
-                                fontSize: 18.0, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -208,11 +256,60 @@ class _Tab1Page extends State<Tab1Page> {
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  'Достижения: ${selectedAchievements.length}\n${selectedAchievements.join(", ")}',
+                  'Достижения: ${selectedAchievementIds.length}',
                   style: const TextStyle(fontSize: 16.0),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8.0),
+                const SizedBox(height: 16.0),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: selectedAchievementIds.map((achievementId) {
+                      return FutureBuilder<Achievement?>(
+                        future: getAchievementById(achievementId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                            final achievement = snapshot.data!;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Container(
+                                width: 100.0,
+                                height: 120.0,
+                                decoration: BoxDecoration(
+                                  color: Color.fromRGBO(128, 128, 128, 0.2),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                padding: EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: Image.network(
+                                        'https://sskef.site/${achievement.logoURL}',
+                                        width: 30.0,
+                                        height: 30.0,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    Text(
+                                      achievement.title,
+                                      style: TextStyle(fontSize: 10.0),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: QrImageView(
@@ -233,6 +330,13 @@ class _Tab1Page extends State<Tab1Page> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(dialogContext).pop();
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (BuildContext context) => HomePage(logoutCallback: widget.logoutCallback)),
+                    );
                   },
                   child: const Text('Закрыть'),
                 ),
@@ -243,7 +347,6 @@ class _Tab1Page extends State<Tab1Page> {
       },
     );
   }
-
   double calculateCompletionPercentage(
       int completedAchievements, int totalAchievements) {
     if (totalAchievements == 0) {

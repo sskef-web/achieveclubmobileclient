@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
 

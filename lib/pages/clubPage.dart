@@ -9,10 +9,10 @@ class ClubPage extends StatefulWidget {
   final String position;
 
   const ClubPage({
-    Key? key,
+    super.key,
     required this.clubId,
     required this.position,
-  }) : super(key: key);
+  });
 
   @override
   _ClubPageState createState() => _ClubPageState();
@@ -107,7 +107,7 @@ class _ClubPageState extends State<ClubPage> {
                   children: [
                     Text(
                       '# ${widget.position}',
-                      style: TextStyle(fontSize: 64.0,color: Colors.white),
+                      style: const TextStyle(fontSize: 64.0,color: Colors.white),
                     ),
                     const SizedBox(width: 15),
                     Container(
@@ -160,7 +160,9 @@ class _ClubPageState extends State<ClubPage> {
                 itemCount: userList!.length,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  final user = userList![index];
+                  final sortedUsers = [...userList!];
+                  sortedUsers.sort((a, b) => b['xpSum'].compareTo(a['xpSum']));
+                  final user = sortedUsers[index];
 
                   return ListTile(
                     leading: CircleAvatar(
@@ -171,7 +173,7 @@ class _ClubPageState extends State<ClubPage> {
                   );
                 },
               )
-                  : const Center(child: CircularProgressIndicator(),),
+                  : const Center(child: CircularProgressIndicator()),
             ],
           ),
         ),
