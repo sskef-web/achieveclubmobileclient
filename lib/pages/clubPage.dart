@@ -158,6 +158,7 @@ class _ClubPageState extends State<ClubPage> {
                   ? ListView.builder(
                 shrinkWrap: true,
                 itemCount: userList!.length,
+                physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   final user = userList![index];
 
@@ -170,7 +171,7 @@ class _ClubPageState extends State<ClubPage> {
                   );
                 },
               )
-                  : const CircularProgressIndicator(),
+                  : const Center(child: CircularProgressIndicator(),),
             ],
           ),
         ),
