@@ -10,20 +10,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../main.dart';
 
-
 class Tab1Page extends StatefulWidget {
   const Tab1Page({super.key});
 
   @override
   _Tab1Page createState() => _Tab1Page();
-
 }
 
 class _Tab1Page extends State<Tab1Page> {
   late Future<User> _userFuture;
   late Future<List<Achievement>> _achieveFuture;
   late Future<List<CompletedAchievement>> _completedAchievementsFuture;
-  List<int> selectedAchievementIds = [];
+  bool _isFloatingActionButtonVisible = false;
   //int _completedAchievementsCount = 0;
   //int _totalAchievementsCount = 0;
 
@@ -84,12 +82,10 @@ class _Tab1Page extends State<Tab1Page> {
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((item) => CompletedAchievement.fromJson(item)).toList();
-    }
-    else if (response.statusCode == 401) {
+    } else if (response.statusCode == 401) {
       await refreshToken();
       return fetchCompletedAchievements();
-    }
-    else {
+    } else {
       throw Exception('Failed to load completed achievements');
     }
   }
@@ -105,7 +101,6 @@ class _Tab1Page extends State<Tab1Page> {
     return prefs.getString('cookies');
   }
 
-
   Future<void> refreshToken() async {
     var refreshUrl = Uri.parse('${baseURL}auth/refresh');
     var cookies = await loadCookies();
@@ -119,9 +114,9 @@ class _Tab1Page extends State<Tab1Page> {
       if (newCookies != null) {
         await saveCookies(newCookies);
       }
-    }
-    else {
-      throw Exception('Failed to refresh Token (StatusCode: ${response.statusCode})\n${response.body}');
+    } else {
+      throw Exception(
+          'Failed to refresh Token (StatusCode: ${response.statusCode})\n${response.body}');
     }
   }
 
@@ -137,13 +132,10 @@ class _Tab1Page extends State<Tab1Page> {
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
-    }
-    else if (response.statusCode == 401)
-    {
+    } else if (response.statusCode == 401) {
       await refreshToken();
       return fetchUser();
-    }
-    else {
+    } else {
       throw Exception('Failed to load user');
     }
   }
@@ -160,13 +152,13 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   void generateQrCode(
-      BuildContext context,
-      String userId,
-      List<int> selectedAchievementIds,
-      String firstName,
-      String lastName,
-      String avatarPath,
-      ) async {
+    BuildContext context,
+    String userId,
+    List<int> selectedAchievementIds,
+    String firstName,
+    String lastName,
+    String avatarPath,
+  ) async {
     final selectedAchievements = <String>[];
 
     for (final achievementId in selectedAchievementIds) {
@@ -175,8 +167,6 @@ class _Tab1Page extends State<Tab1Page> {
         selectedAchievements.add(achievement.title);
       }
     }
-
-    final selectedAchievementsString = selectedAchievements.join(',');
 
     showDialog(
       context: context,
@@ -197,7 +187,8 @@ class _Tab1Page extends State<Tab1Page> {
                   children: [
                     CircleAvatar(
                       radius: 50.0,
-                      backgroundImage: NetworkImage('https://sskef.site/$avatarPath'),
+                      backgroundImage:
+                          NetworkImage('https://sskef.site/$avatarPath'),
                     ),
                     const SizedBox(width: 16.0),
                     Column(
@@ -207,7 +198,8 @@ class _Tab1Page extends State<Tab1Page> {
                           constraints: const BoxConstraints(maxWidth: 150),
                           child: Text(
                             '$firstName $lastName',
-                            style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                fontSize: 18.0, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -217,7 +209,8 @@ class _Tab1Page extends State<Tab1Page> {
                 const SizedBox(height: 8.0),
                 Text(
                   'Достижения: ${selectedAchievements.length}\n${selectedAchievements.join(", ")}',
-                  style: const TextStyle(fontSize: 16.0), textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16.0),
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8.0),
                 ClipRRect(
@@ -251,7 +244,8 @@ class _Tab1Page extends State<Tab1Page> {
     );
   }
 
-  double calculateCompletionPercentage(int completedAchievements, int totalAchievements) {
+  double calculateCompletionPercentage(
+      int completedAchievements, int totalAchievements) {
     if (totalAchievements == 0) {
       return 0.0;
     }
@@ -311,27 +305,48 @@ class _Tab1Page extends State<Tab1Page> {
 
   @override
   Widget build(BuildContext context) {
+    AsyncSnapshot<List<dynamic>>? currentSnapshot;
     return Scaffold(
+      floatingActionButton: _isFloatingActionButtonVisible
+          ? FloatingActionButton(
+        onPressed: () {
+          final user = currentSnapshot!.data![0] as User;
+          generateQrCode(
+            context,
+            userId,
+            selectedAchievementIds,
+            user.firstName,
+            user.lastName,
+            user.avatar,
+          );
+        },
+        child: const Icon(Icons.qr_code),
+      )
+          : null,
       body: FutureBuilder(
-        future: Future.wait([_userFuture, _achieveFuture, _completedAchievementsFuture]),
+        future: Future.wait(
+            [_userFuture, _achieveFuture, _completedAchievementsFuture]),
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+          currentSnapshot = snapshot;
           if (snapshot.hasData) {
             final user = snapshot.data![0] as User;
             final achievements = snapshot.data![1] as List<Achievement>;
-            final completedAchievements = snapshot.data![2] as List<CompletedAchievement>;
+            final completedAchievements =
+                snapshot.data![2] as List<CompletedAchievement>;
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row (
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CircleAvatar(
                           radius: 80.0,
-                          backgroundImage: NetworkImage('https://sskef.site/$Avatar'),
+                          backgroundImage:
+                              NetworkImage('https://sskef.site/$Avatar'),
                           child: InkWell(
                             onTap: () {
                               _uploadAvatar(context);
@@ -358,7 +373,8 @@ class _Tab1Page extends State<Tab1Page> {
                       children: [
                         CircleAvatar(
                           radius: 40.0,
-                          backgroundImage: NetworkImage('https://sskef.site/${user.clubLogo}'),
+                          backgroundImage: NetworkImage(
+                              'https://sskef.site/${user.clubLogo}'),
                         ),
                         const SizedBox(width: 16.0),
                         Text(
@@ -394,7 +410,10 @@ class _Tab1Page extends State<Tab1Page> {
                           ),
                           const SizedBox(height: 8.0),
                           LinearProgressIndicator(
-                            value: calculateCompletionPercentage(completedAchievements.length, achievements.length) / 100,
+                            value: calculateCompletionPercentage(
+                                    completedAchievements.length,
+                                    achievements.length) /
+                                100,
                           ),
                         ],
                       ),
@@ -415,18 +434,16 @@ class _Tab1Page extends State<Tab1Page> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: completedAchievements.length,
                           itemBuilder: (context, index) {
-                            final completedAchievement = completedAchievements[index];
-                            final achievement = achievements.firstWhere((achieve) => achieve.id == completedAchievement.achievementId);
+                            final completedAchievement =
+                                completedAchievements[index];
+                            final achievement = achievements.firstWhere(
+                                (achieve) =>
+                                    achieve.id ==
+                                    completedAchievement.achievementId);
 
                             return AchievementItem(
                               onTap: () {
-                                setState(() {
-                                  if (selectedAchievementIds.contains(achievement.id)) {
-                                    selectedAchievementIds.remove(achievement.id);
-                                  } else {
-                                    selectedAchievementIds.add(achievement.id);
-                                  }
-                                });
+                                setState(() {});
                               },
                               logo: 'https://sskef.site/${achievement.logoURL}',
                               title: achievement.title,
@@ -434,28 +451,10 @@ class _Tab1Page extends State<Tab1Page> {
                               xp: achievement.xp,
                               completionRatio: achievement.completionRatio,
                               id: achievement.id,
-                              isSelected: selectedAchievementIds.contains(achievement.id),
+                              isSelected: false,
                             );
                           },
                         ),
-                        if (selectedAchievementIds.isNotEmpty)
-                          Positioned(
-                            bottom: 16.0,
-                            right: 16.0,
-                            child: FloatingActionButton(
-                              onPressed: () {
-                                generateQrCode(
-                                  context,
-                                  userId,
-                                  selectedAchievementIds,
-                                  user.firstName,
-                                  user.lastName,
-                                  user.avatar
-                                );
-                              },
-                              child: const Icon(Icons.qr_code),
-                            ),
-                          ),
                       ],
                     ),
                     const SizedBox(height: 8.0),
@@ -475,49 +474,40 @@ class _Tab1Page extends State<Tab1Page> {
                           itemCount: achievements.length,
                           itemBuilder: (context, index) {
                             final achievement = achievements[index];
-                            final isCompleted = completedAchievements.any((completed) => completed.achievementId == achievement.id);
+                            final isCompleted = completedAchievements.any(
+                                (completed) =>
+                                    completed.achievementId == achievement.id);
 
                             if (!isCompleted) {
                               return AchievementItem(
                                 onTap: () {
                                   setState(() {
-                                    if (selectedAchievementIds.contains(achievement.id)) {
-                                      selectedAchievementIds.remove(achievement.id);
+                                    if (selectedAchievementIds
+                                        .contains(achievement.id)) {
+                                      selectedAchievementIds
+                                          .remove(achievement.id);
+                                      updateFloatingActionButtonVisibility();
                                     } else {
-                                      selectedAchievementIds.add(achievement.id);
+                                      selectedAchievementIds
+                                          .add(achievement.id);
+                                      updateFloatingActionButtonVisibility();
                                     }
                                   });
                                 },
-                                logo: 'https://sskef.site/${achievement.logoURL}',
+                                logo:
+                                    'https://sskef.site/${achievement.logoURL}',
                                 title: achievement.title,
                                 description: achievement.description,
                                 xp: achievement.xp,
                                 completionRatio: achievement.completionRatio,
                                 id: achievement.id,
-                                isSelected: selectedAchievementIds.contains(achievement.id),
+                                isSelected: selectedAchievementIds
+                                    .contains(achievement.id),
                               );
                             }
                             return Container();
                           },
                         ),
-                        if (selectedAchievementIds.isNotEmpty)
-                          Positioned(
-                            bottom: 16.0,
-                            right: 16.0,
-                            child: FloatingActionButton(
-                              onPressed: () {
-                                generateQrCode(
-                                    context,
-                                    userId,
-                                    selectedAchievementIds,
-                                    user.firstName,
-                                    user.lastName,
-                                    user.avatar
-                                );
-                              },
-                              child: const Icon(Icons.qr_code),
-                            ),
-                          ),
                       ],
                     ),
                   ],
@@ -537,4 +527,10 @@ class _Tab1Page extends State<Tab1Page> {
       ),
     );
   }
+  void updateFloatingActionButtonVisibility() {
+    setState(() {
+      _isFloatingActionButtonVisible = selectedAchievementIds.isNotEmpty;
+    });
+  }
+
 }
