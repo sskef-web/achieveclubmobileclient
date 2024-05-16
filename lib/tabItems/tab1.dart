@@ -75,7 +75,7 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   Future<List<CompletedAchievement>> fetchCompletedAchievements() async {
-    var url = Uri.parse('${baseURL}completedachievements');
+    var url = Uri.parse('${baseURL}completedachievements/current');
     var cookies = await loadCookies();
 
     var response = await http.get(url, headers: {
@@ -125,7 +125,7 @@ class _Tab1Page extends State<Tab1Page> {
 
   Future<User> fetchUser() async {
     try {
-      var url = Uri.parse('${baseURL}users/$userId');
+      var url = Uri.parse('${baseURL}users/${userId}');
       var cookies = await loadCookies();
       userId = extractUserIdFromCookies(cookies!);
       appTitle = 'Профиль';
@@ -133,10 +133,12 @@ class _Tab1Page extends State<Tab1Page> {
       var response = await http.get(url, headers: {
         'Cookie': cookies,
       });
+      debugPrint('${response.statusCode}');
 
       if (response.statusCode == 200) {
         return User.fromJson(jsonDecode(response.body));
-      } else if (response.statusCode == 401) {
+      }
+      else if (response.statusCode == 401) {
         await refreshToken();
         return fetchUser();
       } else {
@@ -149,7 +151,9 @@ class _Tab1Page extends State<Tab1Page> {
       }
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => HomePage(logoutCallback: widget.logoutCallback)),
+        MaterialPageRoute(
+            builder: (BuildContext context) =>
+                HomePage(logoutCallback: widget.logoutCallback)),
       );
       rethrow;
     }
@@ -188,7 +192,8 @@ class _Tab1Page extends State<Tab1Page> {
                 const SizedBox(height: 8.0),
                 Text(
                   achievement.title,
-                  style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18.0, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8.0),
                 Text(
@@ -211,13 +216,13 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   void generateQrCode(
-      BuildContext context,
-      String userId,
-      List<int> selectedAchievementIds,
-      String firstName,
-      String lastName,
-      String avatarPath,
-      ) async {
+    BuildContext context,
+    String userId,
+    List<int> selectedAchievementIds,
+    String firstName,
+    String lastName,
+    String avatarPath,
+  ) async {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -237,7 +242,8 @@ class _Tab1Page extends State<Tab1Page> {
                   children: [
                     CircleAvatar(
                       radius: 50.0,
-                      backgroundImage: NetworkImage('https://sskef.site/$avatarPath'),
+                      backgroundImage:
+                          NetworkImage('https://sskef.site/$avatarPath'),
                     ),
                     const SizedBox(width: 16.0),
                     Column(
@@ -247,7 +253,8 @@ class _Tab1Page extends State<Tab1Page> {
                           constraints: const BoxConstraints(maxWidth: 150),
                           child: Text(
                             '$firstName $lastName',
-                            style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                fontSize: 18.0, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -268,10 +275,13 @@ class _Tab1Page extends State<Tab1Page> {
                       return FutureBuilder<Achievement?>(
                         future: getAchievementById(achievementId),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                          if (snapshot.connectionState ==
+                                  ConnectionState.done &&
+                              snapshot.hasData) {
                             final achievement = snapshot.data!;
                             return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Container(
                                 width: 100.0,
                                 height: 120.0,
@@ -336,7 +346,9 @@ class _Tab1Page extends State<Tab1Page> {
                     }
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (BuildContext context) => HomePage(logoutCallback: widget.logoutCallback)),
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              HomePage(logoutCallback: widget.logoutCallback)),
                     );
                   },
                   child: const Text('Закрыть'),
@@ -348,6 +360,7 @@ class _Tab1Page extends State<Tab1Page> {
       },
     );
   }
+
   double calculateCompletionPercentage(
       int completedAchievements, int totalAchievements) {
     if (totalAchievements == 0) {
@@ -413,23 +426,22 @@ class _Tab1Page extends State<Tab1Page> {
     return Scaffold(
       floatingActionButton: _isFloatingActionButtonVisible
           ? FloatingActionButton(
-        onPressed: () {
-          final user = currentSnapshot!.data![0] as User;
-          generateQrCode(
-            context,
-            userId,
-            selectedAchievementIds,
-            user.firstName,
-            user.lastName,
-            user.avatar,
-          );
-        },
-        child: const Icon(Icons.qr_code),
-      )
+              onPressed: () {
+                final user = currentSnapshot?.data![0] as User;
+                generateQrCode(
+                  context,
+                  userId,
+                  selectedAchievementIds,
+                  user.firstName,
+                  user.lastName,
+                  user.avatar,
+                );
+              },
+              child: const Icon(Icons.qr_code),
+            )
           : null,
       body: FutureBuilder(
-        future: Future.wait(
-            [_userFuture, _achieveFuture, _completedAchievementsFuture]),
+        future: Future.wait([_userFuture, _achieveFuture, _completedAchievementsFuture]),
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
           currentSnapshot = snapshot;
           if (snapshot.hasData) {
@@ -620,7 +632,7 @@ class _Tab1Page extends State<Tab1Page> {
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('Error: ${snapshot.error}'),
+              child: Text('Error: ${snapshot.error}\n ${snapshot.stackTrace}'),
             );
           } else {
             return const Center(
@@ -631,10 +643,10 @@ class _Tab1Page extends State<Tab1Page> {
       ),
     );
   }
+
   void updateFloatingActionButtonVisibility() {
     setState(() {
       _isFloatingActionButtonVisible = selectedAchievementIds.isNotEmpty;
     });
   }
-
 }

@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
 
@@ -42,7 +41,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         return token;
       }
     }
-      return null;
+    return null;
   }
 
   String? extractRefreshTokenFromCookies(String cookies) {
@@ -64,7 +63,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         return userId;
       }
     }
-      return null;
+    return null;
   }
 
   Future<void> saveCookies(String cookies) async {
@@ -94,8 +93,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       userId = extractUserIdFromCookies(cookies);
       refreshToken = extractRefreshTokenFromCookies(cookies);
       return LoginResponse(token, userId, refreshToken, response.body);
-    }
-    else {
+    } else {
       final responseJson = jsonDecode(response.body);
       if (responseJson['title'] == 'Bad Request') {
         throw showDialog(
@@ -115,8 +113,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
             );
           },
         );
-      }
-      else {
+      } else {
         String emailError = '${responseJson['errors']['Email']}';
         String passError = '${responseJson['errors']['Password']}';
         //throw Exception('Failed to login: ${response.statusCode}');
@@ -142,7 +139,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     }
   }
 
-  Future<LoginResponse> registrate(String email, String password, String firstName, String lastName, String avatarPath, int clubId) async {
+  Future<LoginResponse> registrate(String email, String password,
+      String firstName, String lastName, String avatarPath, int clubId) async {
     var url = Uri.parse('${baseURL}auth/registration');
 
     var body = jsonEncode({
@@ -165,19 +163,15 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       var userId = extractUserIdFromCookies(cookies);
       var refreshToken = extractRefreshTokenFromCookies(cookies);
       return LoginResponse(token!, userId!, refreshToken!, response.body);
-    }
-    else {
+    } else {
       //final responseJson = jsonDecode(response.body);
       //throw Exception('Failed to registrate: ${response.statusCode}');
       throw errorMessage = response.body;
     }
   }
 
-
   void _login() async {
-
-    if (email == '' || password == '')
-    {
+    if (email == '' || password == '') {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -195,8 +189,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           );
         },
       );
-    }
-    else {
+    } else {
       await login(email, password);
       savedCookies = await loadCookies();
       //print('${savedCookies}');
@@ -214,9 +207,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   void _register() async {
-
-    if (email == '' || password == '' || firstName == '' || lastName == '' || clubId == 0)
-    {
+    if (email == '' ||
+        password == '' ||
+        firstName == '' ||
+        lastName == '' ||
+        clubId == 0) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -234,10 +229,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           );
         },
       );
-    }
-    else {
+    } else {
       Navigator.pop(context, true);
-      await registrate(email, password, firstName, lastName, avatarPath, clubId);
+      await registrate(
+          email, password, firstName, lastName, avatarPath, clubId);
       savedCookies = await loadCookies();
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -256,7 +251,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     setState(() {
       _isLoggedIn = false;
       appTitle = 'Авторизация';
-      email = '';password = '';
+      email = '';
+      password = '';
     });
   }
 
@@ -335,14 +331,14 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       return HomePage(logoutCallback: _logout);
     } else {
       return LoginPage(
-          loginCallback: _login,
-          registerCallback: _register,
-          updateEmail: _updateEmail,
-          updatePassword: _updatePassword,
-          updateFirstName: _updateFirstName,
-          updateLastName: _updateLastName,
-          updateClubId: _updateClubId,
-          uploadAvatar: _uploadAvatar,
+        loginCallback: _login,
+        registerCallback: _register,
+        updateEmail: _updateEmail,
+        updatePassword: _updatePassword,
+        updateFirstName: _updateFirstName,
+        updateLastName: _updateLastName,
+        updateClubId: _updateClubId,
+        uploadAvatar: _uploadAvatar,
       );
     }
   }
