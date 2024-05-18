@@ -10,7 +10,7 @@ String lastName = '';
 String avatarPath =
     'StaticFiles/avatars/38c7301d-b794-44b4-935b-aeb70527b1a5.jpeg';
 String errorMessage = '';
-var clubId = 0;
+int clubId = 0;
 String Avatar = "";
 String baseURL = 'https://sskef.site/api/';
 var userId;

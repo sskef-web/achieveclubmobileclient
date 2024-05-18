@@ -123,6 +123,8 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  int? clubId; // Change the type of clubId to int?
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,31 +148,31 @@ class _RegisterPageState extends State<RegisterPage> {
                     autovalidateMode: AutovalidateMode.always,
                     onChanged: () {
                       setState(() {
-                        isButtonEnabled = _formKey.currentState?.validate() ??
-                            false;
+                        isButtonEnabled = _formKey.currentState?.validate() ?? false;
                       });
                     },
                     child: Column(
                       children: [
-                        SegmentedButton(
-                          segments: clubs.map((club) {
-                            return ButtonSegment(
-                              value: club.id,
-                              label: Text(club.title),
-                              icon: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: Image.network('https://sskef.site/${club.logoURL}',),
-                              ),
-                            );
-                          }).toList(),
-                          selected: {clubId},
-                          onSelectionChanged: (value) {
-                            setState(() {
-                              clubId = value.first;
-                            });
-                            widget.updateClubId(clubId);
-                          },
+                        Container(
+                          width: double.infinity, // Set the width to full width
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<int>(
+                              value: clubId,
+                              items: clubs.map((club) {
+                                return DropdownMenuItem<int>(
+                                  value: club.id,
+                                  child: Text(club.title),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  clubId = value;
+                                });
+                                widget.updateClubId(clubId!);
+                              },
+                              hint: Text('Выберите клуб'),
+                            ),
+                          ),
                         ),
                         TextFormField(
                           controller: TextEditingController.fromValue(
@@ -329,8 +331,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 16.0),
                   ElevatedButton(
-                    onPressed: (_formKey.currentState?.validate() ?? false) &&
-                        clubId != 0
+                    onPressed: (_formKey.currentState?.validate() ?? false) && clubId != null
                         ? () {
                       widget.registerCallback();
                     }
@@ -355,4 +356,6 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
+
+
 }
