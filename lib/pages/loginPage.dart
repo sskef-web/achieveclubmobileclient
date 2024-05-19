@@ -12,8 +12,13 @@ class LoginPage extends StatefulWidget {
   final Function(String) updateLastName;
   final Function(int) updateClubId;
   final Function(BuildContext) uploadAvatar;
+  String email;
+  String password;
+  String confirmPassword;
+  String firstName;
+  String lastName;
 
-  const LoginPage({
+  LoginPage({
     super.key,
     required this.loginCallback,
     required this.registerCallback,
@@ -23,6 +28,11 @@ class LoginPage extends StatefulWidget {
     required this.updateLastName,
     required this.updateClubId,
     required this.uploadAvatar,
+    required this.email,
+    required this.password,
+    required this.confirmPassword,
+    required this.firstName,
+    required this.lastName,
   });
 
   @override
@@ -37,10 +47,10 @@ class _LoginPageState extends State<LoginPage> {
   bool isButtonEnabled = false;
 
   void navigateToRegisterPage(BuildContext context) {
-    email = '';
-    password = '';
-    firstName = '';
-    lastName = '';
+    widget.email = '';
+    widget.password = '';
+    widget.firstName = '';
+    widget.lastName = '';
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -53,6 +63,11 @@ class _LoginPageState extends State<LoginPage> {
               updateLastName: widget.updateLastName,
               updateClubId: widget.updateClubId,
               uploadAvatar: widget.uploadAvatar,
+              email: widget.email,
+              password: widget.password,
+              firstName: widget.firstName,
+              lastName: widget.lastName,
+              confirmPassword: widget.confirmPassword,
             ),
       ),
     );
@@ -103,14 +118,14 @@ class _LoginPageState extends State<LoginPage> {
                   TextFormField(
                     controller: TextEditingController.fromValue(
                       TextEditingValue(
-                        text: email,
+                        text: widget.email,
                         selection: TextSelection.collapsed(
-                            offset: email.length),
+                            offset: widget.email.length),
                       ),
                     ),
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      errorText: email.isNotEmpty && !EmailValidator.validate(email)
+                      errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
                           ? 'Некорректный адрес электронной почты'
                           : null,
                     ),
@@ -135,9 +150,9 @@ class _LoginPageState extends State<LoginPage> {
                     //controller: _passwordController,
                     controller: TextEditingController.fromValue(
                       TextEditingValue(
-                        text: password,
+                        text: widget.password,
                         selection: TextSelection.collapsed(
-                            offset: password.length),
+                            offset: widget.password.length),
                       ),
                     ),
                     decoration: InputDecoration(
@@ -148,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                           updatePasswordVisibility();
                         },
                       ),
-                      errorText: password.isNotEmpty && (password.length < 6 || !_isPasswordValid(password))
+                      errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
                           ? 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру'
                           : null,
                     ),

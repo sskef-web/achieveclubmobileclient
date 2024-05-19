@@ -14,8 +14,13 @@ class RegisterPage extends StatefulWidget {
   final Function(String) updateLastName;
   final Function(int) updateClubId;
   final Function(BuildContext) uploadAvatar;
+  String email;
+  String password;
+  String confirmPassword;
+  String firstName;
+  String lastName;
 
-  const RegisterPage({
+  RegisterPage({
     super.key,
     required this.registerCallback,
     required this.updateEmail,
@@ -24,6 +29,11 @@ class RegisterPage extends StatefulWidget {
     required this.updateLastName,
     required this.updateClubId,
     required this.uploadAvatar,
+    required this.email,
+    required this.password,
+    required this.confirmPassword,
+    required this.firstName,
+    required this.lastName,
   });
 
   @override
@@ -82,7 +92,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void updateConfirmPassword(String value) {
     setState(() {
-      confirmPassword = value;
+      widget.confirmPassword = value;
     });
   }
 
@@ -177,14 +187,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextFormField(
                           controller: TextEditingController.fromValue(
                             TextEditingValue(
-                              text: firstName,
+                              text: widget.firstName,
                               selection: TextSelection.collapsed(
-                                  offset: firstName.length),
+                                  offset: widget.firstName.length),
                             ),
                           ),
                           decoration: InputDecoration(
                             labelText: 'Имя',
-                            errorText: firstName.isNotEmpty && firstName.length < 2
+                            errorText: widget.firstName.isNotEmpty && widget.firstName.length < 2
                                 ? 'Имя должно содержать не менее 2 символов'
                                 : null,
                           ),
@@ -207,14 +217,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextFormField(
                           controller: TextEditingController.fromValue(
                             TextEditingValue(
-                              text: lastName,
+                              text: widget.lastName,
                               selection: TextSelection.collapsed(
-                                  offset: lastName.length),
+                                  offset: widget.lastName.length),
                             ),
                           ),
                           decoration: InputDecoration(
                             labelText: 'Фамилия',
-                            errorText: lastName.isNotEmpty && lastName.length < 4
+                            errorText: widget.lastName.isNotEmpty && widget.lastName.length < 4
                                 ? 'Фамилия должна содержать не менее 4 символов'
                                 : null,
                           ),
@@ -237,14 +247,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextFormField(
                           controller: TextEditingController.fromValue(
                             TextEditingValue(
-                              text: email,
+                              text: widget.email,
                               selection: TextSelection.collapsed(
-                                  offset: email.length),
+                                  offset: widget.email.length),
                             ),
                           ),
                           decoration: InputDecoration(
                             labelText: 'Email',
-                            errorText: email.isNotEmpty && !EmailValidator.validate(email)
+                            errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
                                 ? 'Некорректный адрес электронной почты'
                                 : null,
                           ),
@@ -267,13 +277,13 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextFormField(
                           controller: TextEditingController.fromValue(
                             TextEditingValue(
-                              text: password,
-                              selection: TextSelection.collapsed(offset: password.length),
+                              text: widget.password,
+                              selection: TextSelection.collapsed(offset: widget.password.length),
                             ),
                           ),
                           decoration: InputDecoration(
                             labelText: 'Пароль',
-                            errorText: password.isNotEmpty && (password.length < 6 || !_isPasswordValid(password))
+                            errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
                                 ? 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру'
                                 : null,
                           ),
@@ -297,14 +307,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextFormField(
                           controller: TextEditingController.fromValue(
                             TextEditingValue(
-                              text: confirmPassword,
+                              text: widget.confirmPassword,
                               selection: TextSelection.collapsed(
-                                  offset: confirmPassword.length),
+                                  offset: widget.confirmPassword.length),
                             ),
                           ),
                           decoration: InputDecoration(
                             labelText: 'Подтвердите пароль',
-                            errorText: confirmPassword!=password
+                            errorText: widget.confirmPassword!=widget.password
                                 ? 'Пароли должны совпадать'
                                 : null,
                           ),
@@ -320,7 +330,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             if (value?.isEmpty ?? true) {
                               return 'Подтверждение пароля обязательно для заполнения';
                             }
-                            if (value != password) {
+                            if (value != widget.password) {
                               return 'Пароли не совпадают';
                             }
                             return null;

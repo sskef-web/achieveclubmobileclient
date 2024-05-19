@@ -25,6 +25,9 @@ class _Tab1Page extends State<Tab1Page> {
   late Future<List<Achievement>> _achieveFuture;
   late Future<List<CompletedAchievement>> _completedAchievementsFuture;
   bool _isFloatingActionButtonVisible = false;
+  late String Avatar = '';
+  var userId;
+  List<int> selectedAchievementIds = [];
   //int _completedAchievementsCount = 0;
   //int _totalAchievementsCount = 0;
 
@@ -125,9 +128,9 @@ class _Tab1Page extends State<Tab1Page> {
 
   Future<User> fetchUser() async {
     try {
-      var url = Uri.parse('${baseURL}users/${userId}');
       var cookies = await loadCookies();
       userId = extractUserIdFromCookies(cookies!);
+      var url = Uri.parse('${baseURL}users/${userId}');
       appTitle = 'Профиль';
 
       var response = await http.get(url, headers: {

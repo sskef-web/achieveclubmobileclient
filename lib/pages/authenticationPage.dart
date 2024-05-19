@@ -17,6 +17,17 @@ class AuthenticationPage extends StatefulWidget {
 
 class _AuthenticationPageState extends State<AuthenticationPage> {
   bool _isLoggedIn = false;
+  late String email = '';
+  late String password = '';
+  late String confirmPassword = '';
+  late String firstName = '';
+  late String lastName = '';
+  late String avatarPath = 'StaticFiles/avatars/38c7301d-b794-44b4-935b-aeb70527b1a5.jpeg';
+  late int clubId = 0;
+  var userId;
+  var token;
+  var refreshToken;
+  var savedCookies;
 
   @override
   void initState() {
@@ -166,6 +177,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     } else {
       //final responseJson = jsonDecode(response.body);
       //throw Exception('Failed to registrate: ${response.statusCode}');
+      String errorMessage;
       throw errorMessage = response.body;
     }
   }
@@ -247,12 +259,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   void _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', false);
-
+    _isLoggedIn = false;
+    email = '';
+    password = '';
     setState(() {
-      _isLoggedIn = false;
       appTitle = 'Авторизация';
-      email = '';
-      password = '';
     });
   }
 
@@ -339,6 +350,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         updateLastName: _updateLastName,
         updateClubId: _updateClubId,
         uploadAvatar: _uploadAvatar,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+        firstName: firstName,
+        lastName: lastName,
       );
     }
   }

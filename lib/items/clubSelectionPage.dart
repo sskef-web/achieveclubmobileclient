@@ -6,8 +6,14 @@ import 'dart:convert';
 
 class ClubSelectionPage extends StatefulWidget {
   final Function(int) updateClubId;
+  int clubId;
 
-  const ClubSelectionPage({super.key, required this.updateClubId});
+
+  ClubSelectionPage({
+    super.key,
+    required this.updateClubId,
+    required this.clubId
+  });
 
   @override
   _ClubSelectionPageState createState() => _ClubSelectionPageState();
@@ -39,7 +45,7 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
       }
       setState(() {
         _clubs = clubs;
-        clubId = clubs.isNotEmpty ? clubs[0].id : 0;
+        widget.clubId = clubs.isNotEmpty ? clubs[0].id : 0;
       });
     } else {
       throw Exception('Failed to fetch club titles');
@@ -62,16 +68,16 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
                 icon: const Icon(Icons.home),
               );
             }).toList(),
-            selected: {clubId},
+            selected: {widget.clubId},
             onSelectionChanged: (value) {
               setState(() {
-                clubId = value.first;
+                widget.clubId = value.first;
               });
-              widget.updateClubId(clubId);
+              widget.updateClubId(widget.clubId);
             },
           ),
           const SizedBox(height: 16),
-          Text('Selected Club ID: $clubId'),
+          Text('Selected Club ID: ${widget.clubId}'),
         ],
       ),
     );
