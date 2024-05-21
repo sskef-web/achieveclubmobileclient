@@ -17,6 +17,7 @@ class LoginPage extends StatefulWidget {
   String confirmPassword;
   String firstName;
   String lastName;
+  var proofCode;
 
   LoginPage({
     super.key,
@@ -33,6 +34,7 @@ class LoginPage extends StatefulWidget {
     required this.confirmPassword,
     required this.firstName,
     required this.lastName,
+    required this.proofCode
   });
 
   @override
@@ -68,6 +70,7 @@ class _LoginPageState extends State<LoginPage> {
               firstName: widget.firstName,
               lastName: widget.lastName,
               confirmPassword: widget.confirmPassword,
+              proofCode: widget.proofCode,
             ),
       ),
     );

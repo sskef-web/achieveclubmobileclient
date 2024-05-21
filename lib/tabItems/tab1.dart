@@ -423,25 +423,31 @@ class _Tab1Page extends State<Tab1Page> {
     }
   }
 
+  void updateFloatingActionButtonVisibility() {
+    setState(() {
+      _isFloatingActionButtonVisible = selectedAchievementIds.isNotEmpty;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     AsyncSnapshot<List<dynamic>>? currentSnapshot;
     return Scaffold(
       floatingActionButton: _isFloatingActionButtonVisible
           ? FloatingActionButton(
-              onPressed: () {
-                final user = currentSnapshot?.data![0] as User;
-                generateQrCode(
-                  context,
-                  userId,
-                  selectedAchievementIds,
-                  user.firstName,
-                  user.lastName,
-                  user.avatar,
-                );
-              },
-              child: const Icon(Icons.qr_code),
-            )
+        onPressed: () {
+          final user = currentSnapshot?.data![0] as User;
+          generateQrCode(
+            context,
+            userId,
+            selectedAchievementIds,
+            user.firstName,
+            user.lastName,
+            user.avatar,
+          );
+        },
+        child: const Icon(Icons.qr_code),
+      )
           : null,
       body: FutureBuilder(
         future: Future.wait([_userFuture, _achieveFuture, _completedAchievementsFuture]),
@@ -451,7 +457,7 @@ class _Tab1Page extends State<Tab1Page> {
             final user = snapshot.data![0] as User;
             final achievements = snapshot.data![1] as List<Achievement>;
             final completedAchievements =
-                snapshot.data![2] as List<CompletedAchievement>;
+            snapshot.data![2] as List<CompletedAchievement>;
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -465,7 +471,7 @@ class _Tab1Page extends State<Tab1Page> {
                         CircleAvatar(
                           radius: 80.0,
                           backgroundImage:
-                              NetworkImage('https://sskef.site/$Avatar'),
+                          NetworkImage('https://sskef.site/$Avatar'),
                           child: InkWell(
                             onTap: () {
                               _uploadAvatar(context);
@@ -530,8 +536,8 @@ class _Tab1Page extends State<Tab1Page> {
                           const SizedBox(height: 8.0),
                           LinearProgressIndicator(
                             value: calculateCompletionPercentage(
-                                    completedAchievements.length,
-                                    achievements.length) /
+                                completedAchievements.length,
+                                achievements.length) /
                                 100,
                           ),
                         ],
@@ -554,10 +560,10 @@ class _Tab1Page extends State<Tab1Page> {
                           itemCount: completedAchievements.length,
                           itemBuilder: (context, index) {
                             final completedAchievement =
-                                completedAchievements[index];
+                            completedAchievements[index];
                             final achievement = achievements.firstWhere(
-                                (achieve) =>
-                                    achieve.id ==
+                                    (achieve) =>
+                                achieve.id ==
                                     completedAchievement.achievementId);
 
                             return AchievementItem(
@@ -594,8 +600,8 @@ class _Tab1Page extends State<Tab1Page> {
                           itemBuilder: (context, index) {
                             final achievement = achievements[index];
                             final isCompleted = completedAchievements.any(
-                                (completed) =>
-                                    completed.achievementId == achievement.id);
+                                    (completed) =>
+                                completed.achievementId == achievement.id);
 
                             if (!isCompleted) {
                               return AchievementItem(
@@ -614,7 +620,7 @@ class _Tab1Page extends State<Tab1Page> {
                                   });
                                 },
                                 logo:
-                                    'https://sskef.site/${achievement.logoURL}',
+                                'https://sskef.site/${achievement.logoURL}',
                                 title: achievement.title,
                                 description: achievement.description,
                                 xp: achievement.xp,
@@ -645,11 +651,5 @@ class _Tab1Page extends State<Tab1Page> {
         },
       ),
     );
-  }
-
-  void updateFloatingActionButtonVisibility() {
-    setState(() {
-      _isFloatingActionButtonVisible = selectedAchievementIds.isNotEmpty;
-    });
   }
 }

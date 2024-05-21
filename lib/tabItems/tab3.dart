@@ -7,7 +7,11 @@ import 'package:achieveclubmobileclient/pages/clubPage.dart';
 import 'package:flutter/material.dart';
 
 class Tab3Page extends StatefulWidget {
-  const Tab3Page({super.key});
+  final Function() logoutCallback;
+  Tab3Page({
+    super.key,
+    required this.logoutCallback
+  });
 
   @override
   _Tab3Page createState() => _Tab3Page();
@@ -24,8 +28,7 @@ class _Tab3Page extends State<Tab3Page> {
     _clubs = fetchClubs();
   }
 
-  void navigateToClubPage(int clubId, String title, String logoURL,
-      String address, String description, String position) {
+  void navigateToClubPage(int clubId, String position) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -33,6 +36,7 @@ class _Tab3Page extends State<Tab3Page> {
             ClubPage(
               clubId: clubId,
               position: position,
+              logoutCallback: widget.logoutCallback,
             ),
       ),
     );
@@ -88,7 +92,7 @@ class _Tab3Page extends State<Tab3Page> {
                     children: [
                       ClubTopItem(
                         onTap: () {
-                          navigateToClubPage(club.id, club.title, club.logoURL, club.address, club.description, position);
+                          navigateToClubPage(club.id, position);
                         },
                         clubName: club.title,
                         clubLogo: club.logoURL,

@@ -28,6 +28,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   var token;
   var refreshToken;
   var savedCookies;
+  var proofCode;
 
   @override
   void initState() {
@@ -158,7 +159,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       'firstName': firstName,
       'lastName': lastName,
       'clubId': clubId,
-      'email': email,
+      'emailAndProof': {
+        'emailAddress': email,
+        'proofCode': '1111'
+      },
       'password': password,
       'avatarURL': avatarPath,
     });
@@ -355,6 +359,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         confirmPassword: confirmPassword,
         firstName: firstName,
         lastName: lastName,
+        proofCode: proofCode,
       );
     }
   }

@@ -24,8 +24,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _tabs = [
       Tab1Page(logoutCallback: widget.logoutCallback),
-      const Tab2Page(),
-      const Tab3Page(),
+      Tab2Page(logoutCallback: widget.logoutCallback,),
+      Tab3Page(logoutCallback: widget.logoutCallback,),
     ];
   }
 

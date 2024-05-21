@@ -19,6 +19,7 @@ class RegisterPage extends StatefulWidget {
   String confirmPassword;
   String firstName;
   String lastName;
+  var proofCode;
 
   RegisterPage({
     super.key,
@@ -34,6 +35,7 @@ class RegisterPage extends StatefulWidget {
     required this.confirmPassword,
     required this.firstName,
     required this.lastName,
+    required this.proofCode,
   });
 
   @override
@@ -47,6 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
   IconData passIcon = Icons.visibility;
   bool isButtonEnabled = false;
   final List<Club> _clubs = [];
+  int? clubId;
 
   @override
   void initState() {
@@ -133,8 +136,6 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  int? clubId; // Change the type of clubId to int?
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -202,7 +203,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           textAlign: TextAlign.left,
                           textDirection: TextDirection.ltr,
                           onChanged: (value) {
-                            widget.updateFirstName(value);
+                            widget.updateFirstName(value!);
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {

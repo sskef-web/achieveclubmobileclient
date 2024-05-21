@@ -1,4 +1,5 @@
 import 'package:achieveclubmobileclient/main.dart';
+import 'package:achieveclubmobileclient/pages/userPage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -7,11 +8,13 @@ import 'dart:convert';
 class ClubPage extends StatefulWidget {
   final int clubId;
   final String position;
+  final Function() logoutCallback;
 
-  const ClubPage({
+  ClubPage({
     super.key,
     required this.clubId,
     required this.position,
+    required this.logoutCallback
   });
 
   @override
@@ -76,6 +79,18 @@ class _ClubPageState extends State<ClubPage> {
         end: Alignment.bottomCenter,
       );
     }
+  }
+  void navigateToUser(int userId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            UserPage(
+              userId: userId,
+              logoutCallback: widget.logoutCallback,
+            ),
+      ),
+    );
   }
 
   @override
@@ -165,6 +180,9 @@ class _ClubPageState extends State<ClubPage> {
                   final user = sortedUsers[index];
 
                   return ListTile(
+                    onTap: () {
+                      navigateToUser(user['id']);
+                    },
                     leading: CircleAvatar(
                       backgroundImage: NetworkImage('https://sskef.site/${user['avatar']}'),
                     ),
