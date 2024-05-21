@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:achieveclubmobileclient/data/club.dart';
 import 'package:achieveclubmobileclient/main.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/painting.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
@@ -49,6 +47,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
   bool isPasswordHidden = true;
   final _formKey = GlobalKey<FormState>();
@@ -59,18 +58,18 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isEmailProofed = false;
 
   @override
-  void dispose() {
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     fetchClubs();
   }
 
+  @override
+  void dispose() {
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
 
   bool _isPasswordValid(String password) {
     final RegExp passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d).{6,}$');
@@ -216,8 +215,7 @@ class _RegisterPageState extends State<RegisterPage> {
       debugPrint('code send to ${email}');
     }
     else {
-      String errorMessage;
-      throw errorMessage = response.body;
+      throw response.body;
     }
   }
 
@@ -336,7 +334,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           textAlign: TextAlign.left,
                           textDirection: TextDirection.ltr,
                           onChanged: (value) {
-                            widget.updateFirstName(value!);
+                            setState(() {
+                              widget.firstName = value;
+                            });
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
@@ -366,7 +366,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           textAlign: TextAlign.left,
                           textDirection: TextDirection.ltr,
                           onChanged: (value) {
-                            widget.updateLastName(value);
+                            setState(() {
+                              widget.lastName = value;
+                            });
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
@@ -393,10 +395,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                 : null,
                           ),
                           keyboardType: TextInputType.emailAddress,
+                          controller: emailController,
                           textAlign: TextAlign.left,
                           textDirection: TextDirection.ltr,
                           onChanged: (value) {
-                            widget.updateEmail(value);
+                            setState(() {
+                              widget.email = value;
+                            });
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
@@ -427,7 +432,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           textAlign: TextAlign.left,
                           textDirection: TextDirection.ltr,
                           onChanged: (value) {
-                            widget.updatePassword(value);
+                            setState(() {
+                              widget.password = value;
+                            });
+                            debugPrint('${widget.password}');
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {

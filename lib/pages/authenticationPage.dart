@@ -17,13 +17,13 @@ class AuthenticationPage extends StatefulWidget {
 
 class _AuthenticationPageState extends State<AuthenticationPage> {
   bool _isLoggedIn = false;
-  late String email = '';
-  late String password = '';
-  late String confirmPassword = '';
-  late String firstName = '';
-  late String lastName = '';
-  late String avatarPath = 'StaticFiles/avatars/38c7301d-b794-44b4-935b-aeb70527b1a5.jpeg';
-  late int clubId = 0;
+  String email = '';
+  String password = '';
+  String confirmPassword = '';
+  String firstName = '';
+  String lastName = '';
+  String avatarPath = 'StaticFiles/avatars/38c7301d-b794-44b4-935b-aeb70527b1a5.jpeg';
+  int clubId = 0;
   var userId;
   var token;
   var refreshToken;

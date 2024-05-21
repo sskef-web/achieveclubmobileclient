@@ -300,14 +300,14 @@ class _Tab1Page extends State<Tab1Page> {
                                       borderRadius: BorderRadius.circular(8.0),
                                       child: Image.network(
                                         'https://sskef.site/${achievement.logoURL}',
-                                        width: 30.0,
-                                        height: 30.0,
+                                        width: 50.0,
+                                        height: 50.0,
                                       ),
                                     ),
-                                    SizedBox(height: 8.0),
+                                    const SizedBox(height: 8.0),
                                     Text(
                                       achievement.title,
-                                      style: TextStyle(fontSize: 10.0),
+                                      style: const TextStyle(fontSize: 12.0),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],
