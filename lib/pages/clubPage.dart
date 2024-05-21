@@ -104,7 +104,7 @@ class _ClubPageState extends State<ClubPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: clubData != null ? SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -195,7 +195,7 @@ class _ClubPageState extends State<ClubPage> {
             ],
           ),
         ),
-      ),
+      ) : const Center(child: CircularProgressIndicator()),
     );
   }
 }

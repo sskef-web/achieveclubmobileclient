@@ -2,9 +2,13 @@ import 'dart:convert';
 
 import 'package:achieveclubmobileclient/data/club.dart';
 import 'package:achieveclubmobileclient/main.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/painting.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+
+import '../items/fourDigitCodeInput.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function() registerCallback;
@@ -43,6 +47,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
 
   bool isPasswordHidden = true;
   final _formKey = GlobalKey<FormState>();
@@ -50,6 +56,14 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isButtonEnabled = false;
   final List<Club> _clubs = [];
   int? clubId;
+  bool isEmailProofed = false;
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -57,16 +71,6 @@ class _RegisterPageState extends State<RegisterPage> {
     fetchClubs();
   }
 
-  String getClubName(int clubId) {
-    switch (clubId) {
-      case 1:
-        return 'Клуб Двойной Чикаго';
-      case 2:
-        return 'Клуб Дворец';
-      default:
-        return '';
-    }
-  }
 
   bool _isPasswordValid(String password) {
     final RegExp passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d).{6,}$');
@@ -90,12 +94,6 @@ class _RegisterPageState extends State<RegisterPage> {
           passIcon = Icons.visibility_off;
           break;
       }
-    });
-  }
-
-  void updateConfirmPassword(String value) {
-    setState(() {
-      widget.confirmPassword = value;
     });
   }
 
@@ -134,6 +132,141 @@ class _RegisterPageState extends State<RegisterPage> {
     } catch (e) {
       throw Exception('Ошибка при загрузке клубов: $e');
     }
+  }
+
+  void _updateProofCode(String value) {
+    setState(() {
+      widget.proofCode = value;
+    });
+    debugPrint('${widget.proofCode}');
+  }
+
+  void showProofCodeDialog(BuildContext context, String email) async {
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text ('Подтверждение адреса электронной почты', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
+                Text ('Вам был отправлен код на Email - \n$email', textAlign: TextAlign.center,),
+                const SizedBox(height: 16.0),
+                FourDigitCodeInput(updateProofCode: _updateProofCode),
+                const SizedBox(height: 16.0,),
+                ElevatedButton(
+                  onPressed: widget.proofCode != 4 ? () {
+                    Navigator.of(dialogContext).pop();
+                    validateEmail(email, widget.proofCode);
+                  } : null,
+                  child: const Text('Отправить'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> validateEmail(String email, String proofCode) async {
+    var url = Uri.parse('${baseURL}auth/ValidateProofCode');
+
+    var body = jsonEncode({
+      'emailAddress': email,
+      'proofCode': proofCode,
+    });
+
+    var response = await http.post(url, body: body, headers: {
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      setState(() {
+        isEmailProofed == true;
+      });
+      showResultDialog(context, true);
+    }
+    else {
+      showResultDialog(context, false);
+      String errorMessage;
+      throw errorMessage = response.body;
+    }
+  }
+
+  Future<void> sendProofCode(String email) async {
+    var url = Uri.parse('${baseURL}auth/SendProofCode');
+
+    var body = jsonEncode(
+      email,
+    );
+
+    var response = await http.post(url, body: body, headers: {
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      debugPrint('code send to ${email}');
+    }
+    else {
+      String errorMessage;
+      throw errorMessage = response.body;
+    }
+  }
+
+  void showResultDialog(BuildContext context, bool isValidate) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                isValidate != false ?
+                const Text('Почта подтверждена', textAlign: TextAlign.center,) : const Text ('Ошибка!\nВведен не верный код', textAlign: TextAlign.center),
+                const SizedBox(height: 16.0,),
+                Row (
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        if (isValidate == true) {
+                          widget.registerCallback();
+                        }
+                      },
+                      child: const Center (child: Text('Продолжить')),
+                    ),
+                    const SizedBox(width: 8.0,),
+                    if (isValidate == false) ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        showProofCodeDialog(context, widget.email);
+                      },
+                      child: const Center (child: Text('Повторить')),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -181,18 +314,18 @@ class _RegisterPageState extends State<RegisterPage> {
                                 });
                                 widget.updateClubId(clubId!);
                               },
-                              hint: Text('Выберите клуб'),
+                              hint: const Text('Выберите клуб'),
                             ),
                           ),
                         ),
                         TextFormField(
-                          controller: TextEditingController.fromValue(
+                          /*controller: TextEditingController.fromValue(
                             TextEditingValue(
                               text: widget.firstName,
                               selection: TextSelection.collapsed(
                                   offset: widget.firstName.length),
                             ),
-                          ),
+                          ),*/
                           decoration: InputDecoration(
                             labelText: 'Имя',
                             errorText: widget.firstName.isNotEmpty && widget.firstName.length < 2
@@ -216,13 +349,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         ),
                         TextFormField(
-                          controller: TextEditingController.fromValue(
+                          /*controller: TextEditingController.fromValue(
                             TextEditingValue(
                               text: widget.lastName,
                               selection: TextSelection.collapsed(
                                   offset: widget.lastName.length),
                             ),
-                          ),
+                          ),*/
                           decoration: InputDecoration(
                             labelText: 'Фамилия',
                             errorText: widget.lastName.isNotEmpty && widget.lastName.length < 4
@@ -239,20 +372,20 @@ class _RegisterPageState extends State<RegisterPage> {
                             if (value?.isEmpty ?? true) {
                               return 'Фамилия обязательна для заполнения';
                             }
-                            if (value!.length < 4) {
+                            if (value!.length <= 3) {
                               return 'Фамилия должна содержать не менее 4 символов';
                             }
                             return null;
                           },
                         ),
                         TextFormField(
-                          controller: TextEditingController.fromValue(
+                          /*controller: TextEditingController.fromValue(
                             TextEditingValue(
                               text: widget.email,
                               selection: TextSelection.collapsed(
                                   offset: widget.email.length),
                             ),
-                          ),
+                          ),*/
                           decoration: InputDecoration(
                             labelText: 'Email',
                             errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
@@ -276,12 +409,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         ),
                         TextFormField(
-                          controller: TextEditingController.fromValue(
+                          /*controller: TextEditingController.fromValue(
                             TextEditingValue(
                               text: widget.password,
                               selection: TextSelection.collapsed(offset: widget.password.length),
                             ),
-                          ),
+                          ),*/
                           decoration: InputDecoration(
                             labelText: 'Пароль',
                             errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
@@ -289,6 +422,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 : null,
                           ),
                           keyboardType: TextInputType.text,
+                          controller: passwordController,
                           obscureText: true,
                           textAlign: TextAlign.left,
                           textDirection: TextDirection.ltr,
@@ -306,16 +440,17 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         ),
                         TextFormField(
-                          controller: TextEditingController.fromValue(
+                          /*controller: TextEditingController.fromValue(
                             TextEditingValue(
                               text: widget.confirmPassword,
                               selection: TextSelection.collapsed(
                                   offset: widget.confirmPassword.length),
                             ),
-                          ),
+                          ),*/
+                          controller: confirmPasswordController,
                           decoration: InputDecoration(
                             labelText: 'Подтвердите пароль',
-                            errorText: widget.confirmPassword!=widget.password
+                            errorText: confirmPasswordController.text != passwordController.text
                                 ? 'Пароли должны совпадать'
                                 : null,
                           ),
@@ -324,14 +459,16 @@ class _RegisterPageState extends State<RegisterPage> {
                           textAlign: TextAlign.left,
                           textDirection: TextDirection.ltr,
                           onChanged: (value) {
-                            updateConfirmPassword(value);
+                            setState(() {
+                              widget.confirmPassword = value;
+                            });
                             updateButtonEnabled();
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
                               return 'Подтверждение пароля обязательно для заполнения';
                             }
-                            if (value != widget.password) {
+                            if (value != passwordController.text) {
                               return 'Пароли не совпадают';
                             }
                             return null;
@@ -344,7 +481,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   ElevatedButton(
                     onPressed: (_formKey.currentState?.validate() ?? false) && clubId != null
                         ? () {
-                      widget.registerCallback();
+                      sendProofCode(widget.email);
+                      showProofCodeDialog(context, widget.email);
                     }
                         : null,
                     child: const Padding(

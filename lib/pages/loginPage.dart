@@ -49,10 +49,6 @@ class _LoginPageState extends State<LoginPage> {
   bool isButtonEnabled = false;
 
   void navigateToRegisterPage(BuildContext context) {
-    widget.email = '';
-    widget.password = '';
-    widget.firstName = '';
-    widget.lastName = '';
     Navigator.push(
       context,
       MaterialPageRoute(

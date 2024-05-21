@@ -181,8 +181,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     } else {
       //final responseJson = jsonDecode(response.body);
       //throw Exception('Failed to registrate: ${response.statusCode}');
-      String errorMessage;
-      throw errorMessage = response.body;
+      throw response.body;
     }
   }
 
