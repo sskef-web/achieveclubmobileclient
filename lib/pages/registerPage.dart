@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:achieveclubmobileclient/data/club.dart';
 import 'package:achieveclubmobileclient/main.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +20,7 @@ class RegisterPage extends StatefulWidget {
   String confirmPassword;
   String firstName;
   String lastName;
-  var proofCode;
+  String proofCode;
 
   RegisterPage({
     super.key,
@@ -55,6 +54,11 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isButtonEnabled = false;
   final List<Club> _clubs = [];
   int? clubId;
+  String? firstName;
+  String? email;
+  String? lastName;
+  String? password;
+  String? confirmPassword;
   bool isEmailProofed = false;
 
   @override
@@ -138,6 +142,40 @@ class _RegisterPageState extends State<RegisterPage> {
       widget.proofCode = value;
     });
     debugPrint('${widget.proofCode}');
+  }
+
+  void _updateEmail(String value) {
+    setState(() {
+      widget.email = value;
+    });
+    debugPrint('${widget.email}');
+  }
+
+  void _updateFirstName(String value) {
+    setState(() {
+      widget.firstName = value;
+    });
+    debugPrint('${widget.firstName}');
+  }
+  void _updateLastName(String value) {
+    setState(() {
+      widget.lastName = value;
+    });
+    debugPrint('${widget.lastName}');
+  }
+
+  void _updatePassword(String value) {
+    setState(() {
+      widget.lastName = value;
+    });
+    debugPrint('${widget.lastName}');
+  }
+
+  void _updateConfirmPassword(String value) {
+    setState(() {
+      widget.confirmPassword = value;
+    });
+    debugPrint('${widget.confirmPassword}');
   }
 
   void showProofCodeDialog(BuildContext context, String email) async {
@@ -240,7 +278,14 @@ class _RegisterPageState extends State<RegisterPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ElevatedButton(
+                    const SizedBox(width: 8.0,),
+                    isValidate == false ? ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        showProofCodeDialog(context, widget.email);
+                      },
+                      child: const Center (child: Text('Повторить')),
+                    ) : ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
                         if (isValidate == true) {
@@ -248,14 +293,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                       },
                       child: const Center (child: Text('Продолжить')),
-                    ),
-                    const SizedBox(width: 8.0,),
-                    if (isValidate == false) ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop();
-                        showProofCodeDialog(context, widget.email);
-                      },
-                      child: const Center (child: Text('Повторить')),
                     ),
                   ],
                 ),
@@ -335,8 +372,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           textDirection: TextDirection.ltr,
                           onChanged: (value) {
                             setState(() {
-                              widget.firstName = value;
+                              firstName = value;
                             });
+                            widget.updateFirstName(firstName!);
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
@@ -367,8 +405,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           textDirection: TextDirection.ltr,
                           onChanged: (value) {
                             setState(() {
-                              widget.lastName = value;
+                              lastName = value;
                             });
+                            widget.updateLastName(lastName!);
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
@@ -400,8 +439,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           textDirection: TextDirection.ltr,
                           onChanged: (value) {
                             setState(() {
-                              widget.email = value;
+                              email = value;
                             });
+                            widget.updateEmail(email!);
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
@@ -433,9 +473,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           textDirection: TextDirection.ltr,
                           onChanged: (value) {
                             setState(() {
-                              widget.password = value;
+                              password = value;
                             });
-                            debugPrint('${widget.password}');
+                            widget.updatePassword(password!);
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
@@ -468,7 +508,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           textDirection: TextDirection.ltr,
                           onChanged: (value) {
                             setState(() {
-                              widget.confirmPassword = value;
+                              confirmPassword = value;
                             });
                             updateButtonEnabled();
                           },
@@ -487,12 +527,11 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 16.0),
                   ElevatedButton(
-                    onPressed: (_formKey.currentState?.validate() ?? false) && clubId != null
-                        ? () {
-                      sendProofCode(widget.email);
-                      showProofCodeDialog(context, widget.email);
-                    }
-                        : null,
+                    onPressed: (_formKey.currentState?.validate() ?? false) && clubId != null ? () {
+                      debugPrint("\n\n\n\n${widget.email}\n\n\n\n");
+                        sendProofCode(email!);
+                        showProofCodeDialog(context, email!);
+                    } : null,
                     child: const Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text(

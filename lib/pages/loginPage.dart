@@ -6,18 +6,18 @@ import 'package:flutter/material.dart';
 class LoginPage extends StatefulWidget {
   final Function() loginCallback;
   final Function() registerCallback;
-  final Function(String) updateEmail;
-  final Function(String) updatePassword;
-  final Function(String) updateFirstName;
-  final Function(String) updateLastName;
-  final Function(int) updateClubId;
+  Function(String) updateEmail;
+  Function(String) updatePassword;
+  Function(String) updateFirstName;
+  Function(String) updateLastName;
+  Function(int) updateClubId;
   final Function(BuildContext) uploadAvatar;
   String email;
   String password;
   String confirmPassword;
   String firstName;
   String lastName;
-  var proofCode;
+  String proofCode;
 
   LoginPage({
     super.key,
@@ -54,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
       MaterialPageRoute(
         builder: (context) =>
             RegisterPage(
+              key: widget.key,
               registerCallback: widget.registerCallback,
               updateEmail: widget.updateEmail,
               updatePassword: widget.updatePassword,

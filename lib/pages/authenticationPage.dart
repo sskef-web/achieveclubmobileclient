@@ -28,7 +28,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   var token;
   var refreshToken;
   var savedCookies;
-  var proofCode;
+  String proofCode = '';
 
   @override
   void initState() {
@@ -152,21 +152,21 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   Future<LoginResponse> registrate(String email, String password,
-      String firstName, String lastName, String avatarPath, int clubId) async {
+      String firstName, String lastName, String avatarPath, int clubId, String proofCode) async {
     var url = Uri.parse('${baseURL}auth/registration');
 
     var body = jsonEncode({
       'firstName': firstName,
       'lastName': lastName,
       'clubId': clubId,
+      'password': password,
+      'avatarURL': avatarPath,
       'emailAndProof': {
         'emailAddress': email,
         'proofCode': '1111'
       },
-      'password': password,
-      'avatarURL': avatarPath,
     });
-
+    debugPrint('====== REG DATA ======\n$firstName\n$lastName\n$clubId\n$email\n$proofCode\n$password\n$avatarPath\n====== REG DATA ======');
     var response = await http.post(url, body: body, headers: {
       'Content-Type': 'application/json',
     });
@@ -222,32 +222,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   void _register() async {
-    if (email == '' ||
-        password == '' ||
-        firstName == '' ||
-        lastName == '' ||
-        clubId == 0) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Ошибка'),
-            content: const Text('Пожалуйста, заполните все поля'),
-            actions: [
-              TextButton(
-                child: const Text('ОК'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
+
       Navigator.pop(context, true);
       await registrate(
-          email, password, firstName, lastName, avatarPath, clubId);
+          email, password, firstName, lastName, avatarPath, clubId, proofCode);
       savedCookies = await loadCookies();
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -256,7 +234,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       setState(() {
         _isLoggedIn = true;
       });
-    }
   }
 
   void _logout() async {
@@ -273,24 +250,28 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   void _updateEmail(String value) {
     setState(() {
       email = value;
+      print('NEW EMAIL: $email');
     });
   }
 
   void _updatePassword(String value) {
     setState(() {
       password = value;
+      print('NEW PASS: $password');
     });
   }
 
   void _updateFirstName(String value) {
     setState(() {
       firstName = value;
+      print('NEW FIRSTNAME: $firstName');
     });
   }
 
   void _updateLastName(String value) {
     setState(() {
       lastName = value;
+      print('NEW LASTNAME: $lastName');
     });
   }
 
@@ -345,6 +326,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       return HomePage(logoutCallback: _logout);
     } else {
       return LoginPage(
+        key: widget.key,
         loginCallback: _login,
         registerCallback: _register,
         updateEmail: _updateEmail,
