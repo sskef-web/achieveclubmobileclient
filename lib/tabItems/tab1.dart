@@ -28,8 +28,6 @@ class _Tab1Page extends State<Tab1Page> {
   late String Avatar = '';
   var userId;
   List<int> selectedAchievementIds = [];
-  //int _completedAchievementsCount = 0;
-  //int _totalAchievementsCount = 0;
 
   @override
   void initState() {
@@ -92,13 +90,12 @@ class _Tab1Page extends State<Tab1Page> {
       await refreshToken();
       return fetchCompletedAchievements();
     } else {
-      throw Exception('Failed to load completed achievements');
+      throw Exception('Ошибка при загрузке выполненных достижений');
     }
   }
 
   Future<void> saveCookies(String cookies) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //await prefs.remove('cookies');
     await prefs.setString('cookies', cookies);
   }
 
@@ -121,13 +118,23 @@ class _Tab1Page extends State<Tab1Page> {
         await saveCookies(newCookies);
       }
     } else {
-      throw Exception(
-          'Failed to refresh Token (StatusCode: ${response.statusCode})\n${response.body}');
+      throw Exception('Ошибка обновления токена (Код: ${response.statusCode}');
     }
   }
 
+  Future<void> updatePage() async{
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (BuildContext context) =>
+              HomePage(logoutCallback: widget.logoutCallback)),
+    );
+  }
+
   Future<User> fetchUser() async {
-    try {
       var cookies = await loadCookies();
       userId = extractUserIdFromCookies(cookies!);
       var url = Uri.parse('${baseURL}users/${userId}');
@@ -143,23 +150,11 @@ class _Tab1Page extends State<Tab1Page> {
       }
       else if (response.statusCode == 401) {
         await refreshToken();
+        await updatePage();
         return fetchUser();
       } else {
-        throw Exception('Failed to load user');
+        throw Exception('Ошибка при загрузке пользователя');
       }
-    }
-    catch (e) {
-      if (Navigator.canPop(context)) {
-        Navigator.pop(context);
-      }
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (BuildContext context) =>
-                HomePage(logoutCallback: widget.logoutCallback)),
-      );
-      rethrow;
-    }
   }
 
   Future<Achievement?> getAchievementById(int id) async {
@@ -381,7 +376,7 @@ class _Tab1Page extends State<Tab1Page> {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((item) => Achievement.fromJson(item)).toList();
     } else {
-      throw Exception('Failed to load achievements');
+      throw Exception('Ошибка при загрузке достижений');
     }
   }
 
@@ -415,10 +410,10 @@ class _Tab1Page extends State<Tab1Page> {
             Avatar = imageUrl;
           });
         } else {
-          print('Error uploading avatar. Status code: ${response.statusCode}');
+          throw Exception('Ошибка при смене аватара. Код: ${response.statusCode}');
         }
       } catch (error) {
-        print('Error uploading avatar: $error');
+        throw Exception('Ошибка при смене аватара: $error');
       }
     }
   }
@@ -470,8 +465,7 @@ class _Tab1Page extends State<Tab1Page> {
                       children: [
                         CircleAvatar(
                           radius: 80.0,
-                          backgroundImage:
-                          NetworkImage('https://sskef.site/$Avatar'),
+                          backgroundImage: NetworkImage('https://sskef.site/$Avatar'),
                           child: InkWell(
                             onTap: () {
                               _uploadAvatar(context);
@@ -497,7 +491,8 @@ class _Tab1Page extends State<Tab1Page> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CircleAvatar(
-                          radius: 40.0,
+                          radius: 50.0,
+                          backgroundColor: Colors.grey[200],
                           backgroundImage: NetworkImage(
                               'https://sskef.site/${user.clubLogo}'),
                         ),
@@ -640,8 +635,8 @@ class _Tab1Page extends State<Tab1Page> {
               ),
             );
           } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}\n ${snapshot.stackTrace}'),
+            return const Center(
+              child: Text('Ошибка при загрузке страницы (Snapshot error)'),
             );
           } else {
             return const Center(

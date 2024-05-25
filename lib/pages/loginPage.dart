@@ -457,7 +457,9 @@ class _LoginPageState extends State<LoginPage> {
                       suffixIcon: IconButton(
                         icon: Icon(passIcon),
                         onPressed: () {
-                          updatePasswordVisibility();
+                          setState(() {
+                            updatePasswordVisibility();
+                          });
                         },
                       ),
                       errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))

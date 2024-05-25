@@ -510,7 +510,7 @@ class _RegisterPageState extends State<RegisterPage> {
             } else if (snapshot.hasError) {
               return const Text('Ошибка при загрузке клубов');
             } else {
-              return const CircularProgressIndicator();
+              return const Center (child: CircularProgressIndicator());
             }
           },
         ),

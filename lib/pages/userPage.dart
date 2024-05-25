@@ -216,6 +216,7 @@ class _UserPageState extends State<UserPage> {
                       children: [
                         CircleAvatar(
                           radius: 40.0,
+                          backgroundColor: Colors.grey[200],
                           backgroundImage: NetworkImage(
                               'https://sskef.site/${user.clubLogo}'),
                         ),
@@ -285,9 +286,7 @@ class _UserPageState extends State<UserPage> {
                                     completedAchievement.achievementId);
 
                             return AchievementItem(
-                              onTap: () {
-                                setState(() {});
-                              },
+                              onTap: null,
                               logo: 'https://sskef.site/${achievement.logoURL}',
                               title: achievement.title,
                               description: achievement.description,

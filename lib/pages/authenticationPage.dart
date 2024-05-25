@@ -201,8 +201,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       var refreshToken = extractRefreshTokenFromCookies(cookies);
       return LoginResponse(token!, userId!, refreshToken!, response.body);
     } else {
-      //final responseJson = jsonDecode(response.body);
-      //throw Exception('Failed to registrate: ${response.statusCode}');
       throw response.body;
     }
   }

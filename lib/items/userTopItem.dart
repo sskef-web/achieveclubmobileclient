@@ -61,31 +61,32 @@ class UserTopItem extends StatelessWidget {
             ],
           ),
           trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 60.0,
-                height: 60.0,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage('https://sskef.site/$clubLogo'),
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 55.0,
+                  height: 55.0,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage('https://sskef.site/$clubLogo'),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 4.0),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text('# $topPosition', textAlign: TextAlign.center, textScaler: const TextScaler.linear(1.8)),
-                ],
-              ),
-            ],
+                const SizedBox(width: 4.0),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('# $topPosition', textAlign: TextAlign.center, textScaler: const TextScaler.linear(1.8)),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
     );
   }
 }
