@@ -144,42 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
     debugPrint('${widget.proofCode}');
   }
 
-  void _updateEmail(String value) {
-    setState(() {
-      widget.email = value;
-    });
-    debugPrint('${widget.email}');
-  }
-
-  void _updateFirstName(String value) {
-    setState(() {
-      widget.firstName = value;
-    });
-    debugPrint('${widget.firstName}');
-  }
-  void _updateLastName(String value) {
-    setState(() {
-      widget.lastName = value;
-    });
-    debugPrint('${widget.lastName}');
-  }
-
-  void _updatePassword(String value) {
-    setState(() {
-      widget.lastName = value;
-    });
-    debugPrint('${widget.lastName}');
-  }
-
-  void _updateConfirmPassword(String value) {
-    setState(() {
-      widget.confirmPassword = value;
-    });
-    debugPrint('${widget.confirmPassword}');
-  }
-
   void showProofCodeDialog(BuildContext context, String email) async {
-
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {

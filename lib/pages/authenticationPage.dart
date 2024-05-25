@@ -88,6 +88,28 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     return prefs.getString('cookies');
   }
 
+  Future<void> _changePassword(String email, String password) async {
+    var url = Uri.parse('${baseURL}auth/ChangePassword');
+
+    var body = jsonEncode({
+    'emailAndProof': {
+    'emailAddress': email,
+    'proofCode': proofCode
+    },
+      'password': password
+    });
+    var response = await http.patch(url, body: body, headers: {
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode != 200) {
+      throw response.body;
+    }
+    else {
+
+    }
+  }
+
   Future<LoginResponse> login(String email, String password) async {
     var url = Uri.parse('${baseURL}auth/login');
     var body = jsonEncode({
@@ -185,6 +207,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     }
   }
 
+  void changePassword() async {
+    debugPrint('EMAIL: ${email} | PASSWORD: ${password}');
+    _changePassword(email, password);
+  }
+
   void _login() async {
     if (email == '' || password == '') {
       showDialog(
@@ -268,6 +295,13 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     });
   }
 
+  void _updateProofCode(String value) {
+    setState(() {
+      proofCode = value;
+      print('NEW PROOFCODE: $proofCode');
+    });
+  }
+
   void _updateLastName(String value) {
     setState(() {
       lastName = value;
@@ -330,9 +364,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         loginCallback: _login,
         registerCallback: _register,
         updateEmail: _updateEmail,
+        changePassword: changePassword,
         updatePassword: _updatePassword,
         updateFirstName: _updateFirstName,
         updateLastName: _updateLastName,
+        updateProofCode: _updateProofCode,
         updateClubId: _updateClubId,
         uploadAvatar: _uploadAvatar,
         email: email,
