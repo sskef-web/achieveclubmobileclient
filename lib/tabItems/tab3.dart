@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 class Tab3Page extends StatefulWidget {
   final Function() logoutCallback;
-  Tab3Page({
+  const Tab3Page({
     super.key,
     required this.logoutCallback
   });

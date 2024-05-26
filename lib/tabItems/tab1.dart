@@ -137,7 +137,7 @@ class _Tab1Page extends State<Tab1Page> {
   Future<User> fetchUser() async {
       var cookies = await loadCookies();
       userId = extractUserIdFromCookies(cookies!);
-      var url = Uri.parse('${baseURL}users/${userId}');
+      var url = Uri.parse('${baseURL}users/$userId');
       appTitle = 'Профиль';
 
       var response = await http.get(url, headers: {
@@ -284,10 +284,10 @@ class _Tab1Page extends State<Tab1Page> {
                                 width: 100.0,
                                 height: 120.0,
                                 decoration: BoxDecoration(
-                                  color: Color.fromRGBO(128, 128, 128, 0.2),
+                                  color: const Color.fromRGBO(128, 128, 128, 0.2),
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
-                                padding: EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [

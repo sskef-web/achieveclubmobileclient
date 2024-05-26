@@ -141,7 +141,7 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() {
       widget.proofCode = value;
     });
-    debugPrint('${widget.proofCode}');
+    debugPrint(widget.proofCode);
   }
 
   void showProofCodeDialog(BuildContext context, String email) async {
@@ -215,7 +215,7 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     if (response.statusCode == 200) {
-      debugPrint('code send to ${email}');
+      debugPrint('code send to $email');
     }
     else {
       throw response.body;
@@ -297,7 +297,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                     child: Column(
                       children: [
-                        Container(
+                        SizedBox(
                           width: double.infinity, // Set the width to full width
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<int>(

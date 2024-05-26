@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class HomePage extends StatefulWidget {
   final Function() logoutCallback;
 
-  const HomePage({Key? key, required this.logoutCallback}) : super(key: key);
+  const HomePage({super.key, required this.logoutCallback});
 
   @override
   _HomePageState createState() => _HomePageState();

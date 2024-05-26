@@ -107,21 +107,21 @@ class _LoginPageState extends State<LoginPage> {
       widget.proofCode = value;
     });
     widget.updateProofCode(value);
-    debugPrint('${widget.proofCode}');
+    debugPrint(widget.proofCode);
   }
   void _updatePassword(String value) {
     setState(() {
       widget.password = value;
     });
     widget.updatePassword(value);
-    debugPrint('${widget.password}');
+    debugPrint(widget.password);
   }
 
   void _updateEmail(String value) {
     widget.email = value;
     email = value;
     widget.updateEmail(value);
-    debugPrint('${widget.email}');
+    debugPrint(widget.email);
   }
 
   Future<void> validateEmail(String email, String proofCode) async {
@@ -144,8 +144,7 @@ class _LoginPageState extends State<LoginPage> {
     }
     else {
       showResultDialog(context, false);
-      String errorMessage;
-      throw errorMessage = response.body;
+      throw response.body;
     }
   }
 
@@ -202,8 +201,8 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     Navigator.of(dialogContext).pop();
                     debugPrint("\n\n\n\n${widget.email}\n\n\n\n");
-                    sendProofCode(email!);
-                    showProofCodeDialog(context, email!);
+                    sendProofCode(email);
+                    showProofCodeDialog(context, email);
                   },
                   child: const Text('Отправить'),
                 ),
@@ -228,7 +227,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (response.statusCode == 200) {
-      debugPrint('code send to ${email}');
+      debugPrint('code send to $email');
     }
     else {
       throw response.body;
@@ -279,7 +278,7 @@ class _LoginPageState extends State<LoginPage> {
                   onChanged: (value) {
                     setState(() {
                       _updatePassword(value);
-                      debugPrint('${widget.password}');
+                      debugPrint(widget.password);
                     });
                   },
                   validator: (value) {

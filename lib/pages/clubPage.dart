@@ -10,7 +10,7 @@ class ClubPage extends StatefulWidget {
   final String position;
   final Function() logoutCallback;
 
-  ClubPage({
+  const ClubPage({
     super.key,
     required this.clubId,
     required this.position,

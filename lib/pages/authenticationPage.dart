@@ -206,7 +206,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   void changePassword() async {
-    debugPrint('EMAIL: ${email} | PASSWORD: ${password}');
+    debugPrint('EMAIL: $email | PASSWORD: $password');
     _changePassword(email, password);
   }
 
