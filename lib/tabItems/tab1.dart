@@ -78,6 +78,7 @@ class _Tab1Page extends State<Tab1Page> {
   Future<List<CompletedAchievement>> fetchCompletedAchievements() async {
     var url = Uri.parse('${baseURL}completedachievements/current');
     var cookies = await loadCookies();
+    appTitle = "Профиль";
 
     var response = await http.get(url, headers: {
       'Cookie': cookies!,
@@ -107,6 +108,7 @@ class _Tab1Page extends State<Tab1Page> {
   Future<void> refreshToken() async {
     var refreshUrl = Uri.parse('${baseURL}auth/refresh');
     var cookies = await loadCookies();
+    appTitle = "Профиль";
 
     var response = await http.get(refreshUrl, headers: {
       'Cookie': cookies!,
