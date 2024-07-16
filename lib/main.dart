@@ -1,7 +1,7 @@
 import 'package:achieveclubmobileclient/pages/authenticationPage.dart';
 import 'package:flutter/material.dart';
 
-String appTitle = "Авторизация";
+String appTitle = "Autoryzacja";
 String baseURL = 'https://sskef.site/api/';
 
 void main() {

@@ -55,13 +55,13 @@ class _HomePageState extends State<HomePage> {
             _currentIndex = index;
             switch (_currentIndex) {
               case 0:
-                appTitle = 'Профиль';
+                appTitle = 'Profil';
                 break;
               case 1:
-                appTitle = 'Топ 100 пользователей';
+                appTitle = 'Top 100 użytkowników';
                 break;
               case 2:
-                appTitle = 'Топ клубов';
+                appTitle = 'Top kluby';
                 break;
             }
           });
@@ -69,15 +69,15 @@ class _HomePageState extends State<HomePage> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Профиль',
+            label: 'Profil',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.groups),
-            label: 'Топ 100 пользователей',
+            label: 'Top 100 użytkowników',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.apartment),
-            label: 'Топ клубов',
+            label: 'Top kluby',
           ),
         ],
       ),

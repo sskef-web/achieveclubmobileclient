@@ -64,7 +64,7 @@ class _Tab3Page extends State<Tab3Page> {
 
       return clubList;
     } else {
-      throw Exception('Failed to fetch clubs');
+      throw Exception('Błąd podczas ładowania klubów');
     }
   }
 
@@ -107,7 +107,7 @@ class _Tab3Page extends State<Tab3Page> {
             ),
           );
         } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          return Text('Błąd: ${snapshot.error}');
         } else {
           return const Center(child: CircularProgressIndicator(),);
         }

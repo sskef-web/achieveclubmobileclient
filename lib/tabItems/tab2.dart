@@ -41,7 +41,7 @@ class _Tab2Page extends State<Tab2Page> {
       }
       return users;
     } else {
-      throw Exception('Failed to load user');
+      throw Exception('Błąd podczas ładowania użytkownika');
     }
   }
 
@@ -101,7 +101,7 @@ class _Tab2Page extends State<Tab2Page> {
               ),
             );
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Text('Błąd: ${snapshot.error}');
           } else {
             return const Center (child:CircularProgressIndicator());
           }

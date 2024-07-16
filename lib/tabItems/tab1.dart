@@ -78,7 +78,6 @@ class _Tab1Page extends State<Tab1Page> {
   Future<List<CompletedAchievement>> fetchCompletedAchievements() async {
     var url = Uri.parse('${baseURL}completedachievements/current');
     var cookies = await loadCookies();
-    appTitle = "Профиль";
 
     var response = await http.get(url, headers: {
       'Cookie': cookies!,
@@ -86,12 +85,15 @@ class _Tab1Page extends State<Tab1Page> {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        appTitle = "Profil";
+      });
       return data.map((item) => CompletedAchievement.fromJson(item)).toList();
     } else if (response.statusCode == 401) {
       await refreshToken();
       return fetchCompletedAchievements();
     } else {
-      throw Exception('Ошибка при загрузке выполненных достижений');
+      throw Exception('Błąd ładowania ukończonych osiągnięć');
     }
   }
 
@@ -108,7 +110,7 @@ class _Tab1Page extends State<Tab1Page> {
   Future<void> refreshToken() async {
     var refreshUrl = Uri.parse('${baseURL}auth/refresh');
     var cookies = await loadCookies();
-    appTitle = "Профиль";
+    appTitle = "Profil";
 
     var response = await http.get(refreshUrl, headers: {
       'Cookie': cookies!,
@@ -120,7 +122,7 @@ class _Tab1Page extends State<Tab1Page> {
         await saveCookies(newCookies);
       }
     } else {
-      throw Exception('Ошибка обновления токена (Код: ${response.statusCode}');
+      throw Exception('Błąd aktualizacji tokena (kod: ${response.statusCode}');
     }
   }
 
@@ -140,7 +142,7 @@ class _Tab1Page extends State<Tab1Page> {
       var cookies = await loadCookies();
       userId = extractUserIdFromCookies(cookies!);
       var url = Uri.parse('${baseURL}users/$userId');
-      appTitle = 'Профиль';
+      appTitle = 'Profil';
 
       var response = await http.get(url, headers: {
         'Cookie': cookies,
@@ -155,7 +157,7 @@ class _Tab1Page extends State<Tab1Page> {
         await updatePage();
         return fetchUser();
       } else {
-        throw Exception('Ошибка при загрузке пользователя');
+        throw Exception('Błąd podczas ładowania użytkownika');
       }
   }
 
@@ -205,7 +207,7 @@ class _Tab1Page extends State<Tab1Page> {
                   onPressed: () {
                     Navigator.of(dialogContext).pop();
                   },
-                  child: const Text('Закрыть'),
+                  child: const Text('Zamknij'),
                 ),
               ],
             ),
@@ -263,7 +265,7 @@ class _Tab1Page extends State<Tab1Page> {
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  'Достижения: ${selectedAchievementIds.length}',
+                  'Osiągnięcia: ${selectedAchievementIds.length}',
                   style: const TextStyle(fontSize: 16.0),
                   textAlign: TextAlign.center,
                 ),
@@ -332,7 +334,7 @@ class _Tab1Page extends State<Tab1Page> {
                 ),
                 const SizedBox(height: 8.0),
                 const Text(
-                  'Пожалуйста, покажите QR-код тренеру',
+                  'Prosimy o pokazanie kodu QR trenerowi.',
                   style: TextStyle(fontSize: 16.0),
                   textAlign: TextAlign.center,
                 ),
@@ -351,7 +353,7 @@ class _Tab1Page extends State<Tab1Page> {
                               HomePage(logoutCallback: widget.logoutCallback)),
                     );
                   },
-                  child: const Text('Закрыть'),
+                  child: const Text('Zamknij'),
                 ),
               ],
             ),

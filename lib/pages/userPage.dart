@@ -69,7 +69,7 @@ class _UserPageState extends State<UserPage> {
       }
     } else {
       throw Exception(
-          'Failed to refresh Token (StatusCode: ${response.statusCode})\n${response.body}');
+          'Błąd podczas aktualizacji tokena (Kod statusu: ${response.statusCode})\n${response.body}');
     }
   }
 
@@ -88,7 +88,7 @@ class _UserPageState extends State<UserPage> {
       await refreshToken();
       return fetchCompletedAchievements();
     } else {
-      throw Exception('Failed to load completed achievements');
+      throw Exception('Błąd ładowania ukończonych osiągnięć');
     }
   }
 
@@ -109,7 +109,7 @@ class _UserPageState extends State<UserPage> {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((item) => Achievement.fromJson(item)).toList();
     } else {
-      throw Exception('Failed to load achievements');
+      throw Exception('Błąd ładowania osiągnięć');
     }
   }
 
@@ -117,7 +117,7 @@ class _UserPageState extends State<UserPage> {
     try {
       var cookies = await loadCookies();
       var url = Uri.parse('${baseURL}users/${widget.userId}');
-      appTitle = 'Профиль';
+      appTitle = 'Profil';
 
       var response = await http.get(url, headers: {
         'Cookie': cookies!,
@@ -131,7 +131,7 @@ class _UserPageState extends State<UserPage> {
         await refreshToken();
         return fetchUser();
       } else {
-        throw Exception('Failed to load user');
+        throw Exception('Błąd podczas ładowania użytkownika');
       }
     }
     catch (e) {
@@ -166,7 +166,7 @@ class _UserPageState extends State<UserPage> {
       appBar: AppBar(
         title: const Center(
           child: Text(
-            'Профиль пользователя',
+            'Profil użytkownika',
             textAlign: TextAlign.center,
           ),
         ),
@@ -238,14 +238,14 @@ class _UserPageState extends State<UserPage> {
                       child: Column(
                         children: [
                           Text(
-                            'Выполнено достижений: ${completedAchievements.length}',
+                            'Osiągnięcia zrealizowane: ${completedAchievements.length}',
                             style: const TextStyle(
                               fontSize: 18.0,
                             ),
                           ),
                           const SizedBox(height: 8.0),
                           Text(
-                            'Процент выполненных достижений: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
+                            'Procent osiągniętych wyników: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18.0,
@@ -263,7 +263,7 @@ class _UserPageState extends State<UserPage> {
                     ),
                     const SizedBox(height: 8.0),
                     const Text(
-                      'Завершенные достижения:',
+                      'Ukończone osiągnięcia:',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -300,7 +300,7 @@ class _UserPageState extends State<UserPage> {
                     ),
                     const SizedBox(height: 8.0),
                     const Text(
-                      'Невыполненные достижения:',
+                      'Niespełnione osiągnięcia:',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -342,7 +342,7 @@ class _UserPageState extends State<UserPage> {
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('Error: ${snapshot.error}\n ${snapshot.stackTrace}'),
+              child: Text('Błąd: ${snapshot.error}\n ${snapshot.stackTrace}'),
             );
           } else {
             return const Center(

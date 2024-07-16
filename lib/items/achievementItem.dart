@@ -56,7 +56,7 @@ class _AchievementItemState extends State<AchievementItem> {
             const SizedBox(height: 4.0),
             Text('XP: ${widget.xp}'),
             const SizedBox(height: 4.0),
-            Text('Процент выполнения: ${widget.completionRatio}%'),
+            Text('Procent realizacji: ${widget.completionRatio}%'),
           ],
         ),
       ),
