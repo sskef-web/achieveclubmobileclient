@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../main.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Tab1Page extends StatefulWidget {
   final Function() logoutCallback;
@@ -519,14 +520,14 @@ class _Tab1Page extends State<Tab1Page> {
                       child: Column(
                         children: [
                           Text(
-                            'Выполнено достижений: ${completedAchievements.length}',
+                            'Osiągnięcia zrealizowane: ${completedAchievements.length}',
                             style: const TextStyle(
                               fontSize: 18.0,
                             ),
                           ),
                           const SizedBox(height: 8.0),
                           Text(
-                            'Процент выполненных достижений: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
+                            'Procent osiągniętych wyników: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18.0,
@@ -544,7 +545,7 @@ class _Tab1Page extends State<Tab1Page> {
                     ),
                     const SizedBox(height: 8.0),
                     const Text(
-                      'Завершенные достижения:',
+                      'Ukończone osiągnięcia:',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -583,7 +584,7 @@ class _Tab1Page extends State<Tab1Page> {
                     ),
                     const SizedBox(height: 8.0),
                     const Text(
-                      'Невыполненные достижения:',
+                      'Niespełnione osiągnięcia:',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -639,8 +640,8 @@ class _Tab1Page extends State<Tab1Page> {
               ),
             );
           } else if (snapshot.hasError) {
-            return const Center(
-              child: Text('Ошибка при загрузке страницы (Snapshot error)'),
+            return Center(
+              child: Text('Błąd podczas ładowania strony (Snapshot error) ${AppLocalizations.of(context)!.appTitle}'),
             );
           } else {
             return const Center(

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
 
@@ -130,6 +131,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     } else {
       final responseJson = jsonDecode(response.body);
       if (responseJson['title'] == 'Bad Request') {
+        debugPrint(responseJson.toString());
         throw showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -352,10 +354,19 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     }
   }
 
-  @override
+  Widget _buildHomePage() {
+    setState(() {
+      appTitle = "Profil";
+    });
+    return HomePage(
+      logoutCallback: _logout,
+    );
+  }
+
+    @override
   Widget build(BuildContext context) {
     if (_isLoggedIn) {
-      return HomePage(logoutCallback: _logout);
+      return _buildHomePage();
     } else {
       return LoginPage(
         key: widget.key,
