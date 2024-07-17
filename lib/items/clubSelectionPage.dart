@@ -48,7 +48,7 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
         widget.clubId = clubs.isNotEmpty ? clubs[0].id : 0;
       });
     } else {
-      throw Exception('Failed to fetch club titles');
+      throw Exception('Nie udało się pobrać tytułów klubowych');
     }
   }
 
@@ -77,7 +77,7 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
             },
           ),
           const SizedBox(height: 16),
-          Text('Selected Club ID: ${widget.clubId}'),
+          Text('Wybrany identyfikator klubu: ${widget.clubId}'),
         ],
       ),
     );

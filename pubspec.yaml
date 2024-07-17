@@ -30,6 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   shared_preferences: ^2.0.8
   flutter_hooks: ^0.20.5
   qr_flutter:
@@ -40,6 +43,7 @@ dependencies:
   image_picker: ^1.1.1
   dio: ^5.4.3+1
   email_validator: ^2.0.1
+
 
 dev_dependencies:
   flutter_test:
@@ -57,6 +61,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

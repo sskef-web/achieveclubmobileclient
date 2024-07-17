@@ -130,10 +130,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
         return clubs;
       } else {
-        throw Exception('Ошибка при загрузке клубов: ${response.statusCode}');
+        throw Exception('Błąd podczas ładowania klubów: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Ошибка при загрузке клубов: $e');
+      throw Exception('Błąd podczas ładowania klubów: $e');
     }
   }
 
@@ -158,8 +158,8 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text ('Подтверждение адреса электронной почты', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
-                Text ('Вам был отправлен код на Email - \n$email', textAlign: TextAlign.center,),
+                const Text ('Potwierdzenie adresu e-mail', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
+                Text ('Otrzymałeś kod na adres e-mail - \n$email', textAlign: TextAlign.center,),
                 const SizedBox(height: 16.0),
                 FourDigitCodeInput(updateProofCode: _updateProofCode),
                 const SizedBox(height: 16.0,),
@@ -168,7 +168,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     Navigator.of(dialogContext).pop();
                     validateEmail(email, widget.proofCode);
                   } : null,
-                  child: const Text('Отправить'),
+                  child: const Text('Wyślij'),
                 ),
               ],
             ),
@@ -237,7 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 isValidate != false ?
-                const Text('Почта подтверждена', textAlign: TextAlign.center,) : const Text ('Ошибка!\nВведен не верный код', textAlign: TextAlign.center),
+                const Text('Poczta potwierdzona.', textAlign: TextAlign.center,) : const Text ('Błąd!\nWprowadzono nieprawidłowy kod', textAlign: TextAlign.center),
                 const SizedBox(height: 16.0,),
                 Row (
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -249,7 +249,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Navigator.of(dialogContext).pop();
                         showProofCodeDialog(context, widget.email);
                       },
-                      child: const Center (child: Text('Повторить')),
+                      child: const Center (child: Text('Powtórzenie')),
                     ) : ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
@@ -257,7 +257,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           widget.registerCallback();
                         }
                       },
-                      child: const Center (child: Text('Продолжить')),
+                      child: const Center (child: Text('Ciąg dalszy nastąpi')),
                     ),
                   ],
                 ),
@@ -273,7 +273,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Регистрация'),
+        title: const Text('Rejestracja'),
         centerTitle: true,
       ),
       body: Padding(
@@ -314,7 +314,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 });
                                 widget.updateClubId(clubId!);
                               },
-                              hint: const Text('Выберите клуб'),
+                              hint: const Text('Wybierz klub'),
                             ),
                           ),
                         ),
@@ -327,9 +327,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),*/
                           decoration: InputDecoration(
-                            labelText: 'Имя',
+                            labelText: 'Nazwa',
                             errorText: widget.firstName.isNotEmpty && widget.firstName.length < 2
-                                ? 'Имя должно содержать не менее 2 символов'
+                                ? 'Nazwa musi składać się z co najmniej 2 znaków'
                                 : null,
                           ),
                           keyboardType: TextInputType.text,
@@ -343,10 +343,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return 'Имя обязательно для заполнения';
+                              return 'Wymagana nazwa';
                             }
                             if (value!.length < 2) {
-                              return 'Имя должно содержать не менее 2 символов';
+                              return 'Nazwa musi składać się z co najmniej 2 znaków';
                             }
                             return null;
                           },
@@ -360,9 +360,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),*/
                           decoration: InputDecoration(
-                            labelText: 'Фамилия',
+                            labelText: 'Nazwisko',
                             errorText: widget.lastName.isNotEmpty && widget.lastName.length < 4
-                                ? 'Фамилия должна содержать не менее 4 символов'
+                                ? 'Nazwisko musi składać się z co najmniej 4 znaków'
                                 : null,
                           ),
                           keyboardType: TextInputType.text,
@@ -376,10 +376,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return 'Фамилия обязательна для заполнения';
+                              return 'Nazwisko jest obowiązkowe';
                             }
                             if (value!.length <= 3) {
-                              return 'Фамилия должна содержать не менее 4 символов';
+                              return 'Nazwisko musi składać się z co najmniej 4 znaków';
                             }
                             return null;
                           },
@@ -393,9 +393,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),*/
                           decoration: InputDecoration(
-                            labelText: 'Email',
+                            labelText: 'E-mail',
                             errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
-                                ? 'Некорректный адрес электронной почты'
+                                ? 'Nieprawidłowy adres e-mail'
                                 : null,
                           ),
                           keyboardType: TextInputType.emailAddress,
@@ -410,10 +410,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return 'Email обязателен для заполнения';
+                              return 'Wymagany jest adres e-mail';
                             }
                             if (!EmailValidator.validate(value!)) {
-                              return 'Почта должна быть валидной';
+                              return 'Poczta musi być ważna';
                             }
                             return null;
                           },
@@ -426,9 +426,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),*/
                           decoration: InputDecoration(
-                            labelText: 'Пароль',
+                            labelText: 'Hasło',
                             errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
-                                ? 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру'
+                                ? 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra'
                                 : null,
                           ),
                           keyboardType: TextInputType.text,
@@ -444,10 +444,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return 'Пароль обязателен для заполнения';
+                              return 'Hasło jest obowiązkowe';
                             }
                             if (value!.length < 6 || !_isPasswordValid(value)) {
-                              return 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру';
+                              return 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra';
                             }
                             return null;
                           },
@@ -462,9 +462,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),*/
                           controller: confirmPasswordController,
                           decoration: InputDecoration(
-                            labelText: 'Подтвердите пароль',
+                            labelText: 'Potwierdź hasło',
                             errorText: confirmPasswordController.text != passwordController.text
-                                ? 'Пароли должны совпадать'
+                                ? 'Hasła muszą być zgodne'
                                 : null,
                           ),
                           keyboardType: TextInputType.text,
@@ -479,10 +479,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return 'Подтверждение пароля обязательно для заполнения';
+                              return 'Potwierdzenie hasła jest obowiązkowe';
                             }
                             if (value != passwordController.text) {
-                              return 'Пароли не совпадают';
+                              return 'Hasła nie są zgodne';
                             }
                             return null;
                           },
@@ -500,7 +500,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: const Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text(
-                        'Зарегистрироваться',
+                        'Zarejestruj się',
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
@@ -508,7 +508,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               );
             } else if (snapshot.hasError) {
-              return const Text('Ошибка при загрузке клубов');
+              return const Text('Błąd podczas ładowania klubów');
             } else {
               return const Center (child: CircularProgressIndicator());
             }

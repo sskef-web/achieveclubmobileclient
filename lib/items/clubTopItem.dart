@@ -44,8 +44,8 @@ class ClubTopItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Клуб "$clubName"', textScaler: const TextScaler.linear(1.3)),
-                  Text('Средний опыт: $xp XP', textScaler: const TextScaler.linear(1.3)),
+                  Text('Klub "$clubName"', textScaler: const TextScaler.linear(1.3)),
+                  Text('Średnie doświadczenie: $xp XP', textScaler: const TextScaler.linear(1.3)),
                 ],
               ),
             ],

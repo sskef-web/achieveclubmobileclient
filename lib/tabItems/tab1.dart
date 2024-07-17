@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../main.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Tab1Page extends StatefulWidget {
   final Function() logoutCallback;
@@ -78,7 +79,6 @@ class _Tab1Page extends State<Tab1Page> {
   Future<List<CompletedAchievement>> fetchCompletedAchievements() async {
     var url = Uri.parse('${baseURL}completedachievements/current');
     var cookies = await loadCookies();
-    appTitle = "Профиль";
 
     var response = await http.get(url, headers: {
       'Cookie': cookies!,
@@ -86,12 +86,15 @@ class _Tab1Page extends State<Tab1Page> {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        appTitle = "Profil";
+      });
       return data.map((item) => CompletedAchievement.fromJson(item)).toList();
     } else if (response.statusCode == 401) {
       await refreshToken();
       return fetchCompletedAchievements();
     } else {
-      throw Exception('Ошибка при загрузке выполненных достижений');
+      throw Exception('Błąd ładowania ukończonych osiągnięć');
     }
   }
 
@@ -108,7 +111,7 @@ class _Tab1Page extends State<Tab1Page> {
   Future<void> refreshToken() async {
     var refreshUrl = Uri.parse('${baseURL}auth/refresh');
     var cookies = await loadCookies();
-    appTitle = "Профиль";
+    appTitle = "Profil";
 
     var response = await http.get(refreshUrl, headers: {
       'Cookie': cookies!,
@@ -120,7 +123,7 @@ class _Tab1Page extends State<Tab1Page> {
         await saveCookies(newCookies);
       }
     } else {
-      throw Exception('Ошибка обновления токена (Код: ${response.statusCode}');
+      throw Exception('Błąd aktualizacji tokena (kod: ${response.statusCode}');
     }
   }
 
@@ -140,7 +143,7 @@ class _Tab1Page extends State<Tab1Page> {
       var cookies = await loadCookies();
       userId = extractUserIdFromCookies(cookies!);
       var url = Uri.parse('${baseURL}users/$userId');
-      appTitle = 'Профиль';
+      appTitle = 'Profil';
 
       var response = await http.get(url, headers: {
         'Cookie': cookies,
@@ -155,7 +158,7 @@ class _Tab1Page extends State<Tab1Page> {
         await updatePage();
         return fetchUser();
       } else {
-        throw Exception('Ошибка при загрузке пользователя');
+        throw Exception('Błąd podczas ładowania użytkownika');
       }
   }
 
@@ -205,7 +208,7 @@ class _Tab1Page extends State<Tab1Page> {
                   onPressed: () {
                     Navigator.of(dialogContext).pop();
                   },
-                  child: const Text('Закрыть'),
+                  child: const Text('Zamknij'),
                 ),
               ],
             ),
@@ -263,7 +266,7 @@ class _Tab1Page extends State<Tab1Page> {
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  'Достижения: ${selectedAchievementIds.length}',
+                  'Osiągnięcia: ${selectedAchievementIds.length}',
                   style: const TextStyle(fontSize: 16.0),
                   textAlign: TextAlign.center,
                 ),
@@ -332,7 +335,7 @@ class _Tab1Page extends State<Tab1Page> {
                 ),
                 const SizedBox(height: 8.0),
                 const Text(
-                  'Пожалуйста, покажите QR-код тренеру',
+                  'Prosimy o pokazanie kodu QR trenerowi.',
                   style: TextStyle(fontSize: 16.0),
                   textAlign: TextAlign.center,
                 ),
@@ -351,7 +354,7 @@ class _Tab1Page extends State<Tab1Page> {
                               HomePage(logoutCallback: widget.logoutCallback)),
                     );
                   },
-                  child: const Text('Закрыть'),
+                  child: const Text('Zamknij'),
                 ),
               ],
             ),
@@ -517,14 +520,14 @@ class _Tab1Page extends State<Tab1Page> {
                       child: Column(
                         children: [
                           Text(
-                            'Выполнено достижений: ${completedAchievements.length}',
+                            'Osiągnięcia zrealizowane: ${completedAchievements.length}',
                             style: const TextStyle(
                               fontSize: 18.0,
                             ),
                           ),
                           const SizedBox(height: 8.0),
                           Text(
-                            'Процент выполненных достижений: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
+                            'Procent osiągniętych wyników: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18.0,
@@ -542,7 +545,7 @@ class _Tab1Page extends State<Tab1Page> {
                     ),
                     const SizedBox(height: 8.0),
                     const Text(
-                      'Завершенные достижения:',
+                      'Ukończone osiągnięcia:',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -581,7 +584,7 @@ class _Tab1Page extends State<Tab1Page> {
                     ),
                     const SizedBox(height: 8.0),
                     const Text(
-                      'Невыполненные достижения:',
+                      'Niespełnione osiągnięcia:',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -637,8 +640,8 @@ class _Tab1Page extends State<Tab1Page> {
               ),
             );
           } else if (snapshot.hasError) {
-            return const Center(
-              child: Text('Ошибка при загрузке страницы (Snapshot error)'),
+            return Center(
+              child: Text('Błąd podczas ładowania strony (Snapshot error) ${AppLocalizations.of(context)!.appTitle}'),
             );
           } else {
             return const Center(

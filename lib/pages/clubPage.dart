@@ -42,7 +42,7 @@ class _ClubPageState extends State<ClubPage> {
         userList = clubData['users'];
       });
     } else {
-      throw Exception('Failed to load data: ${clubResponse.body} [${clubResponse.statusCode}]');
+      throw Exception('Nie udało się załadować danych: ${clubResponse.body} [${clubResponse.statusCode}]');
     }
   }
 
@@ -99,7 +99,7 @@ class _ClubPageState extends State<ClubPage> {
       appBar: AppBar(
         title: Center(
           child: Text(
-            'Клуб "${clubData?['title']}"',
+            'Klub "${clubData?['title']}"',
             textAlign: TextAlign.center,
           ),
         ),
@@ -152,7 +152,7 @@ class _ClubPageState extends State<ClubPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'История клуба:',
+                      'Historia klubu:',
                       style: TextStyle(fontSize: 18),
                     ),
                     Text(
@@ -166,7 +166,7 @@ class _ClubPageState extends State<ClubPage> {
               ),
               const SizedBox(height: 16),
               const Text(
-                'Пользователи в клубе:',
+                'Użytkownicy w klubie:',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               userList != null
@@ -187,7 +187,7 @@ class _ClubPageState extends State<ClubPage> {
                       backgroundImage: NetworkImage('https://sskef.site/${user['avatar']}'),
                     ),
                     title: Text('${user['firstName']} ${user['lastName']}'),
-                    subtitle: Text('Средний XP: ${user['xpSum']}'),
+                    subtitle: Text('Średni XP: ${user['xpSum']}'),
                   );
                 },
               )

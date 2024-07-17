@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
 
@@ -130,12 +131,13 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     } else {
       final responseJson = jsonDecode(response.body);
       if (responseJson['title'] == 'Bad Request') {
+        debugPrint(responseJson.toString());
         throw showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Ошибка'),
-              content: const Text('Почта или пароль указаны не верно.'),
+              title: const Text('Błąd'),
+              content: const Text('Adres e-mail lub hasło są nieprawidłowe.'),
               actions: [
                 TextButton(
                   child: const Text('ОК'),
@@ -151,13 +153,13 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         String emailError = '${responseJson['errors']['Email']}';
         String passError = '${responseJson['errors']['Password']}';
         //throw Exception('Failed to login: ${response.statusCode}');
-        print(responseJson);
+        debugPrint(responseJson);
         throw showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Ошибка'),
-              content: Text('Не удалось войти:\n$emailError\n$passError'),
+              title: const Text('Błąd'),
+              content: Text('Nie udało się wejść:\n$emailError\n$passError'),
               actions: [
                 TextButton(
                   child: const Text('ОК'),
@@ -216,8 +218,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Ошибка'),
-            content: const Text('Пожалуйста, заполните все поля'),
+            title: const Text('Błąd'),
+            content: const Text('Wypełnij wszystkie pola'),
             actions: [
               TextButton(
                 child: const Text('ОК'),
@@ -240,7 +242,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       await prefs.setBool('isLoggedIn', true);
 
       setState(() {
-        appTitle = 'Профиль';
+        appTitle = 'Profil';
         _isLoggedIn = true;
       });
     }
@@ -268,7 +270,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     email = '';
     password = '';
     setState(() {
-      appTitle = 'Авторизация';
+      appTitle = 'Autoryzacja';
     });
   }
 
@@ -344,18 +346,27 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
             avatarPath = imageUrl;
           });
         } else {
-          print('Error uploading avatar. Status code: ${response.statusCode}');
+          debugPrint('Błąd podczas przesyłania awatara. Kod statusu: ${response.statusCode}');
         }
       } catch (error) {
-        print('Error uploading avatar: $error');
+        debugPrint('Błąd podczas wgrywania awatara: $error');
       }
     }
   }
 
-  @override
+  Widget _buildHomePage() {
+    setState(() {
+      appTitle = "Profil";
+    });
+    return HomePage(
+      logoutCallback: _logout,
+    );
+  }
+
+    @override
   Widget build(BuildContext context) {
     if (_isLoggedIn) {
-      return HomePage(logoutCallback: _logout);
+      return _buildHomePage();
     } else {
       return LoginPage(
         key: widget.key,

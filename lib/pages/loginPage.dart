@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text ('Подтверждение адреса электронной почты', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
+                const Text ('Potwierdzenie adresu e-mail', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
                 TextFormField(
                   controller: TextEditingController.fromValue(
                     TextEditingValue(
@@ -172,9 +172,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   decoration: InputDecoration(
-                    labelText: 'Введите свой email',
+                    labelText: 'Wprowadź swój adres e-mail',
                     errorText: email.isNotEmpty && !EmailValidator.validate(email)
-                        ? 'Некорректный адрес электронной почты'
+                        ? 'Nieprawidłowy adres e-mail'
                         : null,
                   ),
                   keyboardType: TextInputType.emailAddress,
@@ -188,10 +188,10 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Email обязателен для заполнения';
+                      return 'Wymagany jest adres e-mail';
                     }
                     if (!EmailValidator.validate(value!)) {
-                      return 'Почта должна быть валидной';
+                      return 'Poczta musi być ważna';
                     }
                     return null;
                   },
@@ -204,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                     sendProofCode(email);
                     showProofCodeDialog(context, email);
                   },
-                  child: const Text('Отправить'),
+                  child: const Text('Wyślij'),
                 ),
               ],
             ),
@@ -248,7 +248,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text ('Введите новый пароль', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
+                const Text ('Wprowadź nowe hasło', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
                 const SizedBox(height: 16.0),
                 TextFormField(
                   //controller: _passwordController,
@@ -260,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   decoration: InputDecoration(
-                    labelText: 'Пароль',
+                    labelText: 'Hasło',
                     suffixIcon: IconButton(
                       icon: Icon(passIcon),
                       onPressed: () {
@@ -268,7 +268,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
-                        ? 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру'
+                        ? 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra'
                         : null,
                   ),
                   obscureText: isPasswordHidden,
@@ -283,10 +283,10 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Пароль обязателен для заполнения';
+                      return 'Hasło jest obowiązkowe';
                     }
                     if (value!.length < 6 || !_isPasswordValid(value)) {
-                      return 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру';
+                      return 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra';
                     }
                     return null;
                   },
@@ -297,7 +297,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.of(dialogContext).pop();
                     widget.changePassword();
                   },
-                  child: const Text('Отправить'),
+                  child: const Text('Wyślij'),
                 ),
               ],
             ),
@@ -321,8 +321,8 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text ('Подтверждение адреса электронной почты', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
-                Text ('Вам был отправлен код на Email - \n$email', textAlign: TextAlign.center,),
+                const Text ('Potwierdzenie adresu e-mail', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
+                Text ('Otrzymałeś kod na adres e-mail - \n$email', textAlign: TextAlign.center,),
                 const SizedBox(height: 16.0),
                 FourDigitCodeInput(updateProofCode: _updateProofCode),
                 const SizedBox(height: 16.0,),
@@ -331,7 +331,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.of(dialogContext).pop();
                     validateEmail(email, widget.proofCode);
                   } : null,
-                  child: const Text('Отправить'),
+                  child: const Text('Wyślij'),
                 ),
               ],
             ),
@@ -356,7 +356,7 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 isValidate != false ?
-                const Text('Почта подтверждена', textAlign: TextAlign.center,) : const Text ('Ошибка!\nВведен не верный код', textAlign: TextAlign.center),
+                const Text('Poczta potwierdzona.', textAlign: TextAlign.center,) : const Text ('Błąd!\nWprowadzono nieprawidłowy kod', textAlign: TextAlign.center),
                 const SizedBox(height: 16.0,),
                 Row (
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -368,7 +368,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.of(dialogContext).pop();
                         showChangePassword(context);
                       },
-                      child: const Center (child: Text('Повторить')),
+                      child: const Center (child: Text('Powtórzenie')),
                     ) : ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
@@ -376,7 +376,7 @@ class _LoginPageState extends State<LoginPage> {
                           showPasswordDialog(context);
                         }
                       },
-                      child: const Center (child: Text('Продолжить')),
+                      child: const Center (child: Text('Ciąg dalszy nastąpi')),
                     ),
                   ],
                 ),
@@ -420,9 +420,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     decoration: InputDecoration(
-                      labelText: 'Email',
+                      labelText: 'E-mail',
                       errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
-                          ? 'Некорректный адрес электронной почты'
+                          ? 'Nieprawidłowy adres e-mail'
                           : null,
                     ),
                     keyboardType: TextInputType.emailAddress,
@@ -433,10 +433,10 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     validator: (value) {
                       if (value?.isEmpty ?? true) {
-                        return 'Email обязателен для заполнения';
+                        return 'Wymagany jest adres e-mail';
                       }
                       if (!EmailValidator.validate(value!)) {
-                        return 'Почта должна быть валидной';
+                        return 'Poczta musi być ważna';
                       }
                       return null;
                     },
@@ -452,7 +452,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     decoration: InputDecoration(
-                      labelText: 'Пароль',
+                      labelText: 'Hasło',
                       suffixIcon: IconButton(
                         icon: Icon(passIcon),
                         onPressed: () {
@@ -462,7 +462,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                       errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
-                          ? 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру'
+                          ? 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra'
                           : null,
                     ),
                     obscureText: isPasswordHidden,
@@ -474,10 +474,10 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     validator: (value) {
                       if (value?.isEmpty ?? true) {
-                        return 'Пароль обязателен для заполнения';
+                        return 'Hasło jest obowiązkowe';
                       }
                       if (value!.length < 6 || !_isPasswordValid(value)) {
-                        return 'Пароль должен содержать не менее 6 символов и \nкак минимум 1 букву или 1 цифру';
+                        return 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra';
                       }
                       return null;
                     },
@@ -490,7 +490,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 showChangePassword(context);
               },
-              child: const Text('Забыли пароль?', textAlign: TextAlign.center),
+              child: const Text('Zapomniane hasło?', textAlign: TextAlign.center),
             ),
             const SizedBox(height: 24.0),
             ElevatedButton(
@@ -502,7 +502,7 @@ class _LoginPageState extends State<LoginPage> {
               child: const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Войти',
+                  'Zaloguj się',
                   style: TextStyle(fontSize: 18),
                 ),
               ),
@@ -513,7 +513,7 @@ class _LoginPageState extends State<LoginPage> {
                 navigateToRegisterPage(context);
               },
               child: const Text(
-                  'Зарегистрироваться', textAlign: TextAlign.center),
+                  'Zarejestruj się', textAlign: TextAlign.center),
             ),
           ],
         ),
