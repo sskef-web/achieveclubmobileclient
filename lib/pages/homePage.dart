@@ -3,11 +3,12 @@ import 'package:achieveclubmobileclient/tabItems/tab1.dart';
 import 'package:achieveclubmobileclient/tabItems/tab2.dart';
 import 'package:achieveclubmobileclient/tabItems/tab3.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   final Function() logoutCallback;
 
-  const HomePage({super.key, required this.logoutCallback});
+  HomePage({super.key, required this.logoutCallback});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -18,19 +19,21 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   late List<Widget> _tabs;
+  String locale = "";
 
   @override
   void initState() {
     super.initState();
-    _tabs = [
-      Tab1Page(logoutCallback: widget.logoutCallback),
-      Tab2Page(logoutCallback: widget.logoutCallback,),
-      Tab3Page(logoutCallback: widget.logoutCallback,),
-    ];
   }
 
   @override
   Widget build(BuildContext context) {
+    locale = Localizations.localeOf(context).languageCode;
+    _tabs = [
+      Tab1Page(logoutCallback: widget.logoutCallback, locale: locale,),
+      Tab2Page(logoutCallback: widget.logoutCallback,),
+      Tab3Page(logoutCallback: widget.logoutCallback,),
+    ];
     return Scaffold(
       appBar: AppBar(
         title: Center(child: Text(appTitle)),
@@ -43,7 +46,11 @@ class _HomePageState extends State<HomePage> {
               angle: 3.14,
               child: const Icon(Icons.logout),
             ),
-            onPressed: widget.logoutCallback,
+            onPressed: () {
+              setState(() {
+                widget.logoutCallback();
+              });
+            },
           ),
         ),
       ),
@@ -55,29 +62,29 @@ class _HomePageState extends State<HomePage> {
             _currentIndex = index;
             switch (_currentIndex) {
               case 0:
-                appTitle = 'Profil';
+                appTitle = AppLocalizations.of(context)!.tab1;
                 break;
               case 1:
-                appTitle = 'Top 100 użytkowników';
+                appTitle = AppLocalizations.of(context)!.tab2;
                 break;
               case 2:
-                appTitle = 'Top kluby';
+                appTitle = AppLocalizations.of(context)!.tab3;
                 break;
             }
           });
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profil',
+            icon: const Icon(Icons.person),
+            label: AppLocalizations.of(context)!.tab1,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.groups),
-            label: 'Top 100 użytkowników',
+            icon: const Icon(Icons.groups),
+            label: AppLocalizations.of(context)!.tab2,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.apartment),
-            label: 'Top kluby',
+            icon: const Icon(Icons.apartment),
+            label: AppLocalizations.of(context)!.tab3,
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:achieveclubmobileclient/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:achieveclubmobileclient/data/club.dart';
@@ -19,13 +20,12 @@ class Tab3Page extends StatefulWidget {
 }
 
 class _Tab3Page extends State<Tab3Page> {
-
+  String locale = "";
   late Future<List<Club>> _clubs;
 
   @override
   void initState() {
     super.initState();
-    _clubs = fetchClubs();
   }
 
   void navigateToClubPage(int clubId, String position) {
@@ -44,7 +44,11 @@ class _Tab3Page extends State<Tab3Page> {
 
   Future<List<Club>> fetchClubs() async {
     var url = Uri.parse('${baseURL}clubs');
-    var response = await http.get(url);
+    var response = await http.get(url,
+        headers: {
+          'Accept-Language': locale
+        }
+        );
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
@@ -64,12 +68,14 @@ class _Tab3Page extends State<Tab3Page> {
 
       return clubList;
     } else {
-      throw Exception('Błąd podczas ładowania klubów');
+      throw Exception(AppLocalizations.of(context)!.fetchClubsError);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    locale = Localizations.localeOf(context).languageCode;
+    _clubs = fetchClubs();
     return FutureBuilder<List<Club>>(
       future: _clubs,
       builder: (context, snapshot) {
@@ -107,7 +113,7 @@ class _Tab3Page extends State<Tab3Page> {
             ),
           );
         } else if (snapshot.hasError) {
-          return Text('Błąd: ${snapshot.error}');
+          return Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}');
         } else {
           return const Center(child: CircularProgressIndicator(),);
         }

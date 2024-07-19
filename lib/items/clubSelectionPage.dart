@@ -1,4 +1,5 @@
 import 'package:achieveclubmobileclient/data/club.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:achieveclubmobileclient/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -48,7 +49,7 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
         widget.clubId = clubs.isNotEmpty ? clubs[0].id : 0;
       });
     } else {
-      throw Exception('Nie udało się pobrać tytułów klubowych');
+      throw Exception(AppLocalizations.of(context)!.fetchClubsError);
     }
   }
 
@@ -56,7 +57,7 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Club'),
+        title: Text(AppLocalizations.of(context)!.selectClub),
       ),
       body: Column(
         children: [
@@ -77,7 +78,7 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
             },
           ),
           const SizedBox(height: 16),
-          Text('Wybrany identyfikator klubu: ${widget.clubId}'),
+          Text('${AppLocalizations.of(context)!.clubId}: ${widget.clubId}'),
         ],
       ),
     );

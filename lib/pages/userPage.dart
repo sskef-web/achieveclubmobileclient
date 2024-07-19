@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:achieveclubmobileclient/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -29,18 +31,11 @@ class _UserPageState extends State<UserPage> {
   late Future<List<Achievement>> _achieveFuture;
   late Future<List<CompletedAchievement>> _completedAchievementsFuture;
   late String Avatar = '';
+  String locale = "";
 
   @override
   void initState() {
     super.initState();
-    _userFuture = fetchUser();
-    _userFuture.then((user) {
-      setState(() {
-        Avatar = user.avatar;
-      });
-    });
-    _achieveFuture = fetchAchievements();
-    _completedAchievementsFuture = fetchCompletedAchievements();
   }
 
   Future<void> saveCookies(String cookies) async {
@@ -69,7 +64,7 @@ class _UserPageState extends State<UserPage> {
       }
     } else {
       throw Exception(
-          'Błąd podczas aktualizacji tokena (Kod statusu: ${response.statusCode})\n${response.body}');
+          '${AppLocalizations.of(context)!.refreshTokenError} (Code: ${response.statusCode})\n${response.body}');
     }
   }
 
@@ -88,7 +83,7 @@ class _UserPageState extends State<UserPage> {
       await refreshToken();
       return fetchCompletedAchievements();
     } else {
-      throw Exception('Błąd ładowania ukończonych osiągnięć');
+      throw Exception(AppLocalizations.of(context)!.fetchCompletedAchieveError);
     }
   }
 
@@ -99,17 +94,18 @@ class _UserPageState extends State<UserPage> {
     }
 
     double percentage = (completedAchievements / totalAchievements) * 100;
-    return percentage;
+    return double.parse(percentage.toStringAsFixed(2));
   }
 
   Future<List<Achievement>> fetchAchievements() async {
-    final response = await http.get(Uri.parse('${baseURL}achievements'));
+    final response = await http.get(Uri.parse('${baseURL}achievements'),
+        headers: {'Accept-Language': locale});
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((item) => Achievement.fromJson(item)).toList();
     } else {
-      throw Exception('Błąd ładowania osiągnięć');
+      throw Exception(AppLocalizations.of(context)!.fetchAchievementError);
     }
   }
 
@@ -117,10 +113,11 @@ class _UserPageState extends State<UserPage> {
     try {
       var cookies = await loadCookies();
       var url = Uri.parse('${baseURL}users/${widget.userId}');
-      appTitle = 'Profil';
+      appTitle = AppLocalizations.of(context)!.profil;
 
       var response = await http.get(url, headers: {
         'Cookie': cookies!,
+        'Accept-Language': locale
       });
       debugPrint('${response.statusCode}');
 
@@ -131,19 +128,13 @@ class _UserPageState extends State<UserPage> {
         await refreshToken();
         return fetchUser();
       } else {
-        throw Exception('Błąd podczas ładowania użytkownika');
+        throw Exception(AppLocalizations.of(context)!.fetchUserError);
       }
     }
     catch (e) {
       if (Navigator.canPop(context)) {
         Navigator.pop(context);
       }
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (BuildContext context) =>
-                HomePage(logoutCallback: widget.logoutCallback)),
-      );
       rethrow;
     }
   }
@@ -161,12 +152,21 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
+    locale = Localizations.localeOf(context).languageCode;
+    _userFuture = fetchUser();
+    _userFuture.then((user) {
+      setState(() {
+        Avatar = user.avatar;
+      });
+    });
+    _achieveFuture = fetchAchievements();
+    _completedAchievementsFuture = fetchCompletedAchievements();
     AsyncSnapshot<List<dynamic>>? currentSnapshot;
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
+        title:  Center(
           child: Text(
-            'Profil użytkownika',
+            AppLocalizations.of(context)!.userProfile,
             textAlign: TextAlign.center,
           ),
         ),
@@ -190,10 +190,16 @@ class _UserPageState extends State<UserPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          radius: 80.0,
-                          backgroundImage:
-                          NetworkImage('https://sskef.site/$Avatar'),
+                        SizedBox(
+                          width: 160.0, // Twice the radius to maintain aspect ratio
+                          height: 160.0, // Twice the radius to maintain aspect ratio
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl: 'https://sskef.site/$Avatar',
+                              placeholder: (context, url) => CircularProgressIndicator(),
+                              errorWidget: (context, url, error) => Icon(Icons.error),
+                            ),
+                          ),
                         ),
                         const SizedBox(width: 16.0),
                         Flexible(
@@ -238,14 +244,14 @@ class _UserPageState extends State<UserPage> {
                       child: Column(
                         children: [
                           Text(
-                            'Osiągnięcia zrealizowane: ${completedAchievements.length}',
+                            '${AppLocalizations.of(context)!.completedAchievements}: ${completedAchievements.length}',
                             style: const TextStyle(
                               fontSize: 18.0,
                             ),
                           ),
                           const SizedBox(height: 8.0),
                           Text(
-                            'Procent osiągniętych wyników: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
+                            '${AppLocalizations.of(context)!.percentCompletedAchievements}: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18.0,
@@ -262,8 +268,8 @@ class _UserPageState extends State<UserPage> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    const Text(
-                      'Ukończone osiągnięcia:',
+                    if (completedAchievements.length > 0) Text(
+                      AppLocalizations.of(context)!.completedAchievements,
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -299,9 +305,9 @@ class _UserPageState extends State<UserPage> {
                       ],
                     ),
                     const SizedBox(height: 8.0),
-                    const Text(
-                      'Niespełnione osiągnięcia:',
-                      style: TextStyle(
+                    Text(
+                      '${AppLocalizations.of(context)!.unCompletedAchievements}:',
+                      style: const TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -342,7 +348,7 @@ class _UserPageState extends State<UserPage> {
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('Błąd: ${snapshot.error}\n ${snapshot.stackTrace}'),
+              child: Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}\n ${snapshot.stackTrace}'),
             );
           } else {
             return const Center(

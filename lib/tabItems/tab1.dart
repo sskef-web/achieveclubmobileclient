@@ -1,9 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
-import 'package:achieveclubmobileclient/items/achievementItem.dart';
-import 'package:achieveclubmobileclient/data/achievement.dart';
-import 'package:achieveclubmobileclient/data/completedachievement.dart';
-import 'package:achieveclubmobileclient/data/user.dart';
-import 'package:achieveclubmobileclient/pages/homePage.dart';
+import 'package:achieveclubmobileclient/pages/authenticationPage.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+import '../items/achievementItem.dart';
+import '../data/achievement.dart';
+import '../data/completedachievement.dart';
+import '../data/user.dart';
+import '../items/languageSelectionButton.dart';
+import '../pages/homePage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -14,8 +19,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Tab1Page extends StatefulWidget {
   final Function() logoutCallback;
+  String locale;
 
-  const Tab1Page({super.key, required this.logoutCallback});
+  Tab1Page({super.key, required this.logoutCallback, required this.locale});
 
   @override
   _Tab1Page createState() => _Tab1Page();
@@ -87,14 +93,14 @@ class _Tab1Page extends State<Tab1Page> {
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       setState(() {
-        appTitle = "Profil";
+        appTitle = AppLocalizations.of(context)!.profil;
       });
       return data.map((item) => CompletedAchievement.fromJson(item)).toList();
     } else if (response.statusCode == 401) {
       await refreshToken();
       return fetchCompletedAchievements();
     } else {
-      throw Exception('Błąd ładowania ukończonych osiągnięć');
+      throw Exception(AppLocalizations.of(context)!.fetchCompletedAchieveError);
     }
   }
 
@@ -111,7 +117,7 @@ class _Tab1Page extends State<Tab1Page> {
   Future<void> refreshToken() async {
     var refreshUrl = Uri.parse('${baseURL}auth/refresh');
     var cookies = await loadCookies();
-    appTitle = "Profil";
+    appTitle = AppLocalizations.of(context)!.profil;
 
     var response = await http.get(refreshUrl, headers: {
       'Cookie': cookies!,
@@ -123,11 +129,13 @@ class _Tab1Page extends State<Tab1Page> {
         await saveCookies(newCookies);
       }
     } else {
-      throw Exception('Błąd aktualizacji tokena (kod: ${response.statusCode}');
+      widget.logoutCallback();
+      navigateToAuthPage();
+      throw Exception('${AppLocalizations.of(context)!.refreshTokenError} (code: ${response.statusCode}');
     }
   }
 
-  Future<void> updatePage() async{
+  void _updatePage() {
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
@@ -135,18 +143,21 @@ class _Tab1Page extends State<Tab1Page> {
       context,
       MaterialPageRoute(
           builder: (BuildContext context) =>
-              HomePage(logoutCallback: widget.logoutCallback)),
+              HomePage(logoutCallback: widget.logoutCallback,)),
     );
   }
 
   Future<User> fetchUser() async {
       var cookies = await loadCookies();
       userId = extractUserIdFromCookies(cookies!);
-      var url = Uri.parse('${baseURL}users/$userId');
-      appTitle = 'Profil';
+      var url = Uri.parse('${baseURL}users/current');
+      debugPrint(url.toString());
+      appTitle = AppLocalizations.of(context)!.profil;
+      debugPrint(Localizations.localeOf(context).languageCode);
 
       var response = await http.get(url, headers: {
         'Cookie': cookies,
+        'Accept-Language': widget.locale
       });
       debugPrint('${response.statusCode}');
 
@@ -155,11 +166,66 @@ class _Tab1Page extends State<Tab1Page> {
       }
       else if (response.statusCode == 401) {
         await refreshToken();
-        await updatePage();
+        _updatePage();
         return fetchUser();
       } else {
-        throw Exception('Błąd podczas ładowania użytkownika');
+        throw Exception(AppLocalizations.of(context)!.fetchUserError);
       }
+  }
+
+  Future<List<Achievement>> fetchAchievements() async {
+    //var locale = Localizations.localeOf(context).languageCode;
+    debugPrint('LOCALE: $widget.locale');
+    final response = await http.get(Uri.parse('${baseURL}achievements'),
+        headers: {
+          'Accept-Language': widget.locale
+        }
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((item) => Achievement.fromJson(item)).toList();
+    } else {
+      throw Exception(AppLocalizations.of(context)!.fetchAchievementError);
+    }
+  }
+
+  void _uploadAvatar(BuildContext context) async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    var cookies = await loadCookies();
+
+    if (pickedImage != null) {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('${baseURL}avatar'),
+      );
+      request.headers['Cookie'] = cookies!;
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          pickedImage.path,
+        ),
+      );
+
+      try {
+        var streamedResponse = await request.send();
+        var response = await http.Response.fromStream(streamedResponse);
+
+        if (response.statusCode == 200) {
+          var imageUrl = response.body;
+
+          setState(() {
+            Avatar = imageUrl;
+          });
+        } else {
+          throw Exception('${AppLocalizations.of(context)!.uploadAvatarError}. Code: ${response.statusCode}');
+        }
+      } catch (error) {
+        throw Exception('${AppLocalizations.of(context)!.uploadAvatarError}: $error');
+      }
+    }
   }
 
   Future<Achievement?> getAchievementById(int id) async {
@@ -187,10 +253,12 @@ class _Tab1Page extends State<Tab1Page> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.network(
-                  'https://sskef.site/${achievement.logoURL}',
+                CachedNetworkImage(
+                  imageUrl: 'https://sskef.site/${achievement.logoURL}',
                   width: 50.0,
                   height: 50.0,
+                  placeholder: (context, url) => const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
                 const SizedBox(height: 8.0),
                 Text(
@@ -208,7 +276,7 @@ class _Tab1Page extends State<Tab1Page> {
                   onPressed: () {
                     Navigator.of(dialogContext).pop();
                   },
-                  child: const Text('Zamknij'),
+                  child: Text(AppLocalizations.of(context)!.close),
                 ),
               ],
             ),
@@ -243,10 +311,16 @@ class _Tab1Page extends State<Tab1Page> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      radius: 50.0,
-                      backgroundImage:
-                          NetworkImage('https://sskef.site/$avatarPath'),
+                    SizedBox(
+                      width: 80.0,
+                      height: 80.0,
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: 'https://sskef.site/$Avatar',
+                          placeholder: (context, url) => CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 16.0),
                     Column(
@@ -266,7 +340,7 @@ class _Tab1Page extends State<Tab1Page> {
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  'Osiągnięcia: ${selectedAchievementIds.length}',
+                  '${AppLocalizations.of(context)!.achievements}: ${selectedAchievementIds.length}',
                   style: const TextStyle(fontSize: 16.0),
                   textAlign: TextAlign.center,
                 ),
@@ -334,8 +408,8 @@ class _Tab1Page extends State<Tab1Page> {
                   ),
                 ),
                 const SizedBox(height: 8.0),
-                const Text(
-                  'Prosimy o pokazanie kodu QR trenerowi.',
+                Text(
+                  AppLocalizations.of(context)!.showQrToTrainee,
                   style: TextStyle(fontSize: 16.0),
                   textAlign: TextAlign.center,
                 ),
@@ -354,7 +428,7 @@ class _Tab1Page extends State<Tab1Page> {
                               HomePage(logoutCallback: widget.logoutCallback)),
                     );
                   },
-                  child: const Text('Zamknij'),
+                  child: Text(AppLocalizations.of(context)!.close),
                 ),
               ],
             ),
@@ -371,62 +445,22 @@ class _Tab1Page extends State<Tab1Page> {
     }
 
     double percentage = (completedAchievements / totalAchievements) * 100;
-    return percentage;
-  }
-
-  Future<List<Achievement>> fetchAchievements() async {
-    final response = await http.get(Uri.parse('${baseURL}achievements'));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((item) => Achievement.fromJson(item)).toList();
-    } else {
-      throw Exception('Ошибка при загрузке достижений');
-    }
-  }
-
-  void _uploadAvatar(BuildContext context) async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-    var cookies = await loadCookies();
-
-    if (pickedImage != null) {
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('${baseURL}avatar'),
-      );
-      request.headers['Cookie'] = cookies!;
-
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'file',
-          pickedImage.path,
-        ),
-      );
-
-      try {
-        var streamedResponse = await request.send();
-        var response = await http.Response.fromStream(streamedResponse);
-
-        if (response.statusCode == 200) {
-          var imageUrl = response.body;
-
-          setState(() {
-            Avatar = imageUrl;
-          });
-        } else {
-          throw Exception('Ошибка при смене аватара. Код: ${response.statusCode}');
-        }
-      } catch (error) {
-        throw Exception('Ошибка при смене аватара: $error');
-      }
-    }
+    return double.parse(percentage.toStringAsFixed(2));
   }
 
   void updateFloatingActionButtonVisibility() {
     setState(() {
       _isFloatingActionButtonVisible = selectedAchievementIds.isNotEmpty;
     });
+  }
+
+  void navigateToAuthPage() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (BuildContext context) =>
+              AuthenticationPage()),
+    );
   }
 
   @override
@@ -464,6 +498,8 @@ class _Tab1Page extends State<Tab1Page> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    LanguageSelectionButton(key: widget.key, updateAchievements: navigateToAuthPage),
+                    const SizedBox(height: 16.0,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -520,14 +556,14 @@ class _Tab1Page extends State<Tab1Page> {
                       child: Column(
                         children: [
                           Text(
-                            'Osiągnięcia zrealizowane: ${completedAchievements.length}',
+                            '${AppLocalizations.of(context)!.completedAchievements}: ${completedAchievements.length}',
                             style: const TextStyle(
                               fontSize: 18.0,
                             ),
                           ),
                           const SizedBox(height: 8.0),
                           Text(
-                            'Procent osiągniętych wyników: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
+                            '${AppLocalizations.of(context)!.percentCompletedAchievements}: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18.0,
@@ -544,8 +580,8 @@ class _Tab1Page extends State<Tab1Page> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    const Text(
-                      'Ukończone osiągnięcia:',
+                    if (completedAchievements.length > 0) Text(
+                      AppLocalizations.of(context)!.completedAchievements,
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -583,8 +619,8 @@ class _Tab1Page extends State<Tab1Page> {
                       ],
                     ),
                     const SizedBox(height: 8.0),
-                    const Text(
-                      'Niespełnione osiągnięcia:',
+                    Text(
+                      '${AppLocalizations.of(context)!.unCompletedAchievements}:',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -641,7 +677,7 @@ class _Tab1Page extends State<Tab1Page> {
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('Błąd podczas ładowania strony (Snapshot error) ${AppLocalizations.of(context)!.appTitle}'),
+              child: Text('${AppLocalizations.of(context)!.loadingPageError} (Snapshot error) ${snapshot.error}'),
             );
           } else {
             return const Center(

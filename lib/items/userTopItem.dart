@@ -64,8 +64,8 @@ class UserTopItem extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 55.0,
-                  height: 55.0,
+                  width: 35.0,
+                  height: 35.0,
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     shape: BoxShape.circle,
@@ -80,7 +80,7 @@ class UserTopItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('# $topPosition', textAlign: TextAlign.center, textScaler: const TextScaler.linear(1.8)),
+                    Text('# $topPosition', textAlign: TextAlign.center, textScaler: const TextScaler.linear(1.5)),
                   ],
                 ),
               ],

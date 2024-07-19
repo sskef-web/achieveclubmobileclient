@@ -4,7 +4,7 @@ import 'package:achieveclubmobileclient/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../items/fourDigitCodeInput.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -52,7 +52,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   IconData passIcon = Icons.visibility;
   bool isButtonEnabled = false;
-  final List<Club> _clubs = [];
   int? clubId;
   String? firstName;
   String? email;
@@ -130,10 +129,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
         return clubs;
       } else {
-        throw Exception('Błąd podczas ładowania klubów: ${response.statusCode}');
+        throw Exception('${AppLocalizations.of(context)!.fetchClubsError}: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Błąd podczas ładowania klubów: $e');
+      throw Exception('${AppLocalizations.of(context)!.fetchClubsError}: $e');
     }
   }
 
@@ -158,8 +157,8 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text ('Potwierdzenie adresu e-mail', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
-                Text ('Otrzymałeś kod na adres e-mail - \n$email', textAlign: TextAlign.center,),
+                Text (AppLocalizations.of(context)!.confirmEmail, textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
+                Text ('${AppLocalizations.of(context)!.codeSended} - \n$email', textAlign: TextAlign.center,),
                 const SizedBox(height: 16.0),
                 FourDigitCodeInput(updateProofCode: _updateProofCode),
                 const SizedBox(height: 16.0,),
@@ -168,7 +167,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     Navigator.of(dialogContext).pop();
                     validateEmail(email, widget.proofCode);
                   } : null,
-                  child: const Text('Wyślij'),
+                  child: Text(AppLocalizations.of(context)!.send),
                 ),
               ],
             ),
@@ -237,7 +236,8 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 isValidate != false ?
-                const Text('Poczta potwierdzona.', textAlign: TextAlign.center,) : const Text ('Błąd!\nWprowadzono nieprawidłowy kod', textAlign: TextAlign.center),
+                Text(AppLocalizations.of(context)!.emailConfirmed, textAlign: TextAlign.center,)
+                    : Text ('${AppLocalizations.of(context)!.error}!\n${AppLocalizations.of(context)!.wrongCode}', textAlign: TextAlign.center),
                 const SizedBox(height: 16.0,),
                 Row (
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -249,7 +249,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Navigator.of(dialogContext).pop();
                         showProofCodeDialog(context, widget.email);
                       },
-                      child: const Center (child: Text('Powtórzenie')),
+                      child: Center (child: Text(AppLocalizations.of(context)!.repeat)),
                     ) : ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
@@ -257,7 +257,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           widget.registerCallback();
                         }
                       },
-                      child: const Center (child: Text('Ciąg dalszy nastąpi')),
+                      child: Center (child: Text(AppLocalizations.of(context)!.continued)),
                     ),
                   ],
                 ),
@@ -273,7 +273,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Rejestracja'),
+        title: Text(AppLocalizations.of(context)!.registration),
         centerTitle: true,
       ),
       body: Padding(
@@ -314,7 +314,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 });
                                 widget.updateClubId(clubId!);
                               },
-                              hint: const Text('Wybierz klub'),
+                              hint: Text(AppLocalizations.of(context)!.selectClub),
                             ),
                           ),
                         ),
@@ -327,9 +327,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),*/
                           decoration: InputDecoration(
-                            labelText: 'Nazwa',
+                            labelText: AppLocalizations.of(context)!.name,
                             errorText: widget.firstName.isNotEmpty && widget.firstName.length < 2
-                                ? 'Nazwa musi składać się z co najmniej 2 znaków'
+                                ? AppLocalizations.of(context)!.nameError
                                 : null,
                           ),
                           keyboardType: TextInputType.text,
@@ -343,10 +343,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return 'Wymagana nazwa';
+                              return AppLocalizations.of(context)!.emptyName;
                             }
                             if (value!.length < 2) {
-                              return 'Nazwa musi składać się z co najmniej 2 znaków';
+                              return AppLocalizations.of(context)!.nameError;
                             }
                             return null;
                           },
@@ -360,9 +360,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),*/
                           decoration: InputDecoration(
-                            labelText: 'Nazwisko',
-                            errorText: widget.lastName.isNotEmpty && widget.lastName.length < 4
-                                ? 'Nazwisko musi składać się z co najmniej 4 znaków'
+                            labelText: AppLocalizations.of(context)!.surname,
+                            errorText: widget.lastName.isNotEmpty && widget.lastName.length < 2
+                                ? AppLocalizations.of(context)!.surnameError
                                 : null,
                           ),
                           keyboardType: TextInputType.text,
@@ -376,10 +376,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return 'Nazwisko jest obowiązkowe';
+                              return AppLocalizations.of(context)!.emptySurname;
                             }
-                            if (value!.length <= 3) {
-                              return 'Nazwisko musi składać się z co najmniej 4 znaków';
+                            if (value!.length <= 1) {
+                              return AppLocalizations.of(context)!.surnameError;
                             }
                             return null;
                           },
@@ -395,7 +395,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           decoration: InputDecoration(
                             labelText: 'E-mail',
                             errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
-                                ? 'Nieprawidłowy adres e-mail'
+                                ? AppLocalizations.of(context)!.emailError
                                 : null,
                           ),
                           keyboardType: TextInputType.emailAddress,
@@ -410,10 +410,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return 'Wymagany jest adres e-mail';
+                              return AppLocalizations.of(context)!.emptyEmail;
                             }
                             if (!EmailValidator.validate(value!)) {
-                              return 'Poczta musi być ważna';
+                              return AppLocalizations.of(context)!.emailError;
                             }
                             return null;
                           },
@@ -426,9 +426,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),*/
                           decoration: InputDecoration(
-                            labelText: 'Hasło',
+                            labelText: AppLocalizations.of(context)!.password,
                             errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
-                                ? 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra'
+                                ? AppLocalizations.of(context)!.passwordError
                                 : null,
                           ),
                           keyboardType: TextInputType.text,
@@ -444,10 +444,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return 'Hasło jest obowiązkowe';
+                              return AppLocalizations.of(context)!.emptyPassword;
                             }
                             if (value!.length < 6 || !_isPasswordValid(value)) {
-                              return 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra';
+                              return AppLocalizations.of(context)!.passwordError;
                             }
                             return null;
                           },
@@ -462,9 +462,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),*/
                           controller: confirmPasswordController,
                           decoration: InputDecoration(
-                            labelText: 'Potwierdź hasło',
+                            labelText: AppLocalizations.of(context)!.confirmPassword,
                             errorText: confirmPasswordController.text != passwordController.text
-                                ? 'Hasła muszą być zgodne'
+                                ? AppLocalizations.of(context)!.confirmPasswordError
                                 : null,
                           ),
                           keyboardType: TextInputType.text,
@@ -479,10 +479,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return 'Potwierdzenie hasła jest obowiązkowe';
+                              return AppLocalizations.of(context)!.emptyConfirmPassword;
                             }
                             if (value != passwordController.text) {
-                              return 'Hasła nie są zgodne';
+                              return AppLocalizations.of(context)!.confirmPasswordError;
                             }
                             return null;
                           },
@@ -497,10 +497,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         sendProofCode(email!);
                         showProofCodeDialog(context, email!);
                     } : null,
-                    child: const Padding(
+                    child: Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text(
-                        'Zarejestruj się',
+                        AppLocalizations.of(context)!.registrate,
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
@@ -508,7 +508,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               );
             } else if (snapshot.hasError) {
-              return const Text('Błąd podczas ładowania klubów');
+              return Text(AppLocalizations.of(context)!.loadingPageError);
             } else {
               return const Center (child: CircularProgressIndicator());
             }

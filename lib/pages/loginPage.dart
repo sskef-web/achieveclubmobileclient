@@ -5,6 +5,9 @@ import 'package:achieveclubmobileclient/main.dart';
 import 'package:achieveclubmobileclient/pages/registerPage.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../items/languageSelectionButton.dart';
 
 class LoginPage extends StatefulWidget {
   final Function() loginCallback;
@@ -57,6 +60,8 @@ class _LoginPageState extends State<LoginPage> {
   bool isEmailProofed = false;
   String password = '';
   String email = '';
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   void navigateToRegisterPage(BuildContext context) {
     Navigator.push(
@@ -162,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text ('Potwierdzenie adresu e-mail', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
+                Text (AppLocalizations.of(context)!.confirmEmail, textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
                 TextFormField(
                   controller: TextEditingController.fromValue(
                     TextEditingValue(
@@ -172,9 +177,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   decoration: InputDecoration(
-                    labelText: 'Wprowadź swój adres e-mail',
+                    labelText: AppLocalizations.of(context)!.emailError,
                     errorText: email.isNotEmpty && !EmailValidator.validate(email)
-                        ? 'Nieprawidłowy adres e-mail'
+                        ? AppLocalizations.of(context)!.emailError
                         : null,
                   ),
                   keyboardType: TextInputType.emailAddress,
@@ -188,10 +193,10 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Wymagany jest adres e-mail';
+                      return AppLocalizations.of(context)!.emptyEmail;
                     }
                     if (!EmailValidator.validate(value!)) {
-                      return 'Poczta musi być ważna';
+                      return AppLocalizations.of(context)!.emailError;
                     }
                     return null;
                   },
@@ -204,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                     sendProofCode(email);
                     showProofCodeDialog(context, email);
                   },
-                  child: const Text('Wyślij'),
+                  child: Text(AppLocalizations.of(context)!.send),
                 ),
               ],
             ),
@@ -248,7 +253,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text ('Wprowadź nowe hasło', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
+                Text (AppLocalizations.of(context)!.writeNewPassword, textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
                 const SizedBox(height: 16.0),
                 TextFormField(
                   //controller: _passwordController,
@@ -260,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   decoration: InputDecoration(
-                    labelText: 'Hasło',
+                    labelText: AppLocalizations.of(context)!.password,
                     suffixIcon: IconButton(
                       icon: Icon(passIcon),
                       onPressed: () {
@@ -268,7 +273,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
-                        ? 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra'
+                        ? AppLocalizations.of(context)!.passwordError
                         : null,
                   ),
                   obscureText: isPasswordHidden,
@@ -283,10 +288,10 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Hasło jest obowiązkowe';
+                      return AppLocalizations.of(context)!.emptyPassword;
                     }
                     if (value!.length < 6 || !_isPasswordValid(value)) {
-                      return 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra';
+                      return AppLocalizations.of(context)!.passwordError;
                     }
                     return null;
                   },
@@ -297,7 +302,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.of(dialogContext).pop();
                     widget.changePassword();
                   },
-                  child: const Text('Wyślij'),
+                  child: Text(AppLocalizations.of(context)!.send),
                 ),
               ],
             ),
@@ -321,8 +326,8 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text ('Potwierdzenie adresu e-mail', textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
-                Text ('Otrzymałeś kod na adres e-mail - \n$email', textAlign: TextAlign.center,),
+                Text (AppLocalizations.of(context)!.confirmEmail, textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
+                Text ('${AppLocalizations.of(context)!.codeSended} - \n$email', textAlign: TextAlign.center,),
                 const SizedBox(height: 16.0),
                 FourDigitCodeInput(updateProofCode: _updateProofCode),
                 const SizedBox(height: 16.0,),
@@ -331,7 +336,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.of(dialogContext).pop();
                     validateEmail(email, widget.proofCode);
                   } : null,
-                  child: const Text('Wyślij'),
+                  child: Text(AppLocalizations.of(context)!.send),
                 ),
               ],
             ),
@@ -356,7 +361,8 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 isValidate != false ?
-                const Text('Poczta potwierdzona.', textAlign: TextAlign.center,) : const Text ('Błąd!\nWprowadzono nieprawidłowy kod', textAlign: TextAlign.center),
+                Text(AppLocalizations.of(context)!.emailConfirmed, textAlign: TextAlign.center,)
+                    : Text ('${AppLocalizations.of(context)!.error}!\n${AppLocalizations.of(context)!.wrongCode}', textAlign: TextAlign.center),
                 const SizedBox(height: 16.0,),
                 Row (
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -368,7 +374,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.of(dialogContext).pop();
                         showChangePassword(context);
                       },
-                      child: const Center (child: Text('Powtórzenie')),
+                      child: Center (child: Text(AppLocalizations.of(context)!.continued)),
                     ) : ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
@@ -376,7 +382,7 @@ class _LoginPageState extends State<LoginPage> {
                           showPasswordDialog(context);
                         }
                       },
-                      child: const Center (child: Text('Ciąg dalszy nastąpi')),
+                      child: Center (child: Text(AppLocalizations.of(context)!.continued)),
                     ),
                   ],
                 ),
@@ -412,17 +418,18 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 children: [
                   TextFormField(
-                    controller: TextEditingController.fromValue(
+                    controller: _emailController,
+                    /*controller: TextEditingController.fromValue(
                       TextEditingValue(
                         text: widget.email,
                         selection: TextSelection.collapsed(
                             offset: widget.email.length),
                       ),
-                    ),
+                    ),*/
                     decoration: InputDecoration(
                       labelText: 'E-mail',
                       errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
-                          ? 'Nieprawidłowy adres e-mail'
+                          ? AppLocalizations.of(context)!.emailError
                           : null,
                     ),
                     keyboardType: TextInputType.emailAddress,
@@ -433,26 +440,26 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     validator: (value) {
                       if (value?.isEmpty ?? true) {
-                        return 'Wymagany jest adres e-mail';
+                        return AppLocalizations.of(context)!.emptyEmail;
                       }
                       if (!EmailValidator.validate(value!)) {
-                        return 'Poczta musi być ważna';
+                        return AppLocalizations.of(context)!.emailError;
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 16.0),
                   TextFormField(
-                    //controller: _passwordController,
-                    controller: TextEditingController.fromValue(
+                    controller: _passwordController,
+                    /*controller: TextEditingController.fromValue(
                       TextEditingValue(
                         text: widget.password,
                         selection: TextSelection.collapsed(
                             offset: widget.password.length),
                       ),
-                    ),
+                    ),*/
                     decoration: InputDecoration(
-                      labelText: 'Hasło',
+                      labelText: AppLocalizations.of(context)!.password,
                       suffixIcon: IconButton(
                         icon: Icon(passIcon),
                         onPressed: () {
@@ -462,7 +469,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                       errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
-                          ? 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra'
+                          ? AppLocalizations.of(context)!.passwordError
                           : null,
                     ),
                     obscureText: isPasswordHidden,
@@ -474,10 +481,10 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     validator: (value) {
                       if (value?.isEmpty ?? true) {
-                        return 'Hasło jest obowiązkowe';
+                        return AppLocalizations.of(context)!.emptyPassword;
                       }
                       if (value!.length < 6 || !_isPasswordValid(value)) {
-                        return 'Hasło musi zawierać co najmniej 6 znaków i \nco najmniej 1 litera lub 1 cyfra';
+                        return AppLocalizations.of(context)!.passwordError;
                       }
                       return null;
                     },
@@ -490,7 +497,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 showChangePassword(context);
               },
-              child: const Text('Zapomniane hasło?', textAlign: TextAlign.center),
+              child: Text(AppLocalizations.of(context)!.forgotPassword, textAlign: TextAlign.center),
             ),
             const SizedBox(height: 24.0),
             ElevatedButton(
@@ -499,10 +506,10 @@ class _LoginPageState extends State<LoginPage> {
                 widget.loginCallback();
               }
                   : null,
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Zaloguj się',
+                  AppLocalizations.of(context)!.login,
                   style: TextStyle(fontSize: 18),
                 ),
               ),
@@ -512,9 +519,10 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 navigateToRegisterPage(context);
               },
-              child: const Text(
-                  'Zarejestruj się', textAlign: TextAlign.center),
+              child: Text(AppLocalizations.of(context)!.registrate, textAlign: TextAlign.center),
             ),
+            const SizedBox(height: 16.0,),
+            LanguageSelectionButton(updateAchievements: () => (),),
           ],
         ),
       ),

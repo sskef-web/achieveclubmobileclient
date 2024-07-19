@@ -7,6 +7,8 @@ import 'package:achieveclubmobileclient/main.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 
 class AuthenticationPage extends StatefulWidget {
@@ -79,6 +81,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     return null;
   }
 
+
   Future<void> saveCookies(String cookies) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('cookies', cookies);
@@ -136,8 +139,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Błąd'),
-              content: const Text('Adres e-mail lub hasło są nieprawidłowe.'),
+              title: Text(AppLocalizations.of(context)!.error),
+              content: Text(AppLocalizations.of(context)!.emailPassError),
               actions: [
                 TextButton(
                   child: const Text('ОК'),
@@ -158,8 +161,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Błąd'),
-              content: Text('Nie udało się wejść:\n$emailError\n$passError'),
+              title: Text(AppLocalizations.of(context)!.error),
+              content: Text('${AppLocalizations.of(context)!.loginError}:\n$emailError\n$passError'),
               actions: [
                 TextButton(
                   child: const Text('ОК'),
@@ -218,8 +221,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Błąd'),
-            content: const Text('Wypełnij wszystkie pola'),
+            title: Text(AppLocalizations.of(context)!.error),
+            content: Text(AppLocalizations.of(context)!.emptyFields),
             actions: [
               TextButton(
                 child: const Text('ОК'),
@@ -266,11 +269,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   void _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', false);
-    _isLoggedIn = false;
     email = '';
     password = '';
     setState(() {
-      appTitle = 'Autoryzacja';
+      _isLoggedIn = false;
+      appTitle = AppLocalizations.of(context)!.authorization;
     });
   }
 
@@ -356,7 +359,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 
   Widget _buildHomePage() {
     setState(() {
-      appTitle = "Profil";
+      appTitle = AppLocalizations.of(context)!.tab1;
     });
     return HomePage(
       logoutCallback: _logout,

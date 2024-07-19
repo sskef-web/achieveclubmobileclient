@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:achieveclubmobileclient/data/user.dart';
 import 'package:achieveclubmobileclient/items/userTopItem.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:achieveclubmobileclient/main.dart';
 import 'package:achieveclubmobileclient/pages/userPage.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class _Tab2Page extends State<Tab2Page> {
       }
       return users;
     } else {
-      throw Exception('Błąd podczas ładowania użytkownika');
+      throw Exception(AppLocalizations.of(context)!.fetchUserError);
     }
   }
 
@@ -101,7 +102,7 @@ class _Tab2Page extends State<Tab2Page> {
               ),
             );
           } else if (snapshot.hasError) {
-            return Text('Błąd: ${snapshot.error}');
+            return Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}');
           } else {
             return const Center (child:CircularProgressIndicator());
           }

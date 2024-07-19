@@ -2,8 +2,11 @@ import 'package:achieveclubmobileclient/pages/authenticationPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
-String appTitle = "Autoryzacja";
+import 'data/language_provider.dart';
+
+String appTitle = "";
 String baseURL = 'https://sskef.site/api/';
 
 void main() {
@@ -15,32 +18,39 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      locale: Locale('pl'),
-      supportedLocales: [
-        const Locale('ru'),
-        const Locale('pl'),
-      ],
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromRGBO(11, 106, 108, 1.0)),
-        useMaterial3: true,
-        fontFamily: 'Exo2',
+    return ChangeNotifierProvider<LanguageProvider>(
+      create: (_) => LanguageProvider(),
+      child: Consumer<LanguageProvider>(
+        builder: (_, languageProvider, __) {
+          return MaterialApp(
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('ru', ''), // Русский
+              Locale('pl', ''), // Польский
+              Locale('en', '') // Английский
+            ],
+            locale: languageProvider.locale,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                  seedColor: const Color.fromRGBO(11, 106, 108, 1.0)),
+              useMaterial3: true,
+              fontFamily: 'Exo2',
+            ),
+            darkTheme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                  seedColor: const Color.fromRGBO(11, 106, 108, 1.0),
+                  brightness: Brightness.dark),
+              useMaterial3: true,
+              fontFamily: 'Exo2',
+            ),
+            home: const AuthenticationPage(),
+          );
+        },
       ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromRGBO(11, 106, 108, 1.0),
-            brightness: Brightness.dark),
-        useMaterial3: true,
-        fontFamily: 'Exo2',
-      ),
-      home: const AuthenticationPage(),
     );
   }
 }

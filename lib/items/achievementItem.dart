@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AchievementItem extends StatefulWidget {
   final String logo;
@@ -47,7 +49,11 @@ class _AchievementItemState extends State<AchievementItem> {
       color: isSelected ? Colors.blue : null,
       child: ListTile(
         onTap: widget.onTap,
-        leading: Image.network(widget.logo),
+        leading: CachedNetworkImage(
+          imageUrl: widget.logo,
+          placeholder: (context, url) => CircularProgressIndicator(),
+          errorWidget: (context, url, error) => Icon(Icons.error),
+        ),
         title: Text(widget.title),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +62,7 @@ class _AchievementItemState extends State<AchievementItem> {
             const SizedBox(height: 4.0),
             Text('XP: ${widget.xp}'),
             const SizedBox(height: 4.0),
-            Text('Procent realizacji: ${widget.completionRatio}%'),
+            Text('${AppLocalizations.of(context)!.completePercent}: ${widget.completionRatio}%'),
           ],
         ),
       ),

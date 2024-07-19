@@ -1,7 +1,7 @@
 import 'package:achieveclubmobileclient/main.dart';
 import 'package:achieveclubmobileclient/pages/userPage.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -24,15 +24,16 @@ class ClubPage extends StatefulWidget {
 class _ClubPageState extends State<ClubPage> {
   Map<String, dynamic>? clubData;
   List<dynamic>? userList;
+  String locale = "";
 
   @override
   void initState() {
     super.initState();
-    fetchData();
   }
 
   Future<void> fetchData() async {
-    final clubResponse = await http.get(Uri.parse('${baseURL}clubs/${widget.clubId}'));
+    final clubResponse = await http.get(Uri.parse('${baseURL}clubs/${widget.clubId}'),
+        headers: {'Accept-Language': locale});
 
     if (clubResponse.statusCode == 200) {
       final clubData = jsonDecode(clubResponse.body);
@@ -42,7 +43,7 @@ class _ClubPageState extends State<ClubPage> {
         userList = clubData['users'];
       });
     } else {
-      throw Exception('Nie udało się załadować danych: ${clubResponse.body} [${clubResponse.statusCode}]');
+      throw Exception('${AppLocalizations.of(context)!.fetchClubsError}: ${clubResponse.body} [${clubResponse.statusCode}]');
     }
   }
 
@@ -95,11 +96,13 @@ class _ClubPageState extends State<ClubPage> {
 
   @override
   Widget build(BuildContext context) {
+    locale = Localizations.localeOf(context).languageCode;
+    fetchData();
     return Scaffold(
       appBar: AppBar(
         title: Center(
           child: Text(
-            'Klub "${clubData?['title']}"',
+            '${AppLocalizations.of(context)!.club} "${clubData?['title']}"',
             textAlign: TextAlign.center,
           ),
         ),
@@ -151,8 +154,8 @@ class _ClubPageState extends State<ClubPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Historia klubu:',
+                    Text(
+                      AppLocalizations.of(context)!.clubHistory,
                       style: TextStyle(fontSize: 18),
                     ),
                     Text(
@@ -165,8 +168,8 @@ class _ClubPageState extends State<ClubPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Użytkownicy w klubie:',
+              Text(
+                '${AppLocalizations.of(context)!.clubStudents}:',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               userList != null
@@ -187,7 +190,7 @@ class _ClubPageState extends State<ClubPage> {
                       backgroundImage: NetworkImage('https://sskef.site/${user['avatar']}'),
                     ),
                     title: Text('${user['firstName']} ${user['lastName']}'),
-                    subtitle: Text('Średni XP: ${user['xpSum']}'),
+                    subtitle: Text('${AppLocalizations.of(context)!.avgXP}: ${user['xpSum']}'),
                   );
                 },
               )
