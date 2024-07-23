@@ -25,6 +25,7 @@ class _ClubPageState extends State<ClubPage> {
   Map<String, dynamic>? clubData;
   List<dynamic>? userList;
   String locale = "";
+  bool isDataFetched = false;
 
   @override
   void initState() {
@@ -42,7 +43,15 @@ class _ClubPageState extends State<ClubPage> {
         this.clubData = clubData;
         userList = clubData['users'];
       });
+      isDataFetched = true;
+      if (clubData['users'] == []) {
+        setState(() {
+          userList = null;
+        });
+      }
+      debugPrint('fetch user List ${userList}');
     } else {
+
       throw Exception('${AppLocalizations.of(context)!.fetchClubsError}: ${clubResponse.body} [${clubResponse.statusCode}]');
     }
   }
@@ -97,7 +106,7 @@ class _ClubPageState extends State<ClubPage> {
   @override
   Widget build(BuildContext context) {
     locale = Localizations.localeOf(context).languageCode;
-    fetchData();
+    isDataFetched == true ? null : fetchData();
     return Scaffold(
       appBar: AppBar(
         title: Center(
@@ -123,7 +132,7 @@ class _ClubPageState extends State<ClubPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
+                     if (int.parse(widget.position) >= 1) Text(
                       '# ${widget.position}',
                       style: const TextStyle(fontSize: 64.0,color: Colors.white),
                     ),
@@ -169,7 +178,7 @@ class _ClubPageState extends State<ClubPage> {
               ),
               const SizedBox(height: 16),
               Text(
-                '${AppLocalizations.of(context)!.clubStudents}:',
+                userList != [] ? '${AppLocalizations.of(context)!.clubStudents}:' : '',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               userList != null

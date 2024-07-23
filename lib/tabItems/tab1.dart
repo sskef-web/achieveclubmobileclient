@@ -8,6 +8,7 @@ import '../data/achievement.dart';
 import '../data/completedachievement.dart';
 import '../data/user.dart';
 import '../items/languageSelectionButton.dart';
+import '../pages/clubPage.dart';
 import '../pages/homePage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -112,6 +113,20 @@ class _Tab1Page extends State<Tab1Page> {
   Future<String?> loadCookies() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('cookies');
+  }
+
+  void navigateToClubPage(int clubId, String position) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ClubPage(
+              clubId: clubId,
+              position: position,
+              logoutCallback: widget.logoutCallback,
+            ),
+      ),
+    );
   }
 
   Future<void> refreshToken() async {
@@ -532,10 +547,12 @@ class _Tab1Page extends State<Tab1Page> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CircleAvatar(
+                          backgroundColor: Colors.white,
                           radius: 50.0,
-                          backgroundColor: Colors.grey[200],
-                          backgroundImage: NetworkImage(
-                              'https://sskef.site/${user.clubLogo}'),
+                          backgroundImage: NetworkImage('https://sskef.site/${user.clubLogo}'),
+                          child: InkWell(
+                            onTap: () {navigateToClubPage(user.clubId, '0');},
+                          ),
                         ),
                         const SizedBox(width: 16.0),
                         Text(
