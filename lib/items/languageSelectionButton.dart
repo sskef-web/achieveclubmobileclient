@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../data/language_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../main.dart';
 
 class LanguageSelectionButton extends StatefulWidget {
   final Function() updateAchievements;

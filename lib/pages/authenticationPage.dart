@@ -245,7 +245,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       await prefs.setBool('isLoggedIn', true);
 
       setState(() {
-        appTitle = 'Profil';
+        appTitle = AppLocalizations.of(context)!.profil;
         _isLoggedIn = true;
       });
     }

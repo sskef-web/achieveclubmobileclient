@@ -398,7 +398,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(appTitle),
+        title: Text(AppLocalizations.of(context)!.authorization),
         centerTitle: true,
       ),
       body: Padding(
