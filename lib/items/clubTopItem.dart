@@ -39,7 +39,7 @@ class ClubTopItem extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: NetworkImage('https://sskef.site/$clubLogo'),
+                    image: NetworkImage('https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/$clubLogo'),
                   ),
                 ),
               ),

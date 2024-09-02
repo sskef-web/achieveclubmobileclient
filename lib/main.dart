@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'data/language_provider.dart';
 
 String appTitle = "";
-String baseURL = 'https://sskef.site/api/';
+String baseURL = 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/api/';
 
 void main() {
   runApp(const MyApp());

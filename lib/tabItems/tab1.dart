@@ -269,7 +269,7 @@ class _Tab1Page extends State<Tab1Page> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CachedNetworkImage(
-                  imageUrl: 'https://sskef.site/${achievement.logoURL}',
+                  imageUrl: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
                   width: 50.0,
                   height: 50.0,
                   placeholder: (context, url) => const CircularProgressIndicator(),
@@ -331,7 +331,7 @@ class _Tab1Page extends State<Tab1Page> {
                       height: 80.0,
                       child: ClipOval(
                         child: CachedNetworkImage(
-                          imageUrl: 'https://sskef.site/$Avatar',
+                          imageUrl: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/$Avatar',
                           placeholder: (context, url) => CircularProgressIndicator(),
                           errorWidget: (context, url, error) => Icon(Icons.error),
                         ),
@@ -388,7 +388,7 @@ class _Tab1Page extends State<Tab1Page> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(8.0),
                                       child: Image.network(
-                                        'https://sskef.site/${achievement.logoURL}',
+                                        'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
                                         width: 50.0,
                                         height: 50.0,
                                       ),
@@ -521,7 +521,7 @@ class _Tab1Page extends State<Tab1Page> {
                       children: [
                         CircleAvatar(
                           radius: 80.0,
-                          backgroundImage: NetworkImage('https://sskef.site/$Avatar'),
+                          backgroundImage: NetworkImage('https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/$Avatar'),
                           child: InkWell(
                             onTap: () {
                               _uploadAvatar(context);
@@ -549,7 +549,7 @@ class _Tab1Page extends State<Tab1Page> {
                         CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 50.0,
-                          backgroundImage: NetworkImage('https://sskef.site/${user.clubLogo}'),
+                          backgroundImage: NetworkImage('https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${user.clubLogo}'),
                           child: InkWell(
                             onTap: () {navigateToClubPage(user.clubId, '0');},
                           ),
@@ -623,7 +623,7 @@ class _Tab1Page extends State<Tab1Page> {
                               onTap: () {
                                 setState(() {});
                               },
-                              logo: 'https://sskef.site/${achievement.logoURL}',
+                              logo: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
                               title: achievement.title,
                               description: achievement.description,
                               xp: achievement.xp,
@@ -673,7 +673,7 @@ class _Tab1Page extends State<Tab1Page> {
                                   });
                                 },
                                 logo:
-                                'https://sskef.site/${achievement.logoURL}',
+                                'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
                                 title: achievement.title,
                                 description: achievement.description,
                                 xp: achievement.xp,

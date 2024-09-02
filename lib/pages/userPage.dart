@@ -122,6 +122,7 @@ class _UserPageState extends State<UserPage> {
       debugPrint('${response.statusCode}');
 
       if (response.statusCode == 200) {
+        debugPrint('USER - ${jsonDecode(response.body)}');
         return User.fromJson(jsonDecode(response.body));
       }
       else if (response.statusCode == 401) {
@@ -191,11 +192,11 @@ class _UserPageState extends State<UserPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: 160.0, // Twice the radius to maintain aspect ratio
-                          height: 160.0, // Twice the radius to maintain aspect ratio
+                          width: 160.0,
+                          height: 160.0,
                           child: ClipOval(
                             child: CachedNetworkImage(
-                              imageUrl: 'https://sskef.site/$Avatar',
+                              imageUrl: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/$Avatar',
                               placeholder: (context, url) => CircularProgressIndicator(),
                               errorWidget: (context, url, error) => Icon(Icons.error),
                             ),
@@ -223,7 +224,7 @@ class _UserPageState extends State<UserPage> {
                           radius: 40.0,
                           backgroundColor: Colors.grey[200],
                           backgroundImage: NetworkImage(
-                              'https://sskef.site/${user.clubLogo}'),
+                              'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${user.clubLogo}'),
                         ),
                         const SizedBox(width: 16.0),
                         Text(
@@ -292,7 +293,7 @@ class _UserPageState extends State<UserPage> {
 
                             return AchievementItem(
                               onTap: null,
-                              logo: 'https://sskef.site/${achievement.logoURL}',
+                              logo: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
                               title: achievement.title,
                               description: achievement.description,
                               xp: achievement.xp,
@@ -328,7 +329,7 @@ class _UserPageState extends State<UserPage> {
                             if (!isCompleted) {
                               return AchievementItem(
                                 onTap: null,
-                                logo: 'https://sskef.site/${achievement.logoURL}',
+                                logo: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
                                 title: achievement.title,
                                 description: achievement.description,
                                 xp: achievement.xp,
