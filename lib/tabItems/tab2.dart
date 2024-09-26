@@ -30,7 +30,7 @@ class _Tab2Page extends State<Tab2Page> {
   }
 
   Future<List<User>> fetchUsers() async {
-    var url = Uri.parse('${baseURL}users');
+    var url = Uri.parse('${baseURL}api/users');
 
     var response = await http.get(url);
 
@@ -69,7 +69,6 @@ class _Tab2Page extends State<Tab2Page> {
             List<User> users = snapshot.data!;
             users.sort((a, b) => b.xpSum.compareTo(a.xpSum));
             users = users.take(100).toList();
-
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

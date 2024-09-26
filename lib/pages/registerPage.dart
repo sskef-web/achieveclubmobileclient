@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../items/fourDigitCodeInput.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -13,6 +14,7 @@ class RegisterPage extends StatefulWidget {
   final Function(String) updatePassword;
   final Function(String) updateFirstName;
   final Function(String) updateLastName;
+  final Function(String) updateProofCode;
   final Function(int) updateClubId;
   final Function(BuildContext) uploadAvatar;
   String email;
@@ -29,6 +31,7 @@ class RegisterPage extends StatefulWidget {
     required this.updatePassword,
     required this.updateFirstName,
     required this.updateLastName,
+    required this.updateProofCode,
     required this.updateClubId,
     required this.uploadAvatar,
     required this.email,
@@ -106,10 +109,12 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<List<Club>> fetchClubs() async {
-    final url = Uri.parse('${baseURL}clubs');
+    final url = Uri.parse('${baseURL}api/clubs');
 
     try {
-      final response = await http.get(url);
+      final response = await http.get(url, headers: {
+        'Accept-Language': Localizations.localeOf(context).languageCode,
+      });
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -139,8 +144,9 @@ class _RegisterPageState extends State<RegisterPage> {
   void _updateProofCode(String value) {
     setState(() {
       widget.proofCode = value;
+      widget.updateProofCode;
     });
-    debugPrint(widget.proofCode);
+    debugPrint('NEW proof-code - ${widget.proofCode}');
   }
 
   void showProofCodeDialog(BuildContext context, String email) async {
@@ -178,7 +184,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> validateEmail(String email, String proofCode) async {
-    var url = Uri.parse('${baseURL}auth/ValidateProofCode');
+    var url = Uri.parse('${baseURL}api/auth/ValidateProofCode');
 
     var body = jsonEncode({
       'emailAddress': email,
@@ -197,19 +203,19 @@ class _RegisterPageState extends State<RegisterPage> {
     }
     else {
       showResultDialog(context, false);
-      String errorMessage;
-      throw errorMessage = response.body;
+      throw response.body;
     }
   }
 
   Future<void> sendProofCode(String email) async {
-    var url = Uri.parse('${baseURL}auth/SendProofCode');
+    var url = Uri.parse('${baseURL}api/auth/SendProofCode');
 
     var body = jsonEncode(
       email,
     );
 
     var response = await http.post(url, body: body, headers: {
+      'Accept-Language': Localizations.localeOf(context).languageCode,
       'Content-Type': 'application/json',
     });
 
@@ -219,6 +225,16 @@ class _RegisterPageState extends State<RegisterPage> {
     else {
       throw response.body;
     }
+  }
+
+  Future<bool> saveProofCode() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('proofCode', widget.proofCode);
+  }
+
+  Future<String?> loadProofCode() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('proofCode');
   }
 
   void showResultDialog(BuildContext context, bool isValidate) {
@@ -254,6 +270,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
                         if (isValidate == true) {
+                          saveProofCode();
                           widget.registerCallback();
                         }
                       },
@@ -319,13 +336,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         TextFormField(
-                          /*controller: TextEditingController.fromValue(
-                            TextEditingValue(
-                              text: widget.firstName,
-                              selection: TextSelection.collapsed(
-                                  offset: widget.firstName.length),
-                            ),
-                          ),*/
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.name,
                             errorText: widget.firstName.isNotEmpty && widget.firstName.length < 2
@@ -352,13 +362,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         ),
                         TextFormField(
-                          /*controller: TextEditingController.fromValue(
-                            TextEditingValue(
-                              text: widget.lastName,
-                              selection: TextSelection.collapsed(
-                                  offset: widget.lastName.length),
-                            ),
-                          ),*/
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.surname,
                             errorText: widget.lastName.isNotEmpty && widget.lastName.length < 2
@@ -385,13 +388,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         ),
                         TextFormField(
-                          /*controller: TextEditingController.fromValue(
-                            TextEditingValue(
-                              text: widget.email,
-                              selection: TextSelection.collapsed(
-                                  offset: widget.email.length),
-                            ),
-                          ),*/
                           decoration: InputDecoration(
                             labelText: 'E-mail',
                             errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
@@ -419,12 +415,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         ),
                         TextFormField(
-                          /*controller: TextEditingController.fromValue(
-                            TextEditingValue(
-                              text: widget.password,
-                              selection: TextSelection.collapsed(offset: widget.password.length),
-                            ),
-                          ),*/
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.password,
                             errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
@@ -453,13 +443,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         ),
                         TextFormField(
-                          /*controller: TextEditingController.fromValue(
-                            TextEditingValue(
-                              text: widget.confirmPassword,
-                              selection: TextSelection.collapsed(
-                                  offset: widget.confirmPassword.length),
-                            ),
-                          ),*/
                           controller: confirmPasswordController,
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.confirmPassword,

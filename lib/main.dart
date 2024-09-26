@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'data/language_provider.dart';
 
 String appTitle = "";
-String baseURL = 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/api/';
+String baseURL = 'http://142.93.231.78:8080/';
 
 void main() {
   runApp(const MyApp());

@@ -43,7 +43,7 @@ class _Tab3Page extends State<Tab3Page> {
   }
 
   Future<List<Club>> fetchClubs() async {
-    var url = Uri.parse('${baseURL}clubs');
+    var url = Uri.parse('${baseURL}api/clubs');
     var response = await http.get(url,
         headers: {
           'Accept-Language': locale
@@ -82,34 +82,41 @@ class _Tab3Page extends State<Tab3Page> {
         if (snapshot.hasData) {
           var clubs = snapshot.data!;
           clubs.sort((a, b) => b.avgXp.compareTo(a.avgXp));
-
           return SingleChildScrollView(
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: clubs.length,
-              itemBuilder: (context, index) {
-                final club = clubs[index];
-                final position = (index + 1).toString();
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ClubTopItem(
-                        onTap: () {
-                          navigateToClubPage(club.id, position);
-                        },
-                        clubName: club.title,
-                        clubLogo: club.logoURL,
-                        xp: club.avgXp,
-                        id: club.id,
-                        position: position,
-                      ),
-                    ],
-                  ),
-                );
-              },
+            child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: clubs.length,
+                      itemBuilder: (context, index) {
+                        final club = clubs[index];
+                        final position = (index + 1).toString();
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ClubTopItem(
+                                onTap: () {
+                                  navigateToClubPage(club.id, position);
+                                },
+                                clubName: club.title,
+                                clubLogo: club.logoURL,
+                                xp: club.avgXp,
+                                id: club.id,
+                                position: position,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                )
             ),
           );
         } else if (snapshot.hasError) {

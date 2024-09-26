@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../main.dart';
+
 class UserTopItem extends StatelessWidget {
   final int id;
   final String firstName;
@@ -39,7 +41,7 @@ class UserTopItem extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: NetworkImage('https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/$avatarPath'),
+                    image: NetworkImage('${baseURL}$avatarPath'),
                   ),
                 ),
               ),
@@ -71,7 +73,7 @@ class UserTopItem extends StatelessWidget {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage('https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/$clubLogo'),
+                      image: NetworkImage('${baseURL}$clubLogo'),
                     ),
                   ),
                 ),

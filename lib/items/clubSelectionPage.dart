@@ -30,7 +30,7 @@ class _ClubSelectionPageState extends State<ClubSelectionPage> {
   }
 
   Future<void> _fetchClubTitles() async {
-    final response = await http.get(Uri.parse('${baseURL}clubs/titles'));
+    final response = await http.get(Uri.parse('${baseURL}api/clubs/titles'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       List<Club> clubs = [];

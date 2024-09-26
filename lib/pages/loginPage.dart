@@ -75,6 +75,7 @@ class _LoginPageState extends State<LoginPage> {
               updatePassword: widget.updatePassword,
               updateFirstName: widget.updateFirstName,
               updateLastName: widget.updateLastName,
+              updateProofCode: widget.updateProofCode,
               updateClubId: widget.updateClubId,
               uploadAvatar: widget.uploadAvatar,
               email: widget.email,
@@ -130,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> validateEmail(String email, String proofCode) async {
-    var url = Uri.parse('${baseURL}auth/ValidateProofCode');
+    var url = Uri.parse('${baseURL}api/auth/ValidateProofCode');
 
     var body = jsonEncode({
       'emailAddress': email,
@@ -221,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
   Future<void> sendProofCode(String email) async {
-    var url = Uri.parse('${baseURL}auth/SendProofCode');
+    var url = Uri.parse('${baseURL}api/auth/SendProofCode');
 
     var body = jsonEncode(
       email,
@@ -419,13 +420,6 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   TextFormField(
                     controller: _emailController,
-                    /*controller: TextEditingController.fromValue(
-                      TextEditingValue(
-                        text: widget.email,
-                        selection: TextSelection.collapsed(
-                            offset: widget.email.length),
-                      ),
-                    ),*/
                     decoration: InputDecoration(
                       labelText: 'E-mail',
                       errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
@@ -451,13 +445,6 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 16.0),
                   TextFormField(
                     controller: _passwordController,
-                    /*controller: TextEditingController.fromValue(
-                      TextEditingValue(
-                        text: widget.password,
-                        selection: TextSelection.collapsed(
-                            offset: widget.password.length),
-                      ),
-                    ),*/
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context)!.password,
                       suffixIcon: IconButton(

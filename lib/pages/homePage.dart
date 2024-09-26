@@ -36,7 +36,12 @@ class _HomePageState extends State<HomePage> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text(appTitle)),
+        backgroundColor: Colors.transparent,
+        title: Center(
+            child: Text(
+              appTitle,
+            )
+        ),
         leading: SizedBox(
           width: 48.0,
           height: 48.0,
@@ -47,9 +52,7 @@ class _HomePageState extends State<HomePage> {
               child: const Icon(Icons.logout),
             ),
             onPressed: () {
-              setState(() {
-                widget.logoutCallback();
-              });
+              widget.logoutCallback();
             },
           ),
         ),

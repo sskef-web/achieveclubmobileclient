@@ -84,7 +84,7 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   Future<List<CompletedAchievement>> fetchCompletedAchievements() async {
-    var url = Uri.parse('${baseURL}completedachievements/current');
+    var url = Uri.parse('${baseURL}api/completedachievements/current');
     var cookies = await loadCookies();
 
     var response = await http.get(url, headers: {
@@ -130,7 +130,7 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   Future<void> refreshToken() async {
-    var refreshUrl = Uri.parse('${baseURL}auth/refresh');
+    var refreshUrl = Uri.parse('${baseURL}api/auth/refresh');
     var cookies = await loadCookies();
     appTitle = AppLocalizations.of(context)!.profil;
 
@@ -165,7 +165,7 @@ class _Tab1Page extends State<Tab1Page> {
   Future<User> fetchUser() async {
       var cookies = await loadCookies();
       userId = extractUserIdFromCookies(cookies!);
-      var url = Uri.parse('${baseURL}users/current');
+      var url = Uri.parse('${baseURL}api/users/current');
       debugPrint(url.toString());
       appTitle = AppLocalizations.of(context)!.profil;
       debugPrint(Localizations.localeOf(context).languageCode);
@@ -189,9 +189,8 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   Future<List<Achievement>> fetchAchievements() async {
-    //var locale = Localizations.localeOf(context).languageCode;
     debugPrint('LOCALE: $widget.locale');
-    final response = await http.get(Uri.parse('${baseURL}achievements'),
+    final response = await http.get(Uri.parse('${baseURL}api/achievements'),
         headers: {
           'Accept-Language': widget.locale
         }
@@ -213,7 +212,7 @@ class _Tab1Page extends State<Tab1Page> {
     if (pickedImage != null) {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('${baseURL}avatar'),
+        Uri.parse('${baseURL}api/avatar'),
       );
       request.headers['Cookie'] = cookies!;
 
@@ -269,7 +268,7 @@ class _Tab1Page extends State<Tab1Page> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CachedNetworkImage(
-                  imageUrl: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
+                  imageUrl: '${baseURL}${achievement.logoURL}',
                   width: 50.0,
                   height: 50.0,
                   placeholder: (context, url) => const CircularProgressIndicator(),
@@ -331,7 +330,7 @@ class _Tab1Page extends State<Tab1Page> {
                       height: 80.0,
                       child: ClipOval(
                         child: CachedNetworkImage(
-                          imageUrl: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/$Avatar',
+                          imageUrl: '${baseURL}$Avatar',
                           placeholder: (context, url) => CircularProgressIndicator(),
                           errorWidget: (context, url, error) => Icon(Icons.error),
                         ),
@@ -388,7 +387,7 @@ class _Tab1Page extends State<Tab1Page> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(8.0),
                                       child: Image.network(
-                                        'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
+                                        '${baseURL}${achievement.logoURL}',
                                         width: 50.0,
                                         height: 50.0,
                                       ),
@@ -509,7 +508,7 @@ class _Tab1Page extends State<Tab1Page> {
             snapshot.data![2] as List<CompletedAchievement>;
             return SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0, top: 8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -521,7 +520,7 @@ class _Tab1Page extends State<Tab1Page> {
                       children: [
                         CircleAvatar(
                           radius: 80.0,
-                          backgroundImage: NetworkImage('https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/$Avatar'),
+                          backgroundImage: NetworkImage('${baseURL}$Avatar'),
                           child: InkWell(
                             onTap: () {
                               _uploadAvatar(context);
@@ -549,7 +548,7 @@ class _Tab1Page extends State<Tab1Page> {
                         CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 50.0,
-                          backgroundImage: NetworkImage('https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${user.clubLogo}'),
+                          backgroundImage: NetworkImage('${baseURL}${user.clubLogo}'),
                           child: InkWell(
                             onTap: () {navigateToClubPage(user.clubId, '0');},
                           ),
@@ -599,7 +598,7 @@ class _Tab1Page extends State<Tab1Page> {
                     const SizedBox(height: 8.0),
                     if (completedAchievements.length > 0) Text(
                       AppLocalizations.of(context)!.completedAchievements,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -623,7 +622,7 @@ class _Tab1Page extends State<Tab1Page> {
                               onTap: () {
                                 setState(() {});
                               },
-                              logo: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
+                              logo: '${baseURL}${achievement.logoURL}',
                               title: achievement.title,
                               description: achievement.description,
                               xp: achievement.xp,
@@ -638,7 +637,7 @@ class _Tab1Page extends State<Tab1Page> {
                     const SizedBox(height: 8.0),
                     Text(
                       '${AppLocalizations.of(context)!.unCompletedAchievements}:',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -673,7 +672,7 @@ class _Tab1Page extends State<Tab1Page> {
                                   });
                                 },
                                 logo:
-                                'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
+                                '${baseURL}${achievement.logoURL}',
                                 title: achievement.title,
                                 description: achievement.description,
                                 xp: achievement.xp,

@@ -33,7 +33,7 @@ class _ClubPageState extends State<ClubPage> {
   }
 
   Future<void> fetchData() async {
-    final clubResponse = await http.get(Uri.parse('${baseURL}clubs/${widget.clubId}'),
+    final clubResponse = await http.get(Uri.parse('${baseURL}api/clubs/${widget.clubId}'),
         headers: {'Accept-Language': locale});
 
     if (clubResponse.statusCode == 200) {
@@ -144,7 +144,7 @@ class _ClubPageState extends State<ClubPage> {
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: NetworkImage('https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${clubData?['logoURL']}'),
+                          image: NetworkImage('${baseURL}/${clubData?['logoURL']}'),
                         ),
                       ),
                     ),
@@ -179,7 +179,7 @@ class _ClubPageState extends State<ClubPage> {
               const SizedBox(height: 16),
               Text(
                 userList != [] ? '${AppLocalizations.of(context)!.clubStudents}:' : '',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               userList != null
                   ? ListView.builder(
@@ -196,7 +196,7 @@ class _ClubPageState extends State<ClubPage> {
                       navigateToUser(user['id']);
                     },
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage('https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${user['avatar']}'),
+                      backgroundImage: NetworkImage('${baseURL}/${user['avatar']}'),
                     ),
                     title: Text('${user['firstName']} ${user['lastName']}'),
                     subtitle: Text('${AppLocalizations.of(context)!.avgXP}: ${user['xpSum']}'),

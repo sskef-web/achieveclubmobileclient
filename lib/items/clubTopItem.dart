@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../main.dart';
+
 class ClubTopItem extends StatelessWidget {
   final int id;
   final String clubName;
@@ -39,7 +41,7 @@ class ClubTopItem extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: NetworkImage('https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/$clubLogo'),
+                    image: NetworkImage('${baseURL}$clubLogo'),
                   ),
                 ),
               ),

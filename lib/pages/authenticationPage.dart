@@ -25,7 +25,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   String confirmPassword = '';
   String firstName = '';
   String lastName = '';
-  String avatarPath = 'StaticFiles/avatars/38c7301d-b794-44b4-935b-aeb70527b1a5.jpeg';
+  String avatarPath = 'empty';
   int clubId = 0;
   var userId;
   var token;
@@ -92,16 +92,22 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     return prefs.getString('cookies');
   }
 
-  Future<void> _changePassword(String email, String password) async {
-    var url = Uri.parse('${baseURL}auth/ChangePassword');
+  Future<String?> loadProofCode() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('proofCode');
+  }
 
-    var body = jsonEncode({
-    'emailAndProof': {
-    'emailAddress': email,
-    'proofCode': proofCode
-    },
-      'password': password
-    });
+  Future<void> _changePassword(String email, String password) async {
+    var url = Uri.parse('${baseURL}api/auth/ChangePassword');
+
+    var body = jsonEncode(
+        {
+          'emailAndProof': {
+            'emailAddress': email,
+            'proofCode': proofCode
+          },
+          'password': password
+        });
     var response = await http.patch(url, body: body, headers: {
       'Content-Type': 'application/json',
     });
@@ -115,7 +121,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   Future<LoginResponse> login(String email, String password) async {
-    var url = Uri.parse('${baseURL}auth/login');
+    var url = Uri.parse('${baseURL}api/auth/login');
     var body = jsonEncode({
       'email': email,
       'password': password,
@@ -179,8 +185,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   Future<LoginResponse> registrate(String email, String password,
-      String firstName, String lastName, String avatarPath, int clubId, String proofCode) async {
-    var url = Uri.parse('${baseURL}auth/registration');
+      String firstName, String lastName, String avatarPath, int clubId, var proofCode) async {
+    var url = Uri.parse('${baseURL}api/auth/registration?api-version=1.1');
 
     var body = jsonEncode({
       'firstName': firstName,
@@ -190,7 +196,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       'avatarURL': avatarPath,
       'emailAndProof': {
         'emailAddress': email,
-        'proofCode': '1111'
+        'proofCode': proofCode
       },
     });
     debugPrint('====== REG DATA ======\n$firstName\n$lastName\n$clubId\n$email\n$proofCode\n$password\n$avatarPath\n====== REG DATA ======');
@@ -237,10 +243,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     } else {
       await login(email, password);
       savedCookies = await loadCookies();
-      //print('${savedCookies}');
-
-      //password = HashService.generateHash(password,  );
-
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
 
@@ -252,10 +254,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   void _register() async {
-
       Navigator.pop(context, true);
+      var newProofCode = await loadProofCode();
+
       await registrate(
-          email, password, firstName, lastName, avatarPath, clubId, proofCode);
+          email, password, firstName, lastName, avatarPath, clubId, newProofCode);
       savedCookies = await loadCookies();
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -280,42 +283,42 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   void _updateEmail(String value) {
     setState(() {
       email = value;
-      print('NEW EMAIL: $email');
+      debugPrint('NEW EMAIL: $email');
     });
   }
 
   void _updatePassword(String value) {
     setState(() {
       password = value;
-      print('NEW PASS: $password');
+      debugPrint('NEW PASS: $password');
     });
   }
 
   void _updateFirstName(String value) {
     setState(() {
       firstName = value;
-      print('NEW FIRSTNAME: $firstName');
+      debugPrint('NEW FIRSTNAME: $firstName');
     });
   }
 
   void _updateProofCode(String value) {
     setState(() {
       proofCode = value;
-      print('NEW PROOFCODE: $proofCode');
+      debugPrint('NEW PROOFCODE: $proofCode');
     });
   }
 
   void _updateLastName(String value) {
     setState(() {
       lastName = value;
-      print('NEW LASTNAME: $lastName');
+      debugPrint('NEW LASTNAME: $lastName');
     });
   }
 
   void _updateClubId(int value) {
     setState(() {
       clubId = value;
-      print('NEW CLUB ID: $clubId');
+      debugPrint('NEW CLUB ID: $clubId');
     });
   }
 
@@ -349,10 +352,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
             avatarPath = imageUrl;
           });
         } else {
-          debugPrint('Błąd podczas przesyłania awatara. Kod statusu: ${response.statusCode}');
+          debugPrint('Error uploading avatar. Status Code: ${response.statusCode}');
         }
       } catch (error) {
-        debugPrint('Błąd podczas wgrywania awatara: $error');
+        debugPrint('Erorr uploading avatar: $error');
       }
     }
   }
