@@ -36,11 +36,18 @@ class _UserPageState extends State<UserPage> {
   @override
   void initState() {
     super.initState();
+    _userFuture = fetchUser();
+    _userFuture.then((user) {
+      setState(() {
+        Avatar = user.avatar;
+      });
+    });
+    _achieveFuture = fetchAchievements();
+    _completedAchievementsFuture = fetchCompletedAchievements();
   }
 
   Future<void> saveCookies(String cookies) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //await prefs.remove('cookies');
     await prefs.setString('cookies', cookies);
   }
 
@@ -50,7 +57,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   Future<void> refreshToken() async {
-    var refreshUrl = Uri.parse('${baseURL}auth/refresh');
+    var refreshUrl = Uri.parse('${baseURL}api/auth/refresh');
     var cookies = await loadCookies();
 
     var response = await http.get(refreshUrl, headers: {
@@ -69,7 +76,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   Future<List<CompletedAchievement>> fetchCompletedAchievements() async {
-    var url = Uri.parse('${baseURL}completedachievements/${widget.userId}');
+    var url = Uri.parse('${baseURL}api/completedachievements/${widget.userId}');
     var cookies = await loadCookies();
 
     var response = await http.get(url, headers: {
@@ -98,7 +105,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   Future<List<Achievement>> fetchAchievements() async {
-    final response = await http.get(Uri.parse('${baseURL}achievements'),
+    final response = await http.get(Uri.parse('${baseURL}api/achievements'),
         headers: {'Accept-Language': locale});
 
     if (response.statusCode == 200) {
@@ -112,7 +119,7 @@ class _UserPageState extends State<UserPage> {
   Future<User> fetchUser() async {
     try {
       var cookies = await loadCookies();
-      var url = Uri.parse('${baseURL}users/${widget.userId}');
+      var url = Uri.parse('${baseURL}api/users/${widget.userId}');
       appTitle = AppLocalizations.of(context)!.profil;
 
       var response = await http.get(url, headers: {
@@ -154,14 +161,6 @@ class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     locale = Localizations.localeOf(context).languageCode;
-    _userFuture = fetchUser();
-    _userFuture.then((user) {
-      setState(() {
-        Avatar = user.avatar;
-      });
-    });
-    _achieveFuture = fetchAchievements();
-    _completedAchievementsFuture = fetchCompletedAchievements();
     AsyncSnapshot<List<dynamic>>? currentSnapshot;
     return Scaffold(
       appBar: AppBar(
@@ -196,7 +195,7 @@ class _UserPageState extends State<UserPage> {
                           height: 160.0,
                           child: ClipOval(
                             child: CachedNetworkImage(
-                              imageUrl: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/$Avatar',
+                              imageUrl: '${baseURL}/$Avatar',
                               placeholder: (context, url) => CircularProgressIndicator(),
                               errorWidget: (context, url, error) => Icon(Icons.error),
                             ),
@@ -224,7 +223,7 @@ class _UserPageState extends State<UserPage> {
                           radius: 40.0,
                           backgroundColor: Colors.grey[200],
                           backgroundImage: NetworkImage(
-                              'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${user.clubLogo}'),
+                              '${baseURL}/${user.clubLogo}'),
                         ),
                         const SizedBox(width: 16.0),
                         Text(
@@ -271,7 +270,7 @@ class _UserPageState extends State<UserPage> {
                     const SizedBox(height: 8.0),
                     if (completedAchievements.length > 0) Text(
                       AppLocalizations.of(context)!.completedAchievements,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -293,7 +292,7 @@ class _UserPageState extends State<UserPage> {
 
                             return AchievementItem(
                               onTap: null,
-                              logo: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
+                              logo: '${baseURL}/${achievement.logoURL}',
                               title: achievement.title,
                               description: achievement.description,
                               xp: achievement.xp,
@@ -329,7 +328,7 @@ class _UserPageState extends State<UserPage> {
                             if (!isCompleted) {
                               return AchievementItem(
                                 onTap: null,
-                                logo: 'https://achieveclub-ekdpajekhkd0amct.polandcentral-01.azurewebsites.net/${achievement.logoURL}',
+                                logo: '${baseURL}/${achievement.logoURL}',
                                 title: achievement.title,
                                 description: achievement.description,
                                 xp: achievement.xp,
