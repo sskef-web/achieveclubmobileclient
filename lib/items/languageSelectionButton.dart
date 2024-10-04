@@ -21,6 +21,7 @@ class _LanguageSelectionButtonState extends State<LanguageSelectionButton> {
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       width: 120,
@@ -44,13 +45,13 @@ class _LanguageSelectionButtonState extends State<LanguageSelectionButton> {
               });
               languageProvider.changeLanguage(newValue!);
             },
-            items: const [
+            items: [
               DropdownMenuItem<Locale>(
                 value: Locale('ru'),
                 child: Text(
                   'RU',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: isDarkTheme ? Colors.white : Colors.black,
                     fontSize: 16.0,
                   ),
                 ),
@@ -60,7 +61,7 @@ class _LanguageSelectionButtonState extends State<LanguageSelectionButton> {
                 child: Text(
                   'PL',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: isDarkTheme ? Colors.white : Colors.black,
                     fontSize: 16.0,
                   ),
                 ),
@@ -70,7 +71,7 @@ class _LanguageSelectionButtonState extends State<LanguageSelectionButton> {
                 child: Text(
                   'EN',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: isDarkTheme ? Colors.white : Colors.black,
                     fontSize: 16.0,
                   ),
                 ),
@@ -78,48 +79,18 @@ class _LanguageSelectionButtonState extends State<LanguageSelectionButton> {
             ],
             hint: Text(
               Localizations.localeOf(context).languageCode.toUpperCase(),
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: isDarkTheme ? Colors.white : Colors.black,
                 fontSize: 16.0,
               ),
             ),
             isExpanded: false,
             underline: const SizedBox(),
-            style: const TextStyle(fontSize: 16.0),
-            selectedItemBuilder: (BuildContext context) {
-              return [
-                const DropdownMenuItem<Locale>(
-                  value: Locale('ru'),
-                  child: Text(
-                    'RU',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
-                const DropdownMenuItem<Locale>(
-                  value: Locale('pl'),
-                  child: Text(
-                    'PL',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
-                const DropdownMenuItem<Locale>(
-                  value: Locale('en'),
-                  child: Text(
-                    'EN',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
-              ];
-            },
+            style: TextStyle(
+              color: isDarkTheme ? Colors.white : Colors.black,
+              fontSize: 16.0,
+            ),
+            dropdownColor: isDarkTheme ? Colors.grey[800] : Colors.white,
           ),
         ),
       ),

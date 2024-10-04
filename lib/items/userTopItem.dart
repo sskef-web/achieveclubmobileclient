@@ -41,7 +41,7 @@ class UserTopItem extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: NetworkImage('${baseURL}$avatarPath'),
+                    image: NetworkImage('$baseURL$avatarPath'),
                   ),
                 ),
               ),
@@ -73,7 +73,7 @@ class UserTopItem extends StatelessWidget {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage('${baseURL}$clubLogo'),
+                      image: NetworkImage('$baseURL$clubLogo'),
                     ),
                   ),
                 ),

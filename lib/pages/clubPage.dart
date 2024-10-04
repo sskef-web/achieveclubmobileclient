@@ -49,7 +49,7 @@ class _ClubPageState extends State<ClubPage> {
           userList = null;
         });
       }
-      debugPrint('fetch user List ${userList}');
+      debugPrint('fetch user List $userList');
     } else {
 
       throw Exception('${AppLocalizations.of(context)!.fetchClubsError}: ${clubResponse.body} [${clubResponse.statusCode}]');
@@ -144,7 +144,7 @@ class _ClubPageState extends State<ClubPage> {
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: NetworkImage('${baseURL}/${clubData?['logoURL']}'),
+                          image: NetworkImage('$baseURL/${clubData?['logoURL']}'),
                         ),
                       ),
                     ),
@@ -196,7 +196,7 @@ class _ClubPageState extends State<ClubPage> {
                       navigateToUser(user['id']);
                     },
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage('${baseURL}/${user['avatar']}'),
+                      backgroundImage: NetworkImage('$baseURL/${user['avatar']}'),
                     ),
                     title: Text('${user['firstName']} ${user['lastName']}'),
                     subtitle: Text('${AppLocalizations.of(context)!.avgXP}: ${user['xpSum']}'),

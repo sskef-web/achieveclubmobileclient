@@ -41,7 +41,7 @@ class ClubTopItem extends StatelessWidget {
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: NetworkImage('${baseURL}$clubLogo'),
+                    image: NetworkImage('$baseURL$clubLogo'),
                   ),
                 ),
               ),
