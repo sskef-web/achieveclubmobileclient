@@ -62,6 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String? password;
   String? confirmPassword;
   bool isEmailProofed = false;
+  String proofCode = "";
 
   @override
   void initState() {
@@ -113,7 +114,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
       final response = await http.get(url, headers: {
-        'Accept-Language': Localizations.localeOf(context).languageCode,
+        'Accept-Language': Localizations
+            .localeOf(context)
+            .languageCode,
       });
 
       if (response.statusCode == 200) {
@@ -127,14 +130,15 @@ class _RegisterPageState extends State<RegisterPage> {
               avgXp: 0,
               logoURL: clubData['logoURL'],
               description: '',
-              address: ''
-          );
+              address: '');
           clubs.add(club);
         }
 
         return clubs;
       } else {
-        throw Exception('${AppLocalizations.of(context)!.fetchClubsError}: ${response.statusCode}');
+        throw Exception(
+            '${AppLocalizations.of(context)!.fetchClubsError}: ${response
+                .statusCode}');
       }
     } catch (e) {
       throw Exception('${AppLocalizations.of(context)!.fetchClubsError}: $e');
@@ -145,7 +149,9 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() {
       widget.proofCode = value;
       widget.updateProofCode;
+      proofCode = value;
     });
+    saveProofCode();
     debugPrint('NEW proof-code - ${widget.proofCode}');
   }
 
@@ -163,16 +169,27 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text (AppLocalizations.of(context)!.confirmEmail, textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
-                Text ('${AppLocalizations.of(context)!.codeSended} - \n$email', textAlign: TextAlign.center,),
+                Text(
+                  AppLocalizations.of(context)!.confirmEmail,
+                  textAlign: TextAlign.center,
+                  textScaler: TextScaler.linear(1.2),
+                ),
+                Text(
+                  '${AppLocalizations.of(context)!.codeSended} - \n$email',
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 16.0),
                 FourDigitCodeInput(updateProofCode: _updateProofCode),
-                const SizedBox(height: 16.0,),
+                const SizedBox(
+                  height: 16.0,
+                ),
                 ElevatedButton(
-                  onPressed: widget.proofCode != 4 ? () {
+                  onPressed: widget.proofCode != 4
+                      ? () {
                     Navigator.of(dialogContext).pop();
-                    validateEmail(email, widget.proofCode);
-                  } : null,
+                    widget.registerCallback();
+                  }
+                      : null,
                   child: Text(AppLocalizations.of(context)!.send),
                 ),
               ],
@@ -199,37 +216,50 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         isEmailProofed == true;
       });
-      showResultDialog(context, true);
-    }
-    else {
-      showResultDialog(context, false);
+      showResultDialog(context, true, false);
+    } else {
+      showResultDialog(context, false, false);
       throw response.body;
     }
   }
 
+
   Future<void> sendProofCode(String email) async {
-    var url = Uri.parse('${baseURL}api/auth/SendProofCode');
+    var url = Uri.parse('${baseURL}api/email/proof_email');
 
     var body = jsonEncode(
       email,
     );
 
     var response = await http.post(url, body: body, headers: {
-      'Accept-Language': Localizations.localeOf(context).languageCode,
+      'Accept-Language': Localizations
+          .localeOf(context)
+          .languageCode,
       'Content-Type': 'application/json',
     });
 
     if (response.statusCode == 200) {
       debugPrint('code send to $email');
+      showProofCodeDialog(context, email);
+    }
+    else if (response.statusCode == 409) {
+      if (response.body.contains('email')) {
+        showEmailErrorDialog(context);
+      }
+      else {
+        showResultDialog(context, true, true);
+      }
     }
     else {
+      showResultDialog(context, true, true);
+      debugPrint('${response.body}, Status code: ${response.statusCode}');
       throw response.body;
     }
   }
 
   Future<bool> saveProofCode() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setString('proofCode', widget.proofCode);
+    return prefs.setString('proofCode', proofCode);
   }
 
   Future<String?> loadProofCode() async {
@@ -237,7 +267,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return prefs.getString('proofCode');
   }
 
-  void showResultDialog(BuildContext context, bool isValidate) {
+  void showEmailErrorDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -251,22 +281,102 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                isValidate != false ?
-                Text(AppLocalizations.of(context)!.emailConfirmed, textAlign: TextAlign.center,)
-                    : Text ('${AppLocalizations.of(context)!.error}!\n${AppLocalizations.of(context)!.wrongCode}', textAlign: TextAlign.center),
-                const SizedBox(height: 16.0,),
-                Row (
+                Text(
+                  'Ошибка \n Пользователь с таким email уже зарегистрирован.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                  },
+                  child: Center(
+                      child: Text(AppLocalizations.of(context)!.close)),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showResultDialog(BuildContext context, bool isValidate,
+      bool isCodeSended) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                isCodeSended
+                    ? Text(
+                  '${AppLocalizations.of(context)!.error}\n${AppLocalizations
+                      .of(context)!.codeSendedAfter}',
+                  textAlign: TextAlign.center,
+                )
+                    : isValidate != false
+                    ? Text(
+                  AppLocalizations.of(context)!.emailConfirmed,
+                  textAlign: TextAlign.center,
+                )
+                    : Text(
+                    '${AppLocalizations.of(context)!.error}!\n${AppLocalizations
+                        .of(context)!.wrongCode}',
+                    textAlign: TextAlign.center),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(width: 8.0,),
-                    isValidate == false ? ElevatedButton(
+                    const SizedBox(
+                      width: 8.0,
+                    ),
+                    isCodeSended
+                        ? Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                            showProofCodeDialog(context, widget.email);
+                          },
+                          child: Center(
+                              child: Text(
+                                  AppLocalizations.of(context)!.writeCode)),
+                        ),
+                        const SizedBox(width: 8.0,),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                          },
+                          child: Center(
+                              child: Text(
+                                  AppLocalizations.of(context)!.close)),
+                        )
+                      ],
+                    )
+                        : isValidate == false
+                        ? ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
                         showProofCodeDialog(context, widget.email);
                       },
-                      child: Center (child: Text(AppLocalizations.of(context)!.repeat)),
-                    ) : ElevatedButton(
+                      child: Center(
+                          child: Text(
+                              AppLocalizations.of(context)!.repeat)),
+                    )
+                        : ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
                         if (isValidate == true) {
@@ -274,7 +384,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           widget.registerCallback();
                         }
                       },
-                      child: Center (child: Text(AppLocalizations.of(context)!.continued)),
+                      child: Center(
+                          child: Text(AppLocalizations.of(context)!
+                              .continued)),
                     ),
                   ],
                 ),
@@ -309,7 +421,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     autovalidateMode: AutovalidateMode.always,
                     onChanged: () {
                       setState(() {
-                        isButtonEnabled = _formKey.currentState?.validate() ?? false;
+                        isButtonEnabled =
+                            _formKey.currentState?.validate() ?? false;
                       });
                     },
                     child: Column(
@@ -331,14 +444,16 @@ class _RegisterPageState extends State<RegisterPage> {
                                 });
                                 widget.updateClubId(clubId!);
                               },
-                              hint: Text(AppLocalizations.of(context)!.selectClub),
+                              hint: Text(
+                                  AppLocalizations.of(context)!.selectClub),
                             ),
                           ),
                         ),
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.name,
-                            errorText: widget.firstName.isNotEmpty && widget.firstName.length < 2
+                            errorText: widget.firstName.isNotEmpty &&
+                                widget.firstName.length < 2
                                 ? AppLocalizations.of(context)!.nameError
                                 : null,
                           ),
@@ -364,7 +479,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.surname,
-                            errorText: widget.lastName.isNotEmpty && widget.lastName.length < 2
+                            errorText: widget.lastName.isNotEmpty &&
+                                widget.lastName.length < 5
                                 ? AppLocalizations.of(context)!.surnameError
                                 : null,
                           ),
@@ -381,7 +497,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             if (value?.isEmpty ?? true) {
                               return AppLocalizations.of(context)!.emptySurname;
                             }
-                            if (value!.length <= 1) {
+                            if (value!.length <= 4) {
                               return AppLocalizations.of(context)!.surnameError;
                             }
                             return null;
@@ -390,7 +506,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'E-mail',
-                            errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
+                            errorText: widget.email.isNotEmpty &&
+                                !EmailValidator.validate(widget.email)
                                 ? AppLocalizations.of(context)!.emailError
                                 : null,
                           ),
@@ -417,7 +534,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.password,
-                            errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
+                            errorText: widget.password.isNotEmpty &&
+                                (widget.password.length < 6 ||
+                                    !_isPasswordValid(widget.password))
                                 ? AppLocalizations.of(context)!.passwordError
                                 : null,
                           ),
@@ -434,10 +553,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return AppLocalizations.of(context)!.emptyPassword;
+                              return AppLocalizations.of(context)!
+                                  .emptyPassword;
                             }
                             if (value!.length < 6 || !_isPasswordValid(value)) {
-                              return AppLocalizations.of(context)!.passwordError;
+                              return AppLocalizations.of(context)!
+                                  .passwordError;
                             }
                             return null;
                           },
@@ -445,9 +566,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextFormField(
                           controller: confirmPasswordController,
                           decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!.confirmPassword,
-                            errorText: confirmPasswordController.text != passwordController.text
-                                ? AppLocalizations.of(context)!.confirmPasswordError
+                            labelText:
+                            AppLocalizations.of(context)!.confirmPassword,
+                            errorText: confirmPasswordController.text !=
+                                passwordController.text
+                                ? AppLocalizations.of(context)!
+                                .confirmPasswordError
                                 : null,
                           ),
                           keyboardType: TextInputType.text,
@@ -462,10 +586,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
-                              return AppLocalizations.of(context)!.emptyConfirmPassword;
+                              return AppLocalizations.of(context)!
+                                  .emptyConfirmPassword;
                             }
                             if (value != passwordController.text) {
-                              return AppLocalizations.of(context)!.confirmPasswordError;
+                              return AppLocalizations.of(context)!
+                                  .confirmPasswordError;
                             }
                             return null;
                           },
@@ -475,11 +601,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 16.0),
                   ElevatedButton(
-                    onPressed: (_formKey.currentState?.validate() ?? false) && clubId != null ? () {
+                    onPressed: (_formKey.currentState?.validate() ?? false) &&
+                        clubId != null
+                        ? () {
                       debugPrint("\n\n\n\n${widget.email}\n\n\n\n");
-                        sendProofCode(email!);
-                        showProofCodeDialog(context, email!);
-                    } : null,
+                      sendProofCode(email!);
+                    }
+                        : null,
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text(
@@ -493,13 +621,11 @@ class _RegisterPageState extends State<RegisterPage> {
             } else if (snapshot.hasError) {
               return Text(AppLocalizations.of(context)!.loadingPageError);
             } else {
-              return const Center (child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
           },
         ),
       ),
     );
   }
-
-
 }

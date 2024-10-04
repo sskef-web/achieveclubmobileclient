@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-
 import 'data/language_provider.dart';
 
 String appTitle = "";
-String baseURL = 'http://142.93.231.78:8080/';
+String baseURL = 'http://achieve.by:5000/';
 
 void main() {
   runApp(const MyApp());

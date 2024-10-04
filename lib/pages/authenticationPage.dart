@@ -89,34 +89,40 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 
   Future<String?> loadCookies() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    debugPrint('LOAD COOKIES - ${prefs.getString('proofCode')}');
     return prefs.getString('cookies');
   }
 
   Future<String?> loadProofCode() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    debugPrint('LOAD PROOF-CODE - ${prefs.getString('proofCode')}');
     return prefs.getString('proofCode');
   }
 
   Future<void> _changePassword(String email, String password) async {
-    var url = Uri.parse('${baseURL}api/auth/ChangePassword');
-
+    var newProofCode = await loadProofCode();
+    var url = Uri.parse('${baseURL}api/auth/change_password');
     var body = jsonEncode(
         {
-          'emailAndProof': {
-            'emailAddress': email,
-            'proofCode': proofCode
-          },
+          'emailAddress': email,
+          'proofCode': newProofCode,
           'password': password
         });
+    debugPrint("${jsonDecode(body)}");
+    
     var response = await http.patch(url, body: body, headers: {
       'Content-Type': 'application/json',
     });
 
-    if (response.statusCode != 200) {
-      throw response.body;
+    if (response.statusCode == 200) {
+      debugPrint('Password changed. Status Code: ${response.statusCode}');
+      throw AlertDialog(
+        content: Text('Пароль изменен.', textAlign: TextAlign.center, ),
+      );
     }
     else {
-
+      debugPrint('Failed to change password\n ${response.body}. \nStatus Code: ${response.statusCode}');
+      throw response.body;
     }
   }
 
@@ -186,7 +192,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 
   Future<LoginResponse> registrate(String email, String password,
       String firstName, String lastName, String avatarPath, int clubId, var proofCode) async {
-    var url = Uri.parse('${baseURL}api/auth/registration?api-version=1.1');
+    var url = Uri.parse('${baseURL}api/auth/registration?api-version:1.0');
 
     var body = jsonEncode({
       'firstName': firstName,
@@ -194,10 +200,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       'clubId': clubId,
       'password': password,
       'avatarURL': avatarPath,
-      'emailAndProof': {
-        'emailAddress': email,
-        'proofCode': proofCode
-      },
+      'emailAddress': email,
+      'proofCode': proofCode
     });
     debugPrint('====== REG DATA ======\n$firstName\n$lastName\n$clubId\n$email\n$proofCode\n$password\n$avatarPath\n====== REG DATA ======');
     var response = await http.post(url, body: body, headers: {
@@ -207,12 +211,15 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     if (response.statusCode == 200) {
       var cookies = response.headers['set-cookie'];
       await saveCookies(cookies!);
-      var token = extractTokenFromCookies(cookies);
-      var userId = extractUserIdFromCookies(cookies);
-      var refreshToken = extractRefreshTokenFromCookies(cookies);
-      return LoginResponse(token!, userId!, refreshToken!, response.body);
+      token = extractTokenFromCookies(cookies);
+      userId = extractUserIdFromCookies(cookies);
+      refreshToken = extractRefreshTokenFromCookies(cookies);
+      return LoginResponse(token, userId, refreshToken, response.body);
     } else {
-      throw response.body;
+      debugPrint('Failed registration. Status code: ${response.statusCode}. Body: ${response.body}');
+      throw AlertDialog(
+        content: Text('Ошибка в поле ${response.body}'),
+      );
     }
   }
 
@@ -257,8 +264,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       Navigator.pop(context, true);
       var newProofCode = await loadProofCode();
 
-      await registrate(
-          email, password, firstName, lastName, avatarPath, clubId, newProofCode);
+      await registrate(email, password, firstName, lastName, avatarPath, clubId, newProofCode);
       savedCookies = await loadCookies();
 
       SharedPreferences prefs = await SharedPreferences.getInstance();

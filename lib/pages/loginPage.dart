@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:achieveclubmobileclient/items/fourDigitCodeInput.dart';
+import 'package:achieveclubmobileclient/pages/changePassPage.dart';
 import 'package:http/http.dart' as http;
 import 'package:achieveclubmobileclient/main.dart';
 import 'package:achieveclubmobileclient/pages/registerPage.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../items/languageSelectionButton.dart';
 
@@ -60,8 +62,10 @@ class _LoginPageState extends State<LoginPage> {
   bool isEmailProofed = false;
   String password = '';
   String email = '';
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _forgotEmailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  String proofCode = "";
 
   void navigateToRegisterPage(BuildContext context) {
     Navigator.push(
@@ -108,19 +112,13 @@ class _LoginPageState extends State<LoginPage> {
     return passwordRegex.hasMatch(password);
   }
 
+
   void _updateProofCode(String value) {
     setState(() {
       widget.proofCode = value;
     });
     widget.updateProofCode(value);
     debugPrint(widget.proofCode);
-  }
-  void _updatePassword(String value) {
-    setState(() {
-      widget.password = value;
-    });
-    widget.updatePassword(value);
-    debugPrint(widget.password);
   }
 
   void _updateEmail(String value) {
@@ -146,10 +144,10 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         isEmailProofed == true;
       });
-      showResultDialog(context, true);
+      showResultDialog(context, true, false);
     }
     else {
-      showResultDialog(context, false);
+      showResultDialog(context, false, false);
       throw response.body;
     }
   }
@@ -168,18 +166,12 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text (AppLocalizations.of(context)!.confirmEmail, textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
+                Text (AppLocalizations.of(context)!.confirmEmail, textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2)),
                 TextFormField(
-                  controller: TextEditingController.fromValue(
-                    TextEditingValue(
-                      text: email,
-                      selection: TextSelection.collapsed(
-                          offset: email.length),
-                    ),
-                  ),
+                  controller: _forgotEmailController,
                   decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.emailError,
-                    errorText: email.isNotEmpty && !EmailValidator.validate(email)
+                    labelText: 'E-mail',
+                    errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
                         ? AppLocalizations.of(context)!.emailError
                         : null,
                   ),
@@ -208,7 +200,6 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.of(dialogContext).pop();
                     debugPrint("\n\n\n\n${widget.email}\n\n\n\n");
                     sendProofCode(email);
-                    showProofCodeDialog(context, email);
                   },
                   child: Text(AppLocalizations.of(context)!.send),
                 ),
@@ -222,94 +213,33 @@ class _LoginPageState extends State<LoginPage> {
 
 
   Future<void> sendProofCode(String email) async {
-    var url = Uri.parse('${baseURL}api/auth/SendProofCode');
+    var url = Uri.parse('${baseURL}api/email/change_password');
 
     var body = jsonEncode(
       email,
     );
 
     var response = await http.post(url, body: body, headers: {
+      'Accept-Language': Localizations.localeOf(context).languageCode,
       'Content-Type': 'application/json',
     });
 
     if (response.statusCode == 200) {
       debugPrint('code send to $email');
-    }
-    else {
+      showProofCodeDialog(context, email);
+    } else {
+      showResultDialog(context, true, true);
+      debugPrint('${response.body}, Status code: ${response.statusCode}');
       throw response.body;
     }
   }
 
-  void showPasswordDialog(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text (AppLocalizations.of(context)!.writeNewPassword, textAlign: TextAlign.center, textScaler: TextScaler.linear(1.2),),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  //controller: _passwordController,
-                  controller: TextEditingController.fromValue(
-                    TextEditingValue(
-                      text: widget.password,
-                      selection: TextSelection.collapsed(
-                          offset: widget.password.length),
-                    ),
-                  ),
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.password,
-                    suffixIcon: IconButton(
-                      icon: Icon(passIcon),
-                      onPressed: () {
-                        updatePasswordVisibility();
-                      },
-                    ),
-                    errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
-                        ? AppLocalizations.of(context)!.passwordError
-                        : null,
-                  ),
-                  obscureText: isPasswordHidden,
-                  keyboardType: TextInputType.text,
-                  textAlign: TextAlign.left,
-                  textDirection: TextDirection.ltr,
-                  onChanged: (value) {
-                    setState(() {
-                      _updatePassword(value);
-                      debugPrint(widget.password);
-                    });
-                  },
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return AppLocalizations.of(context)!.emptyPassword;
-                    }
-                    if (value!.length < 6 || !_isPasswordValid(value)) {
-                      return AppLocalizations.of(context)!.passwordError;
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0,),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
-                    widget.changePassword();
-                  },
-                  child: Text(AppLocalizations.of(context)!.send),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+  void navigateToPasswordPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangePassPage(changePassword: widget.changePassword, updatePassword: widget.updatePassword),
+      ),
     );
   }
 
@@ -335,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
                 ElevatedButton(
                   onPressed: widget.proofCode != 4 ? () {
                     Navigator.of(dialogContext).pop();
-                    validateEmail(email, widget.proofCode);
+                    navigateToPasswordPage();
                   } : null,
                   child: Text(AppLocalizations.of(context)!.send),
                 ),
@@ -347,7 +277,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void showResultDialog(BuildContext context, bool isValidate) {
+  void showResultDialog(
+      BuildContext context, bool isValidate, bool isCodeSended) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -361,29 +292,73 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                isValidate != false ?
-                Text(AppLocalizations.of(context)!.emailConfirmed, textAlign: TextAlign.center,)
-                    : Text ('${AppLocalizations.of(context)!.error}!\n${AppLocalizations.of(context)!.wrongCode}', textAlign: TextAlign.center),
-                const SizedBox(height: 16.0,),
-                Row (
+                isCodeSended
+                    ? Text(
+                  '${AppLocalizations.of(context)!.error}\n${AppLocalizations.of(context)!.codeSendedAfter}',
+                  textAlign: TextAlign.center,
+                )
+                    : isValidate != false
+                    ? Text(
+                  AppLocalizations.of(context)!.emailConfirmed,
+                  textAlign: TextAlign.center,
+                )
+                    : Text(
+                    '${AppLocalizations.of(context)!.error}!\n${AppLocalizations.of(context)!.wrongCode}',
+                    textAlign: TextAlign.center),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(width: 8.0,),
-                    isValidate == false ? ElevatedButton(
+                    const SizedBox(
+                      width: 8.0,
+                    ),
+                    isCodeSended
+                        ? Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                            showProofCodeDialog(context, widget.email);
+                          },
+                          child: Center(
+                              child: Text(
+                                  AppLocalizations.of(context)!.writeCode)),
+                        ),
+                        const SizedBox(width: 8.0,),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                          },
+                          child: Center(
+                              child: Text(
+                                  AppLocalizations.of(context)!.close)),
+                        )
+                      ],
+                    )
+                        : isValidate == false
+                        ? ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
                         showChangePassword(context);
                       },
-                      child: Center (child: Text(AppLocalizations.of(context)!.continued)),
-                    ) : ElevatedButton(
+                      child: Center(
+                          child: Text(
+                              AppLocalizations.of(context)!.repeat)),
+                    )
+                        : ElevatedButton(
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
                         if (isValidate == true) {
-                          showPasswordDialog(context);
+                          showChangePassword(context);
+                          widget.registerCallback();
                         }
                       },
-                      child: Center (child: Text(AppLocalizations.of(context)!.continued)),
+                      child: Center(
+                          child: Text(AppLocalizations.of(context)!
+                              .continued)),
                     ),
                   ],
                 ),

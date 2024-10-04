@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FourDigitCodeInput extends StatefulWidget {
   final ValueChanged<String> updateProofCode;
@@ -15,6 +16,11 @@ class _FourDigitCodeInputState extends State<FourDigitCodeInput> {
 
   late List<FocusNode> digitFocusNodes;
   late List<TextEditingController> digitControllers;
+
+  Future<bool> saveProofCode(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('proofCode', value);
+  }
 
   @override
   void initState() {
@@ -66,6 +72,7 @@ class _FourDigitCodeInputState extends State<FourDigitCodeInput> {
                 }
                 setState(() {
                   digitValues[i] = value;
+                  saveProofCode(digitValues.join(''));
                   widget.updateProofCode(digitValues.join(''));
                 });
               },
