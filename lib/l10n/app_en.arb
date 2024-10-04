@@ -31,7 +31,7 @@
   "nameError": "The name must contain at least 2 letters",
   "emptyName": "Name must be filled in",
   "surname": "Last name",
-  "surnameError": "Last name must contain at least 2 letters",
+  "surnameError": "Last name must contain at least 5 letters",
   "emptySurname": "Last name must be filled in",
   "emailError": "The specified email is not validа",
   "emptyEmail": "Email must be specified",
@@ -54,5 +54,9 @@
   "clubId": "Selected club id",
   "completePercent": "Complete percent",
   "clubHistory": "Club history",
-  "clubStudents": "Students of club"
+  "clubStudents": "Students of club",
+  "completionCount": "Completion count",
+  "multipleCompletedAchievements": "Multiple Achievements Completed",
+  "codeSendedAfter": "Код уже отправлен",
+  "writeCode": "Ввести код"
 }

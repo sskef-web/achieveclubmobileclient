@@ -32,7 +32,7 @@
   "nameError": "Imie musi składać się z co najmniej 2 znaków",
   "emptyName": "Wymagane imie",
   "surname": "Nazwisko",
-  "surnameError": "Nazwisko musi składać się z co najmniej 2 znaków",
+  "surnameError": "Nazwisko musi składać się z co najmniej 5 znaków",
   "emptySurname": "Nazwisko jest obowiązkowe",
   "emailError": "Nieprawidłowy adres e-mail",
   "emptyEmail": "Wymagany jest adres e-mail",
@@ -55,5 +55,9 @@
   "clubId": "Wybrany identyfikator klubu",
   "completePercent": "Procent realizacji",
   "clubHistory": "Historia klubu",
-  "clubStudents": "Użytkownicy w klubie"
+  "clubStudents": "Użytkownicy w klubie",
+  "completionCount": "Zrobione raz",
+  "multipleCompletedAchievements": "Dokonane osiągnięcia",
+  "codeSendedAfter": "Код уже отправлен",
+  "writeCode": "Ввести код"
 }
