@@ -30,12 +30,15 @@ class Tab1Page extends StatefulWidget {
 
 class _Tab1Page extends State<Tab1Page> {
   late Future<User> _userFuture;
-  late Future<List<Achievement>> _achieveFuture;
+  late Future<List<Achievement>>_achieveFuture;
   late Future<List<CompletedAchievement>> _completedAchievementsFuture;
   bool _isFloatingActionButtonVisible = false;
   late String Avatar = '';
   var userId;
   List<int> selectedAchievementIds = [];
+  List<int> multipleSelectedAchievementIds = [];
+  List<CompletedAchievement> multipleCompletedAchievements = [];
+  List<CompletedAchievement> nonMultipleCompletedAchievements = [];
 
   @override
   void initState() {
@@ -198,48 +201,48 @@ class _Tab1Page extends State<Tab1Page> {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      return data.map((item) => Achievement.fromJson(item)).toList();
+      return data.map((item) => Achievement.fromJson(item)).toList();;
     } else {
       throw Exception(AppLocalizations.of(context)!.fetchAchievementError);
     }
   }
 
   void _uploadAvatar(BuildContext context) async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-    var cookies = await loadCookies();
+      final picker = ImagePicker();
+      final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+      var cookies = await loadCookies();
 
-    if (pickedImage != null) {
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('${baseURL}api/avatar'),
-      );
-      request.headers['Cookie'] = cookies!;
+      if (pickedImage != null) {
+        var request = http.MultipartRequest(
+          'POST',
+          Uri.parse('${baseURL}api/avatar'),
+        );
+        request.headers['Cookie'] = cookies!;
 
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'file',
-          pickedImage.path,
-        ),
-      );
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'file',
+            pickedImage.path,
+          ),
+        );
 
-      try {
-        var streamedResponse = await request.send();
-        var response = await http.Response.fromStream(streamedResponse);
+        try {
+          var streamedResponse = await request.send();
+          var response = await http.Response.fromStream(streamedResponse);
 
-        if (response.statusCode == 200) {
-          var imageUrl = response.body;
+          if (response.statusCode == 200) {
+            var imageUrl = response.body;
 
-          setState(() {
-            Avatar = imageUrl;
-          });
-        } else {
-          throw Exception('${AppLocalizations.of(context)!.uploadAvatarError}. Code: ${response.statusCode}');
+            setState(() {
+              Avatar = imageUrl;
+            });
+          } else {
+            throw Exception('${AppLocalizations.of(context)!.uploadAvatarError}. Code: ${response.statusCode}');
+          }
+        } catch (error) {
+          throw Exception('${AppLocalizations.of(context)!.uploadAvatarError}: $error');
         }
-      } catch (error) {
-        throw Exception('${AppLocalizations.of(context)!.uploadAvatarError}: $error');
       }
-    }
   }
 
   Future<Achievement?> getAchievementById(int id) async {
@@ -268,7 +271,7 @@ class _Tab1Page extends State<Tab1Page> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CachedNetworkImage(
-                  imageUrl: '${baseURL}${achievement.logoURL}',
+                  imageUrl: '$baseURL${achievement.logoURL}',
                   width: 50.0,
                   height: 50.0,
                   placeholder: (context, url) => const CircularProgressIndicator(),
@@ -304,6 +307,7 @@ class _Tab1Page extends State<Tab1Page> {
     BuildContext context,
     String userId,
     List<int> selectedAchievementIds,
+    List<int> multipleSelectedAchievementIds,
     String firstName,
     String lastName,
     String avatarPath,
@@ -330,7 +334,7 @@ class _Tab1Page extends State<Tab1Page> {
                       height: 80.0,
                       child: ClipOval(
                         child: CachedNetworkImage(
-                          imageUrl: '${baseURL}$Avatar',
+                          imageUrl: '$baseURL$Avatar',
                           placeholder: (context, url) => CircularProgressIndicator(),
                           errorWidget: (context, url, error) => Icon(Icons.error),
                         ),
@@ -362,59 +366,102 @@ class _Tab1Page extends State<Tab1Page> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: selectedAchievementIds.map((achievementId) {
-                      return FutureBuilder<Achievement?>(
-                        future: getAchievementById(achievementId),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                                  ConnectionState.done &&
-                              snapshot.hasData) {
-                            final achievement = snapshot.data!;
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Container(
-                                width: 100.0,
-                                height: 120.0,
-                                decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(128, 128, 128, 0.2),
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      child: Image.network(
-                                        '${baseURL}${achievement.logoURL}',
-                                        width: 50.0,
-                                        height: 50.0,
+                    children: [
+                      ...selectedAchievementIds.map((achievementId) {
+                        return FutureBuilder<Achievement?>(
+                          future: getAchievementById(achievementId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                              final achievement = snapshot.data!;
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Container(
+                                  width: 100.0,
+                                  height: 120.0,
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromRGBO(128, 128, 128, 0.2),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        child: Image.network(
+                                          '$baseURL${achievement.logoURL}',
+                                          width: 50.0,
+                                          height: 50.0,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    Text(
-                                      achievement.title,
-                                      style: const TextStyle(fontSize: 12.0),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                                      const SizedBox(height: 8.0),
+                                      Text(
+                                        achievement.title,
+                                        style: const TextStyle(fontSize: 12.0),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          } else {
-                            return const SizedBox();
-                          }
-                        },
-                      );
-                    }).toList(),
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                        );
+                      }).toList(),
+                      ...multipleSelectedAchievementIds.map((achievementId) {
+                        return FutureBuilder<Achievement?>(
+                          future: getAchievementById(achievementId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                              final achievement = snapshot.data!;
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Container(
+                                  width: 100.0,
+                                  height: 120.0,
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromRGBO(128, 128, 128, 0.2),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        child: Image.network(
+                                          '$baseURL${achievement.logoURL}',
+                                          width: 50.0,
+                                          height: 50.0,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8.0),
+                                      Text(
+                                        '${achievement.title}',
+                                        style: const TextStyle(fontSize: 12.0),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                        );
+                      }).toList(),
+                    ],
                   ),
                 ),
+
                 const SizedBox(height: 16.0),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: QrImageView(
-                    data: '$userId:${selectedAchievementIds.join(":")}',
+                    data: '$userId:${selectedAchievementIds.join(":")}:${multipleSelectedAchievementIds.join(":")}',
                     version: QrVersions.auto,
                     size: 200.0,
                     padding: const EdgeInsets.all(21),
@@ -463,9 +510,17 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   void updateFloatingActionButtonVisibility() {
-    setState(() {
-      _isFloatingActionButtonVisible = selectedAchievementIds.isNotEmpty;
-    });
+    if (selectedAchievementIds.isNotEmpty || multipleSelectedAchievementIds.isNotEmpty) {
+      debugPrint('Selected - ${selectedAchievementIds.length}\n Multiple - ${multipleSelectedAchievementIds.length}');
+      setState(() {
+        _isFloatingActionButtonVisible = true;
+      });
+    }
+    else {
+      setState(() {
+        _isFloatingActionButtonVisible = false;
+      });
+    }
   }
 
   void navigateToAuthPage() {
@@ -489,6 +544,7 @@ class _Tab1Page extends State<Tab1Page> {
             context,
             userId,
             selectedAchievementIds,
+            multipleSelectedAchievementIds,
             user.firstName,
             user.lastName,
             user.avatar,
@@ -506,6 +562,23 @@ class _Tab1Page extends State<Tab1Page> {
             final achievements = snapshot.data![1] as List<Achievement>;
             final completedAchievements =
             snapshot.data![2] as List<CompletedAchievement>;
+
+            if (!nonMultipleCompletedAchievements.isNotEmpty && !multipleSelectedAchievementIds.isNotEmpty) {
+              for (final completedAchievement in completedAchievements) {
+                final achievement = achievements.isNotEmpty
+                    ? achievements.firstWhere((achieve) => achieve.id == completedAchievement.achievementId)
+                    : null;
+
+                if (achievement != null) {
+                  if (achievement.isMultiple) {
+                    multipleCompletedAchievements.add(completedAchievement);
+                  } else {
+                    nonMultipleCompletedAchievements.add(completedAchievement);
+                  }
+                }
+              }
+            }
+
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0, top: 8.0),
@@ -520,7 +593,7 @@ class _Tab1Page extends State<Tab1Page> {
                       children: [
                         CircleAvatar(
                           radius: 80.0,
-                          backgroundImage: NetworkImage('${baseURL}$Avatar'),
+                          backgroundImage: NetworkImage('$baseURL$Avatar'),
                           child: InkWell(
                             onTap: () {
                               _uploadAvatar(context);
@@ -548,7 +621,7 @@ class _Tab1Page extends State<Tab1Page> {
                         CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 50.0,
-                          backgroundImage: NetworkImage('${baseURL}${user.clubLogo}'),
+                          backgroundImage: NetworkImage('$baseURL${user.clubLogo}'),
                           child: InkWell(
                             onTap: () {navigateToClubPage(user.clubId, '0');},
                           ),
@@ -596,39 +669,84 @@ class _Tab1Page extends State<Tab1Page> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    if (completedAchievements.length > 0) Text(
-                      AppLocalizations.of(context)!.completedAchievements,
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
+                    if (multipleCompletedAchievements.isNotEmpty)
+                      Text(
+                        AppLocalizations.of(context)!.multipleCompletedAchievements,
+                        style: const TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
                     const SizedBox(height: 8.0),
                     Stack(
                       children: [
                         ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: completedAchievements.length,
+                          itemCount: multipleCompletedAchievements.length,
                           itemBuilder: (context, index) {
-                            final completedAchievement =
-                            completedAchievements[index];
-                            final achievement = achievements.firstWhere(
-                                    (achieve) =>
-                                achieve.id ==
-                                    completedAchievement.achievementId);
+                            final completedAchievement = multipleCompletedAchievements[index];
+                            final achievement = achievements.firstWhere((achieve) => achieve.id == completedAchievement.achievementId);
+
+                            return AchievementItem(
+                              onTap: () {
+                                setState(() {
+                                  if (multipleSelectedAchievementIds.contains(achievement.id)) {
+                                    multipleSelectedAchievementIds.remove(achievement.id);
+                                  } else {
+                                    multipleSelectedAchievementIds.add(achievement.id);
+                                  }
+                                  updateFloatingActionButtonVisibility();
+                                });
+                              },
+                              logo:
+                              '$baseURL${achievement.logoURL}',
+                              title: achievement.title,
+                              description: achievement.description,
+                              xp: achievement.xp,
+                              completionRatio: achievement.completionRatio,
+                              id: achievement.id,
+                              completionCount: completedAchievement.completionCount,
+                              isMultiple: achievement.isMultiple,
+                              isSelected: multipleSelectedAchievementIds.contains(achievement.id),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8.0),
+                    if (nonMultipleCompletedAchievements.isNotEmpty)
+                      Text(
+                        AppLocalizations.of(context)!.completedAchievements,
+                        style: const TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    const SizedBox(height: 8.0),
+                    Stack(
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: nonMultipleCompletedAchievements.length,
+                          itemBuilder: (context, index) {
+                            final completedAchievement = nonMultipleCompletedAchievements[index];
+                            final achievement = achievements.firstWhere((achieve) => achieve.id == completedAchievement.achievementId);
 
                             return AchievementItem(
                               onTap: () {
                                 setState(() {});
                               },
-                              logo: '${baseURL}${achievement.logoURL}',
+                              logo: '$baseURL${achievement.logoURL}',
                               title: achievement.title,
                               description: achievement.description,
                               xp: achievement.xp,
                               completionRatio: achievement.completionRatio,
                               id: achievement.id,
                               isSelected: false,
+                              completionCount: completedAchievement.completionCount,
+                              isMultiple: achievement.isMultiple,
                             );
                           },
                         ),
@@ -672,7 +790,7 @@ class _Tab1Page extends State<Tab1Page> {
                                   });
                                 },
                                 logo:
-                                '${baseURL}${achievement.logoURL}',
+                                '$baseURL${achievement.logoURL}',
                                 title: achievement.title,
                                 description: achievement.description,
                                 xp: achievement.xp,
@@ -680,6 +798,8 @@ class _Tab1Page extends State<Tab1Page> {
                                 id: achievement.id,
                                 isSelected: selectedAchievementIds
                                     .contains(achievement.id),
+                                completionCount: 0,
+                                isMultiple: false,
                               );
                             }
                             return Container();

@@ -11,6 +11,8 @@ class AchievementItem extends StatefulWidget {
   final int completionRatio;
   final bool isSelected;
   final VoidCallback? onTap;
+  final int completionCount;
+  final bool isMultiple;
 
   const AchievementItem({
     super.key,
@@ -22,6 +24,8 @@ class AchievementItem extends StatefulWidget {
     required this.completionRatio,
     required this.isSelected,
     required this.onTap,
+    required this.completionCount,
+    required this.isMultiple
   });
 
   @override
@@ -45,27 +49,72 @@ class _AchievementItemState extends State<AchievementItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: isSelected ? Colors.blue : null,
-      child: ListTile(
-        onTap: widget.onTap,
-        leading: CachedNetworkImage(
-          imageUrl: widget.logo,
-          placeholder: (context, url) => CircularProgressIndicator(),
-          errorWidget: (context, url, error) => Icon(Icons.error),
+    return Stack(
+      children: [
+        Card(
+          color: isSelected ? Colors.blue : null,
+          child: ListTile(
+            onTap: widget.onTap,
+            leading: CachedNetworkImage(
+              imageUrl: widget.logo,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+            title: Text(widget.title),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.description),
+                const SizedBox(height: 4.0),
+                Text('XP: ${widget.xp}'),
+              ],
+            ),
+          ),
         ),
-        title: Text(widget.title),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.description),
-            const SizedBox(height: 4.0),
-            Text('XP: ${widget.xp}'),
-            const SizedBox(height: 4.0),
-            Text('${AppLocalizations.of(context)!.completePercent}: ${widget.completionRatio}%'),
-          ],
+
+        if (widget.isMultiple)
+          Positioned(
+            top: 10,
+            right: 10,
+            child: Container(
+              padding: EdgeInsets.only(right: 8.0, left: 8.0, top: 2.0, bottom: 2.0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color.fromRGBO(11, 106, 108, 1)
+                    : const Color.fromRGBO(11, 106, 108, 1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '${widget.completionCount + 1}',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+
+        Positioned(
+          bottom: 10,
+          right: 10,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? const Color.fromRGBO(11, 106, 108, 1)
+                  : const Color.fromRGBO(11, 106, 108, 1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: EdgeInsets.only(right: 8.0, left: 8.0, top: 2.0, bottom: 2.0),
+            child: Text(
+                '${widget.completionRatio} %',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

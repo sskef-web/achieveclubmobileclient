@@ -8,7 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class HomePage extends StatefulWidget {
   final Function() logoutCallback;
 
-  HomePage({super.key, required this.logoutCallback});
+  const HomePage({super.key, required this.logoutCallback});
 
   @override
   _HomePageState createState() => _HomePageState();

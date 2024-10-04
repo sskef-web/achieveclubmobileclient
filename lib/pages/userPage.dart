@@ -10,7 +10,6 @@ import '../data/achievement.dart';
 import '../data/completedachievement.dart';
 import '../data/user.dart';
 import '../items/achievementItem.dart';
-import 'homePage.dart';
 
 class UserPage extends StatefulWidget {
   int userId;
@@ -195,7 +194,7 @@ class _UserPageState extends State<UserPage> {
                           height: 160.0,
                           child: ClipOval(
                             child: CachedNetworkImage(
-                              imageUrl: '${baseURL}/$Avatar',
+                              imageUrl: '$baseURL/$Avatar',
                               placeholder: (context, url) => CircularProgressIndicator(),
                               errorWidget: (context, url, error) => Icon(Icons.error),
                             ),
@@ -223,7 +222,7 @@ class _UserPageState extends State<UserPage> {
                           radius: 40.0,
                           backgroundColor: Colors.grey[200],
                           backgroundImage: NetworkImage(
-                              '${baseURL}/${user.clubLogo}'),
+                              '$baseURL/${user.clubLogo}'),
                         ),
                         const SizedBox(width: 16.0),
                         Text(
@@ -268,7 +267,7 @@ class _UserPageState extends State<UserPage> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    if (completedAchievements.length > 0) Text(
+                    if (completedAchievements.isNotEmpty) Text(
                       AppLocalizations.of(context)!.completedAchievements,
                       style: const TextStyle(
                         fontSize: 20.0,
@@ -292,13 +291,15 @@ class _UserPageState extends State<UserPage> {
 
                             return AchievementItem(
                               onTap: null,
-                              logo: '${baseURL}/${achievement.logoURL}',
+                              logo: '$baseURL/${achievement.logoURL}',
                               title: achievement.title,
                               description: achievement.description,
                               xp: achievement.xp,
                               completionRatio: achievement.completionRatio,
                               id: achievement.id,
                               isSelected: false,
+                              completionCount: completedAchievement.completionCount,
+                              isMultiple: achievement.isMultiple,
                             );
                           },
                         ),
@@ -328,13 +329,15 @@ class _UserPageState extends State<UserPage> {
                             if (!isCompleted) {
                               return AchievementItem(
                                 onTap: null,
-                                logo: '${baseURL}/${achievement.logoURL}',
+                                logo: '$baseURL/${achievement.logoURL}',
                                 title: achievement.title,
                                 description: achievement.description,
                                 xp: achievement.xp,
                                 completionRatio: achievement.completionRatio,
                                 id: achievement.id,
                                 isSelected: false,
+                                completionCount: 0,
+                                isMultiple: false,
                               );
                             }
                             return Container();
