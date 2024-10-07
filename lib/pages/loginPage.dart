@@ -484,7 +484,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Text(AppLocalizations.of(context)!.registrate, textAlign: TextAlign.center),
             ),
             const SizedBox(height: 16.0,),
-            LanguageSelectionButton(updateAchievements: () => (),),
+            //LanguageSelectionButton(updateAchievements: () => (),),
           ],
         ),
       ),

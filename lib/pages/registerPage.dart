@@ -427,7 +427,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                     child: Column(
                       children: [
-                        SizedBox(
+                        /*SizedBox(
                           width: double.infinity, // Set the width to full width
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<int>(
@@ -448,7 +448,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   AppLocalizations.of(context)!.selectClub),
                             ),
                           ),
-                        ),
+                        ),*/
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.name,
@@ -601,10 +601,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 16.0),
                   ElevatedButton(
-                    onPressed: (_formKey.currentState?.validate() ?? false) &&
-                        clubId != null
-                        ? () {
-                      debugPrint("\n\n\n\n${widget.email}\n\n\n\n");
+                    onPressed: (_formKey.currentState?.validate() ?? false) ? () {
                       sendProofCode(email!);
                     }
                         : null,

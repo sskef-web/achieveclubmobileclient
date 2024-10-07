@@ -65,52 +65,48 @@ class _AchievementItemState extends State<AchievementItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(widget.description),
-                const SizedBox(height: 4.0),
-                Text('XP: ${widget.xp}'),
-              ],
-            ),
-          ),
-        ),
-
-        if (widget.isMultiple)
-          Positioned(
-            top: 10,
-            right: 10,
-            child: Container(
-              padding: EdgeInsets.only(right: 8.0, left: 8.0, top: 2.0, bottom: 2.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? const Color.fromRGBO(11, 106, 108, 1)
-                    : const Color.fromRGBO(11, 106, 108, 1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '${widget.completionCount + 1}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
+                const SizedBox(height: 8.0),
+                //Text('XP: ${widget.xp}'),
+                Wrap(
+                  spacing: 2.0,
+                  runSpacing: 8.0,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color.fromRGBO(11, 106, 108, 1)
+                            : const Color.fromRGBO(11, 106, 108, 1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.only(right: 8.0, left: 8.0, top: 2.0, bottom: 2.0),
+                      child: Text(
+                        'Процент выполнений: ${widget.completionRatio} %',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13.5,
+                        ),
+                      ),
+                    ),
+                    if (widget.isMultiple)
+                      Container(
+                        padding: EdgeInsets.only(right: 8.0, left: 8.0, top: 2.0, bottom: 2.0),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color.fromRGBO(11, 106, 108, 1)
+                              : const Color.fromRGBO(11, 106, 108, 1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '${widget.xp}XP ✕ ${widget.completionCount + 1}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-              ),
-            ),
-          ),
-
-        Positioned(
-          bottom: 10,
-          right: 10,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? const Color.fromRGBO(11, 106, 108, 1)
-                  : const Color.fromRGBO(11, 106, 108, 1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            padding: EdgeInsets.only(right: 8.0, left: 8.0, top: 2.0, bottom: 2.0),
-            child: Text(
-                '${widget.completionRatio} %',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-              ),
+              ],
             ),
           ),
         ),

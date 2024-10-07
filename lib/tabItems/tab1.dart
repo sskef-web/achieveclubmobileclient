@@ -585,7 +585,7 @@ class _Tab1Page extends State<Tab1Page> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    LanguageSelectionButton(key: widget.key, updateAchievements: navigateToAuthPage),
+                    //LanguageSelectionButton(key: widget.key, updateAchievements: navigateToAuthPage),
                     const SizedBox(height: 16.0,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -614,7 +614,7 @@ class _Tab1Page extends State<Tab1Page> {
                       ],
                     ),
                     const SizedBox(height: 8.0),
-                    Column(
+                    /*Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -622,17 +622,14 @@ class _Tab1Page extends State<Tab1Page> {
                           backgroundColor: Colors.white,
                           radius: 50.0,
                           backgroundImage: NetworkImage('$baseURL${user.clubLogo}'),
-                          child: InkWell(
-                            onTap: () {navigateToClubPage(user.clubId, '0');},
-                          ),
                         ),
                         const SizedBox(width: 16.0),
                         Text(
-                          user.clubName,
+                          "Дворец",
                           textScaler: const TextScaler.linear(1.5),
                         ),
                       ],
-                    ),
+                    ),*/
                     const SizedBox(height: 8.0),
                     Container(
                       decoration: BoxDecoration(
@@ -649,6 +646,7 @@ class _Tab1Page extends State<Tab1Page> {
                             style: const TextStyle(
                               fontSize: 18.0,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8.0),
                           Text(
@@ -676,6 +674,7 @@ class _Tab1Page extends State<Tab1Page> {
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     const SizedBox(height: 8.0),
                     Stack(

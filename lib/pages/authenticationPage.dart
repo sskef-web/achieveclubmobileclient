@@ -191,13 +191,13 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   Future<LoginResponse> registrate(String email, String password,
-      String firstName, String lastName, String avatarPath, int clubId, var proofCode) async {
+      String firstName, String lastName, String avatarPath, var proofCode) async {
     var url = Uri.parse('${baseURL}api/auth/registration?api-version:1.0');
 
     var body = jsonEncode({
       'firstName': firstName,
       'lastName': lastName,
-      'clubId': clubId,
+      'clubId': 1,
       'password': password,
       'avatarURL': avatarPath,
       'emailAddress': email,
@@ -262,9 +262,9 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
 
   void _register() async {
       Navigator.pop(context, true);
-      var newProofCode = await loadProofCode();
+      var proofCode = await loadProofCode();
 
-      await registrate(email, password, firstName, lastName, avatarPath, clubId, newProofCode);
+      await registrate(email, password, firstName, lastName, avatarPath, proofCode);
       savedCookies = await loadCookies();
 
       SharedPreferences prefs = await SharedPreferences.getInstance();

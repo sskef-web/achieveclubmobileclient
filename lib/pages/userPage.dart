@@ -214,7 +214,7 @@ class _UserPageState extends State<UserPage> {
                       ],
                     ),
                     const SizedBox(height: 8.0),
-                    Column(
+                    /*Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -226,11 +226,11 @@ class _UserPageState extends State<UserPage> {
                         ),
                         const SizedBox(width: 16.0),
                         Text(
-                          user.clubName,
+                          'Дворец',
                           textScaler: const TextScaler.linear(1.5),
                         ),
                       ],
-                    ),
+                    ),*/
                     const SizedBox(height: 8.0),
                     Container(
                       decoration: BoxDecoration(

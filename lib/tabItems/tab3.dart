@@ -1,130 +1,157 @@
-import 'dart:convert';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:achieveclubmobileclient/main.dart';
-import 'package:http/http.dart' as http;
-import 'package:achieveclubmobileclient/data/club.dart';
-import 'package:achieveclubmobileclient/items/clubTopItem.dart';
-import 'package:achieveclubmobileclient/pages/clubPage.dart';
 import 'package:flutter/material.dart';
+import '../items/customDotIndicator.dart';
 
 class Tab3Page extends StatefulWidget {
-  final Function() logoutCallback;
-  const Tab3Page({
-    super.key,
-    required this.logoutCallback
-  });
-
   @override
-  _Tab3Page createState() => _Tab3Page();
-
+  _Tab3PageState createState() => _Tab3PageState();
 }
 
-class _Tab3Page extends State<Tab3Page> {
-  String locale = "";
-  late Future<List<Club>> _clubs;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void navigateToClubPage(int clubId, String position) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            ClubPage(
-              clubId: clubId,
-              position: position,
-              logoutCallback: widget.logoutCallback,
-            ),
-      ),
-    );
-  }
-
-  Future<List<Club>> fetchClubs() async {
-    var url = Uri.parse('${baseURL}api/clubs');
-    var response = await http.get(url,
-        headers: {
-          'Accept-Language': locale
-        }
-        );
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      var clubList = <Club>[];
-
-      for (var clubData in data) {
-        var club = Club(
-          id: clubData['id'],
-          title: clubData['title'],
-          logoURL: clubData['logoURL'],
-          avgXp: clubData['avgXp'],
-          description: '',
-          address: '',
-        );
-        clubList.add(club);
-      }
-
-      return clubList;
-    } else {
-      throw Exception(AppLocalizations.of(context)!.fetchClubsError);
-    }
-  }
+class _Tab3PageState extends State<Tab3Page> {
+  final PageController _pageController = PageController(viewportFraction: 0.8);
+  final List<Map<String, dynamic>> data = [
+    {
+      'title': 'Выполнение достижений',
+      'description':
+          'Чтобы выполнить достижение вам нужно:\n'
+              '• Выбрать желаемые достижения нажатием;\n'
+              '• Нажать на кнопку QR-кода справа снизу;\n'
+              '• Показать QR-код тренеру;',
+      'icon': Icons.qr_code
+    },
+    {
+      'title': 'Начисление XP за достижения',
+      'description':
+          'За каждое выполненное достижение вы будете получать опыт (XP), '
+              'так же вы будете подниматься в топе по рейтингу. Вы можете '
+              'мерится количеством опыта с другими студентами :)',
+      'icon': Icons.assistant_rounded
+    },
+    {
+      'title': 'Многоразовые достижения',
+      'description':
+          'Помимо обычных одноразовых достижений есть еще и многоразовые. \n'
+              'Их вы можете выполнять столько раз, сколько вам захочется. \n'
+              'После выполнения многоразового достижение оно будет отображаться отдельно от всех в вверху списка.\n'
+              'Для выполнения многоразового достижения нужно на него нажать в этом списке.\n',
+      'icon': Icons.auto_awesome_rounded
+    },
+    {
+      'title': 'Топ пользователей',
+      'description':
+          'Вы можете перейти на страницу топа 100 пользователей и увидеть '
+              'вашу позицию в топе. \nЧем выше вы в списке - тем вы круче. '
+              '\n За места в топе можно получать какие-то призы от It_Dino :)',
+      'icon': Icons.groups
+    },
+  ];
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    locale = Localizations.localeOf(context).languageCode;
-    _clubs = fetchClubs();
-    return FutureBuilder<List<Club>>(
-      future: _clubs,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          var clubs = snapshot.data!;
-          clubs.sort((a, b) => b.avgXp.compareTo(a.avgXp));
-          return SingleChildScrollView(
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: clubs.length,
-                      itemBuilder: (context, index) {
-                        final club = clubs[index];
-                        final position = (index + 1).toString();
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              ClubTopItem(
-                                onTap: () {
-                                  navigateToClubPage(club.id, position);
-                                },
-                                clubName: club.title,
-                                clubLogo: club.logoURL,
-                                xp: club.avgXp,
-                                id: club.id,
-                                position: position,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                )
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              return Container(
+                margin: EdgeInsets.symmetric(
+                  vertical: screenHeight * 0.1,
+                  horizontal: screenWidth * 0.05,
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color.fromRGBO(11, 106, 108, 0.15)
+                      : const Color.fromRGBO(11, 106, 108, 0.15),
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        size: screenWidth * 0.3,
+                        data[index]['icon'],
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(
+                        data[index]['title'],
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.07,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 8.0),
+                      Text(
+                        data[index]['description'],
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.04,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.justify,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+            onPageChanged: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+          ),
+          Positioned(
+            left: screenWidth * 0.1,
+            bottom: screenHeight * 0.02,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back_ios),
+              onPressed: () {
+                _pageController.previousPage(
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.ease,
+                );
+              },
             ),
-          );
-        } else if (snapshot.hasError) {
-          return Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}');
-        } else {
-          return const Center(child: CircularProgressIndicator(),);
-        }
-      },
+          ),
+          Positioned(
+            right: screenWidth * 0.1,
+            bottom: screenHeight * 0.02,
+            child: IconButton(
+              icon: Icon(Icons.arrow_forward_ios),
+              onPressed: () {
+                _pageController.nextPage(
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.ease,
+                );
+              },
+            ),
+          ),
+          Positioned(
+            bottom: screenHeight * 0.04,
+            left: 0.0,
+            right: 0.0,
+            child: CustomDotIndicator(
+              itemCount: data.length,
+              currentIndex: _currentIndex,
+              onDotTapped: (index) {
+                _pageController.animateToPage(
+                  index,
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.ease,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

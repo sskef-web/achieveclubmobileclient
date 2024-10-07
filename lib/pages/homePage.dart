@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
     _tabs = [
       Tab1Page(logoutCallback: widget.logoutCallback, locale: locale,),
       Tab2Page(logoutCallback: widget.logoutCallback,),
-      Tab3Page(logoutCallback: widget.logoutCallback,),
+      Tab3Page(),
     ];
     return Scaffold(
       appBar: AppBar(
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                 appTitle = AppLocalizations.of(context)!.tab2;
                 break;
               case 2:
-                appTitle = AppLocalizations.of(context)!.tab3;
+                appTitle = 'О приложении';
                 break;
             }
           });
@@ -86,8 +86,8 @@ class _HomePageState extends State<HomePage> {
             label: AppLocalizations.of(context)!.tab2,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.apartment),
-            label: AppLocalizations.of(context)!.tab3,
+            icon: const Icon(Icons.info),
+            label: 'О приложении'
           ),
         ],
       ),

@@ -58,6 +58,6 @@
   "clubStudents": "Użytkownicy w klubie",
   "completionCount": "Zrobione raz",
   "multipleCompletedAchievements": "Dokonane osiągnięcia",
-  "codeSendedAfter": "Код уже отправлен",
+  "codeSendedAfter": "Код уже отправлен, если вы не получили код - попробуйте через 5 минут.",
   "writeCode": "Ввести код"
 }

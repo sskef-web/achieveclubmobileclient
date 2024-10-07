@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -31,41 +32,30 @@ class UserTopItem extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListTile(
           onTap: onTap,
-          leading: Row(
-            mainAxisSize: MainAxisSize.min,
+          leading: CircleAvatar(
+            radius: 25.0,
+            backgroundImage: CachedNetworkImageProvider('$baseURL/$avatarPath'),
+            backgroundColor: Colors.transparent,
+            onBackgroundImageError: (exception, stackTrace) => Icon(Icons.error),
+          ),
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 50.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage('$baseURL$avatarPath'),
-                  ),
+                constraints: const BoxConstraints(maxWidth: 200),
+                child: Text(
+                  '$firstName $lastName',
+                  style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(width: 16.0),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    constraints: const BoxConstraints(maxWidth: 200),
-                    child: Text(
-                      '$firstName $lastName',
-                      style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Text('$userXP XP', style: const TextStyle(fontSize: 12.0)),
-                ],
-              ),
+              Text('$userXP XP', style: const TextStyle(fontSize: 12.0)),
             ],
           ),
           trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
+                /*Container(
                   width: 35.0,
                   height: 35.0,
                   decoration: BoxDecoration(
@@ -76,13 +66,13 @@ class UserTopItem extends StatelessWidget {
                       image: NetworkImage('$baseURL$clubLogo'),
                     ),
                   ),
-                ),
+                ),*/
                 const SizedBox(width: 4.0),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('# $topPosition', textAlign: TextAlign.center, textScaler: const TextScaler.linear(1.5)),
+                    Text('# $topPosition', textAlign: TextAlign.center, textScaler: const TextScaler.linear(2)),
                   ],
                 ),
               ],
