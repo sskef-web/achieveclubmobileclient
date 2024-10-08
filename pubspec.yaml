@@ -49,6 +49,22 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "icons/ic_launcher.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    background_color: "#99e6fc"
+    theme_color: "#f2fbff"
+  windows:
+    generate: true
+    icon_size: 256 # min:48, max:256, default: 48
+  macos:
+    generate: true
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
