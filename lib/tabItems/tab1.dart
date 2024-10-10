@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:achieveclubmobileclient/pages/authenticationPage.dart';
+import '../pages/authenticationPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
 import '../items/achievementItem.dart';
 import '../data/achievement.dart';
 import '../data/completedachievement.dart';
 import '../data/user.dart';
-import '../items/languageSelectionButton.dart';
 import '../pages/clubPage.dart';
 import '../pages/homePage.dart';
 import 'package:flutter/material.dart';
@@ -461,7 +459,9 @@ class _Tab1Page extends State<Tab1Page> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: QrImageView(
-                    data: '$userId:${selectedAchievementIds.join(":")}:${multipleSelectedAchievementIds.join(":")}',
+                    data: multipleSelectedAchievementIds.isNotEmpty
+                        ? '$userId:${selectedAchievementIds.join(":")}:${multipleSelectedAchievementIds.join(":")}'
+                        : '$userId:${selectedAchievementIds.join(":")}',
                     version: QrVersions.auto,
                     size: 200.0,
                     padding: const EdgeInsets.all(21),
@@ -563,9 +563,9 @@ class _Tab1Page extends State<Tab1Page> {
             final completedAchievements =
             snapshot.data![2] as List<CompletedAchievement>;
 
-            if (!nonMultipleCompletedAchievements.isNotEmpty && !multipleSelectedAchievementIds.isNotEmpty) {
+            if (!nonMultipleCompletedAchievements.isNotEmpty && !multipleCompletedAchievements.isNotEmpty) {
               for (final completedAchievement in completedAchievements) {
-                final achievement = achievements.isNotEmpty
+                final achievement = achievements  .isNotEmpty
                     ? achievements.firstWhere((achieve) => achieve.id == completedAchievement.achievementId)
                     : null;
 
@@ -585,7 +585,6 @@ class _Tab1Page extends State<Tab1Page> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    //LanguageSelectionButton(key: widget.key, updateAchievements: navigateToAuthPage),
                     const SizedBox(height: 16.0,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -613,23 +612,6 @@ class _Tab1Page extends State<Tab1Page> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8.0),
-                    /*Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 50.0,
-                          backgroundImage: NetworkImage('$baseURL${user.clubLogo}'),
-                        ),
-                        const SizedBox(width: 16.0),
-                        Text(
-                          "Дворец",
-                          textScaler: const TextScaler.linear(1.5),
-                        ),
-                      ],
-                    ),*/
                     const SizedBox(height: 8.0),
                     Container(
                       decoration: BoxDecoration(
@@ -692,7 +674,8 @@ class _Tab1Page extends State<Tab1Page> {
                                 setState(() {
                                   if (multipleSelectedAchievementIds.contains(achievement.id)) {
                                     multipleSelectedAchievementIds.remove(achievement.id);
-                                  } else {
+                                  }
+                                  else {
                                     multipleSelectedAchievementIds.add(achievement.id);
                                   }
                                   updateFloatingActionButtonVisibility();
@@ -780,12 +763,12 @@ class _Tab1Page extends State<Tab1Page> {
                                         .contains(achievement.id)) {
                                       selectedAchievementIds
                                           .remove(achievement.id);
-                                      updateFloatingActionButtonVisibility();
-                                    } else {
+                                    }
+                                    else {
                                       selectedAchievementIds
                                           .add(achievement.id);
-                                      updateFloatingActionButtonVisibility();
                                     }
+                                    updateFloatingActionButtonVisibility();
                                   });
                                 },
                                 logo:

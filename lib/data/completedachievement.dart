@@ -17,7 +17,7 @@ class CompletedAchievement {
 
 CompletedAchievement findElementWithMaxId(List<CompletedAchievement> elements) {
   if (elements.isEmpty) {
-    throw Exception("Lista jest pusta!");
+    throw Exception("List is empty");
   }
 
   CompletedAchievement elementWithMaxId = elements[0];
