@@ -7,7 +7,7 @@ class Tab3Page extends StatefulWidget {
 }
 
 class _Tab3PageState extends State<Tab3Page> {
-  final PageController _pageController = PageController(viewportFraction: 0.8);
+  final PageController _pageController = PageController(viewportFraction: 1.0);
   final List<Map<String, dynamic>> data = [
     {
       'title': 'Выполнение достижений',
@@ -40,7 +40,7 @@ class _Tab3PageState extends State<Tab3Page> {
       'description':
           'Вы можете перейти на страницу топа 100 пользователей и увидеть '
               'вашу позицию в топе. \nЧем выше вы в списке - тем вы круче. '
-              '\n За места в топе можно получать какие-то призы от It_Dino :)',
+              '\n За места в топе можно получать какие-то призы :)',
       'icon': Icons.groups
     },
   ];
@@ -59,46 +59,33 @@ class _Tab3PageState extends State<Tab3Page> {
             itemCount: data.length,
             itemBuilder: (context, index) {
               return Container(
-                margin: EdgeInsets.symmetric(
-                  vertical: screenHeight * 0.1,
-                  horizontal: screenWidth * 0.05,
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? const Color.fromRGBO(11, 106, 108, 0.15)
-                      : const Color.fromRGBO(11, 106, 108, 0.15),
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        size: screenWidth * 0.3,
-                        data[index]['icon'],
+                padding: EdgeInsets.all(18.0),
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      size: screenWidth * 0.3,
+                      data[index]['icon'],
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      data[index]['title'],
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.07,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 8.0),
-                      Text(
-                        data[index]['title'],
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.07,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      data[index]['description'],
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.04,
                       ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        data[index]['description'],
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.04,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.justify,
-                      ),
-                    ],
-                  ),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ],
                 ),
               );
             },

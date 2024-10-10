@@ -36,7 +36,7 @@ class UserTopItem extends StatelessWidget {
             radius: 25.0,
             backgroundImage: CachedNetworkImageProvider('$baseURL/$avatarPath'),
             backgroundColor: Colors.transparent,
-            onBackgroundImageError: (exception, stackTrace) => Icon(Icons.error),
+            onBackgroundImageError: (exception, stackTrace) => Icon(Icons.error, color: Colors.grey,),
           ),
           title: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -55,18 +55,6 @@ class UserTopItem extends StatelessWidget {
           trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                /*Container(
-                  width: 35.0,
-                  height: 35.0,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage('$baseURL$clubLogo'),
-                    ),
-                  ),
-                ),*/
                 const SizedBox(width: 4.0),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
