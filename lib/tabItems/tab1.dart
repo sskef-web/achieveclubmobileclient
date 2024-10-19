@@ -310,6 +310,13 @@ class _Tab1Page extends State<Tab1Page> {
     String lastName,
     String avatarPath,
   ) async {
+    debugPrint(
+        multipleSelectedAchievementIds.isNotEmpty
+            ? selectedAchievementIds.isNotEmpty
+            ? '$userId:${selectedAchievementIds.join(":")}:${multipleSelectedAchievementIds.join(":")}'
+            : '$userId:${multipleSelectedAchievementIds.join(":")}'
+            : '$userId:${selectedAchievementIds.join(":")}'
+    );
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -460,7 +467,9 @@ class _Tab1Page extends State<Tab1Page> {
                   borderRadius: BorderRadius.circular(10.0),
                   child: QrImageView(
                     data: multipleSelectedAchievementIds.isNotEmpty
-                        ? '$userId:${selectedAchievementIds.join(":")}:${multipleSelectedAchievementIds.join(":")}'
+                        ? selectedAchievementIds.isNotEmpty
+                          ? '$userId:${selectedAchievementIds.join(":")}:${multipleSelectedAchievementIds.join(":")}'
+                          : '$userId:${multipleSelectedAchievementIds.join(":")}'
                         : '$userId:${selectedAchievementIds.join(":")}',
                     version: QrVersions.auto,
                     size: 200.0,

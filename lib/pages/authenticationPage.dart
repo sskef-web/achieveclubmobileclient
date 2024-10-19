@@ -25,7 +25,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   String confirmPassword = '';
   String firstName = '';
   String lastName = '';
-  String avatarPath = 'empty';
+  String avatarPath = 'avatars/9e318d73-c569-424c-8ea8-f5e34b7d67c7.jpeg';
   int clubId = 0;
   var userId;
   var token;

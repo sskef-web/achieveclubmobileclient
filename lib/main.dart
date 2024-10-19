@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'data/language_provider.dart';
 
 String appTitle = "";
-String baseURL = 'http://achieve.by:5000/';
+String baseURL = 'https://achieve.by:5000/';
 
 void main() {
   runApp(const MyApp());
