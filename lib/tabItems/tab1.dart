@@ -621,7 +621,7 @@ class _Tab1Page extends State<Tab1Page> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8.0),
+                    const SizedBox(height: 16.0),
                     Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).brightness == Brightness.dark
@@ -645,15 +645,22 @@ class _Tab1Page extends State<Tab1Page> {
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18.0,
+                              height: 1
                             ),
                           ),
-                          const SizedBox(height: 8.0),
+                          const SizedBox(height: 16.0),
                           LinearProgressIndicator(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Color.fromRGBO(11, 106, 108, 1)
+                                : const Color.fromRGBO(11, 106, 108, 1),
+                            backgroundColor: Color.fromRGBO(
+                                11, 106, 108, 0.25),
                             value: calculateCompletionPercentage(
                                 completedAchievements.length,
                                 achievements.length) /
                                 100,
                           ),
+                          const SizedBox(height: 8.0,),
                         ],
                       ),
                     ),

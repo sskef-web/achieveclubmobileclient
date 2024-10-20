@@ -14,18 +14,17 @@ class AchievementItem extends StatefulWidget {
   final int completionCount;
   final bool isMultiple;
 
-  const AchievementItem(
-      {super.key,
-      required this.logo,
-      required this.id,
-      required this.title,
-      required this.description,
-      required this.xp,
-      required this.completionRatio,
-      required this.isSelected,
-      required this.onTap,
-      required this.completionCount,
-      required this.isMultiple});
+  const AchievementItem({super.key,
+    required this.logo,
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.xp,
+    required this.completionRatio,
+    required this.isSelected,
+    required this.onTap,
+    required this.completionCount,
+    required this.isMultiple});
 
   @override
   _AchievementItemState createState() => _AchievementItemState();
@@ -51,54 +50,81 @@ class _AchievementItemState extends State<AchievementItem> {
     return Stack(
       children: [
         Card(
-          color: isSelected ? Colors.blue : null,
+          color: isSelected ? Colors.blue : Theme
+              .of(context)
+              .brightness == Brightness.dark
+              ? const Color.fromRGBO(11, 106, 108, 0.25)
+              : const Color.fromRGBO(255, 255, 255, 1),
           child: ListTile(
-              contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-              onTap: widget.onTap,
-              leading: CachedNetworkImage(
-                imageUrl: widget.logo,
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-              ),
-              title: Wrap(
-                spacing: 8.0,
-                children: [
-                  Text(widget.title),
-                  Container(
-                    padding: EdgeInsets.only(
-                        right: 8.0, left: 8.0, top: 2.0, bottom: 2.0),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? const Color.fromRGBO(11, 106, 108, 1)
-                          : const Color.fromRGBO(11, 106, 108, 1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      '${widget.xp}XP',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
+            contentPadding: EdgeInsets.only(
+                top: 4.0, bottom: 8.0, right: 10, left: 10),
+            onTap: widget.onTap,
+            leading: CachedNetworkImage(
+              imageUrl: widget.logo,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+            title: Wrap(
+              alignment: WrapAlignment.start,
+              spacing: 8.0,
+              children: [
+                Text(
+                  widget.title,
+                  style: TextStyle(
+                      fontSize: 15
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(
+                      right: 8.0, left: 8.0, top: 2.0, bottom: 2.0),
+                  decoration: BoxDecoration(
+                    color: Theme
+                        .of(context)
+                        .brightness == Brightness.dark
+                        ? const Color.fromRGBO(11, 106, 108, 1)
+                        : const Color.fromRGBO(11, 106, 108, 1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${widget.xp}XP',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
                     ),
                   ),
-                ],
-              ),
-              subtitle: Text(widget.description),
-              trailing: widget.isMultiple
-                  ? Container(
-                      child: CircleAvatar(
-                        backgroundColor: Theme.of(context).brightness == Brightness.dark
-                            ? const Color.fromRGBO(11, 106, 108, 1)
-                            : const Color.fromRGBO(11, 106, 108, 1),
-                        child: Text(
-                            '${widget.completionCount}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ))
-                  : null),
+                ),
+                widget.isMultiple ? Container(
+                  padding: EdgeInsets.only(
+                      right: 8.0, left: 8.0, top: 2.0, bottom: 2.0),
+                  decoration: BoxDecoration(
+                    color: Theme
+                        .of(context)
+                        .brightness == Brightness.dark
+                        ? const Color.fromRGBO(11, 106, 108, 1)
+                        : const Color.fromRGBO(11, 106, 108, 1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${widget.completionCount}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                ) : SizedBox(),
+              ],
+            ),
+            subtitle: Padding(
+                padding: EdgeInsets.only(top: 4.0),
+                child: Text(
+                    widget.description,
+                    style: TextStyle(
+                      height: 1,
+                      fontSize: 13,
+                    ),
+                )
+            ),
+          ),
         ),
       ],
     );

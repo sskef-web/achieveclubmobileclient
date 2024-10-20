@@ -36,25 +36,21 @@ class _HomePageState extends State<HomePage> {
     ];
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.transparent,
-        title: Center(
-            child: Text(
-              appTitle,
-            )
+        title: Text(
+          appTitle,
+          textAlign: TextAlign.center,
         ),
-        leading: SizedBox(
-          width: 48.0,
-          height: 48.0,
-          child: IconButton(
-            iconSize: 32.0,
-            icon: Transform.rotate(
-              angle: 3.14,
-              child: const Icon(Icons.logout),
-            ),
-            onPressed: () {
-              widget.logoutCallback();
-            },
+        leading: IconButton(
+          iconSize: 32.0,
+          icon: Transform.rotate(
+            angle: 3.14,
+            child: const Icon(Icons.logout),
           ),
+          onPressed: () {
+            widget.logoutCallback();
+          },
         ),
       ),
       body: _tabs[_currentIndex],

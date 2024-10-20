@@ -28,6 +28,9 @@ class UserTopItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Theme.of(context).brightness == Brightness.dark
+          ? Color.fromRGBO(11, 106, 108, 0.25)
+          : Color.fromRGBO(255, 255, 255, 1.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListTile(

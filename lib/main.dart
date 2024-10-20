@@ -35,7 +35,9 @@ class MyApp extends StatelessWidget {
             locale: languageProvider.locale,
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
-                  seedColor: const Color.fromRGBO(11, 106, 108, 1.0)),
+                  seedColor: const Color.fromRGBO(200, 200, 200, 1.0),
+                  brightness: Brightness.light
+              ),
               useMaterial3: true,
               fontFamily: 'Exo2',
             ),
