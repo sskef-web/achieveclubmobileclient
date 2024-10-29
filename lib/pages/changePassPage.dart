@@ -19,6 +19,7 @@ class _ChangePassPageState extends State<ChangePassPage> {
   bool isPasswordHidden = true;
   final TextEditingController _forgotPasswordController =
       TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   String password = "";
   IconData passIcon = Icons.visibility;
 
@@ -65,50 +66,60 @@ class _ChangePassPageState extends State<ChangePassPage> {
               textScaler: TextScaler.linear(1.2),
             ),
             const SizedBox(height: 16.0),
-            TextFormField(
-              controller: _forgotPasswordController,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.password,
-                suffixIcon: IconButton(
-                      icon: Icon(passIcon),
-                      onPressed: () {
-                        updatePasswordVisibility();
-                      },
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _forgotPasswordController,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.password,
+                      suffixIcon: IconButton(
+                        icon: Icon(passIcon),
+                        onPressed: () {
+                          updatePasswordVisibility();
+                        },
+                      ),
+                      errorText: password.isNotEmpty &&
+                          (password.length < 6 || !_isPasswordValid(password))
+                          ? AppLocalizations.of(context)!.passwordError
+                          : null,
+                      errorMaxLines: 2,
                     ),
-                errorText: password.isNotEmpty &&
-                        (password.length < 6 || !_isPasswordValid(password))
-                    ? AppLocalizations.of(context)!.passwordError
-                    : null,
+                    obscureText: isPasswordHidden,
+                    keyboardType: TextInputType.text,
+                    textAlign: TextAlign.left,
+                    textDirection: TextDirection.ltr,
+                    onChanged: (value) {
+                      setState(() {
+                        _updatePassword(value);
+                        debugPrint(password);
+                      });
+                    },
+                    validator: (value) {
+                      if (value?.isEmpty ?? true) {
+                        return AppLocalizations.of(context)!.emptyPassword;
+                      }
+                      if (value!.length < 6 || !_isPasswordValid(value)) {
+                        return AppLocalizations.of(context)!.passwordError;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 16.0,
+                  ),
+                  ElevatedButton(
+                    onPressed: _formKey.currentState?.validate() == true
+                        ? () {
+                      Navigator.of(context).pop();
+                      widget.changePassword();
+                    }
+                        : null,
+                    child: Text(AppLocalizations.of(context)!.send),
+                  ),
+                ],
               ),
-              obscureText: isPasswordHidden,
-              keyboardType: TextInputType.text,
-              textAlign: TextAlign.left,
-              textDirection: TextDirection.ltr,
-              onChanged: (value) {
-                setState(() {
-                  _updatePassword(value);
-                  debugPrint(password);
-                });
-              },
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return AppLocalizations.of(context)!.emptyPassword;
-                }
-                if (value!.length < 6 || !_isPasswordValid(value)) {
-                  return AppLocalizations.of(context)!.passwordError;
-                }
-                return null;
-              },
-            ),
-            const SizedBox(
-              height: 16.0,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                widget.changePassword();
-              },
-              child: Text(AppLocalizations.of(context)!.send),
             ),
           ],
         ),

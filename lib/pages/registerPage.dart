@@ -411,7 +411,6 @@ class _RegisterPageState extends State<RegisterPage> {
           future: fetchClubs(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              final clubs = snapshot.data!;
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -427,28 +426,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                     child: Column(
                       children: [
-                        /*SizedBox(
-                          width: double.infinity, // Set the width to full width
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<int>(
-                              value: clubId,
-                              items: clubs.map((club) {
-                                return DropdownMenuItem<int>(
-                                  value: club.id,
-                                  child: Text(club.title),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  clubId = value;
-                                });
-                                widget.updateClubId(clubId!);
-                              },
-                              hint: Text(
-                                  AppLocalizations.of(context)!.selectClub),
-                            ),
-                          ),
-                        ),*/
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.name,
@@ -539,6 +516,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     !_isPasswordValid(widget.password))
                                 ? AppLocalizations.of(context)!.passwordError
                                 : null,
+                            errorMaxLines: 2,
                           ),
                           keyboardType: TextInputType.text,
                           controller: passwordController,

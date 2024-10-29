@@ -7,9 +7,6 @@ import 'package:achieveclubmobileclient/pages/registerPage.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../items/languageSelectionButton.dart';
 
 class LoginPage extends StatefulWidget {
   final Function() loginCallback;
@@ -433,6 +430,7 @@ class _LoginPageState extends State<LoginPage> {
                       errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
                           ? AppLocalizations.of(context)!.passwordError
                           : null,
+                      errorMaxLines: 2,
                     ),
                     obscureText: isPasswordHidden,
                     keyboardType: TextInputType.text,
