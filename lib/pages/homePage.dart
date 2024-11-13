@@ -1,7 +1,7 @@
-import 'package:achieveclubmobileclient/main.dart';
-import 'package:achieveclubmobileclient/tabItems/tab1.dart';
-import 'package:achieveclubmobileclient/tabItems/tab2.dart';
-import 'package:achieveclubmobileclient/tabItems/tab3.dart';
+import '../main.dart';
+import '../tabItems/tab1.dart';
+import '../tabItems/tab2.dart';
+import '../tabItems/tab3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

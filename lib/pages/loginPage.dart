@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:achieveclubmobileclient/items/fourDigitCodeInput.dart';
-import 'package:achieveclubmobileclient/pages/changePassPage.dart';
+import '../items/fourDigitCodeInput.dart';
+import 'changePassPage.dart';
 import 'package:http/http.dart' as http;
-import 'package:achieveclubmobileclient/main.dart';
-import 'package:achieveclubmobileclient/pages/registerPage.dart';
+import '../main.dart';
+import '../pages/registerPage.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

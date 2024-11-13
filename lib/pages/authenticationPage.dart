@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:achieveclubmobileclient/data/loginresponse.dart';
+import '../data/loginresponse.dart';
 import 'package:http/http.dart' as http;
-import 'package:achieveclubmobileclient/pages/homePage.dart';
-import 'package:achieveclubmobileclient/pages/loginPage.dart';
-import 'package:achieveclubmobileclient/main.dart';
+import 'homePage.dart';
+import 'loginPage.dart';
+import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';

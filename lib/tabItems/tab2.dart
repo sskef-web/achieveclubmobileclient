@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:achieveclubmobileclient/data/user.dart';
-import 'package:achieveclubmobileclient/items/userTopItem.dart';
+import '../data/user.dart';
+import '../items/userTopItem.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:achieveclubmobileclient/main.dart';
-import 'package:achieveclubmobileclient/pages/userPage.dart';
+import '../main.dart';
+import '../pages/userPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

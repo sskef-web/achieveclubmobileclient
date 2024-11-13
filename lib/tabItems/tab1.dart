@@ -289,6 +289,7 @@ class _Tab1Page extends State<Tab1Page> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(dialogContext).pop();
+                    _updatePage();
                   },
                   child: Text(AppLocalizations.of(context)!.close),
                 ),
