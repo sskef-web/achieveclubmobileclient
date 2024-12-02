@@ -6,6 +6,11 @@ import 'package:achieveclubmobileclient/data/club.dart';
 import 'package:achieveclubmobileclient/items/clubTopItem.dart';
 import 'package:achieveclubmobileclient/pages/clubPage.dart';
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream
+=======
+import '../items/customDotIndicator.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+>>>>>>> Stashed changes
 
 class Tab3Page extends StatefulWidget {
   final Function() logoutCallback;
@@ -19,6 +24,7 @@ class Tab3Page extends StatefulWidget {
 
 }
 
+<<<<<<< Updated upstream
 class _Tab3Page extends State<Tab3Page> {
   String locale = "";
   late Future<List<Club>> _clubs;
@@ -27,6 +33,41 @@ class _Tab3Page extends State<Tab3Page> {
   void initState() {
     super.initState();
   }
+=======
+class _Tab3PageState extends State<Tab3Page> {
+  final PageController _pageController = PageController(viewportFraction: 1.0);
+  late List<Map<String, dynamic>> data = [];
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    setState(() {
+      data = [
+        {
+          'title': AppLocalizations.of(context)!.achievementTitle,
+          'description': AppLocalizations.of(context)!.achievementDescription,
+          'icon': Icons.qr_code
+        },
+        {
+          'title': AppLocalizations.of(context)!.earnPdTitle,
+          'description': AppLocalizations.of(context)!.earnPdDescription,
+          'icon': Icons.assistant_rounded
+        },
+        {
+          'title': AppLocalizations.of(context)!.multipleAchievementsTitle,
+          'description': AppLocalizations.of(context)!.multipleAchievementsDescription,
+          'icon': Icons.auto_awesome_rounded
+        },
+        {
+          'title': AppLocalizations.of(context)!.topUsersTitle,
+          'description': AppLocalizations.of(context)!.topUsersDescription,
+          'icon': Icons.groups
+        },
+      ];
+    });
+>>>>>>> Stashed changes
 
   void navigateToClubPage(int clubId, String position) {
     Navigator.push(

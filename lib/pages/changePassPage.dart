@@ -52,7 +52,7 @@ class _ChangePassPageState extends State<ChangePassPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Смена пароля'),
+        title: Text('Zmiana hasła'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

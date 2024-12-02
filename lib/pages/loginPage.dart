@@ -1,6 +1,12 @@
 import 'dart:convert';
+<<<<<<< Updated upstream
 import 'package:achieveclubmobileclient/items/fourDigitCodeInput.dart';
 import 'package:achieveclubmobileclient/pages/changePassPage.dart';
+=======
+import '../items/fourDigitCodeInput.dart';
+import '../items/languageSelectionButton.dart';
+import 'changePassPage.dart';
+>>>>>>> Stashed changes
 import 'package:http/http.dart' as http;
 import 'package:achieveclubmobileclient/main.dart';
 import 'package:achieveclubmobileclient/pages/registerPage.dart';

@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+<<<<<<< Updated upstream
 import 'package:achieveclubmobileclient/pages/authenticationPage.dart';
+=======
+import '../items/languageSelectionButton.dart';
+import '../pages/authenticationPage.dart';
+>>>>>>> Stashed changes
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../items/achievementItem.dart';
@@ -192,7 +197,7 @@ class _Tab1Page extends State<Tab1Page> {
   }
 
   Future<List<Achievement>> fetchAchievements() async {
-    debugPrint('LOCALE: $widget.locale');
+    debugPrint('LOCALE fetch achievements: $widget.locale');
     final response = await http.get(Uri.parse('${baseURL}api/achievements'),
         headers: {
           'Accept-Language': widget.locale
@@ -586,7 +591,13 @@ class _Tab1Page extends State<Tab1Page> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     LanguageSelectionButton(key: widget.key, updateAchievements: navigateToAuthPage),
+<<<<<<< Updated upstream
                     const SizedBox(height: 16.0,),
+=======
+                    const SizedBox(
+                      height: 16.0,
+                    ),
+>>>>>>> Stashed changes
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -669,6 +680,72 @@ class _Tab1Page extends State<Tab1Page> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
+<<<<<<< Updated upstream
+=======
+                    TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          searchText = value;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.searchAchieves,
+                        prefixIcon: const Icon(Icons.search),
+                      ),
+                    ),
+                    searchText.isNotEmpty ? const SizedBox(height: 16.0) : Container(),
+                    searchText.isNotEmpty ? Stack(children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: achievements
+                            .where((achievement) => achievement.title
+                            .toLowerCase()
+                            .contains(searchText.toLowerCase()))
+                            .toList()
+                            .length,
+                        itemBuilder: (context, index) {
+                          final achievement = achievements
+                              .where((achievement) => achievement.title
+                              .toLowerCase()
+                              .contains(searchText.toLowerCase()))
+                              .toList()[index];
+                          final isCompleted = completedAchievements.any(
+                                  (completed) =>
+                              completed.achievementId == achievement.id);
+
+                          if (!isCompleted) {
+                            return AchievementItem(
+                              onTap: () {
+                                setState(() {
+                                  if (selectedAchievementIds
+                                      .contains(achievement.id)) {
+                                    selectedAchievementIds
+                                        .remove(achievement.id);
+                                  } else {
+                                    selectedAchievementIds
+                                        .add(achievement.id);
+                                  }
+                                  updateFloatingActionButtonVisibility();
+                                });
+                              },
+                              logo: '$baseURL${achievement.logoURL}',
+                              title: achievement.title,
+                              description: achievement.description,
+                              xp: achievement.xp,
+                              completionRatio: achievement.completionRatio,
+                              id: achievement.id,
+                              isSelected: selectedAchievementIds
+                                  .contains(achievement.id),
+                              completionCount: 0,
+                              isMultiple: false,
+                            );
+                          }
+                          return Container();
+                        },
+                      ),
+                    ]) : Container(),
+>>>>>>> Stashed changes
                     if (multipleCompletedAchievements.isNotEmpty)
                       Text(
                         AppLocalizations.of(context)!.multipleCompletedAchievements,

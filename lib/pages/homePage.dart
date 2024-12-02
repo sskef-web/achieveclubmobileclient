@@ -86,7 +86,11 @@ class _HomePageState extends State<HomePage> {
             label: AppLocalizations.of(context)!.tab2,
           ),
           BottomNavigationBarItem(
+<<<<<<< Updated upstream
             icon: const Icon(Icons.apartment),
+=======
+            icon: const Icon(Icons.info),
+>>>>>>> Stashed changes
             label: AppLocalizations.of(context)!.tab3,
           ),
         ],

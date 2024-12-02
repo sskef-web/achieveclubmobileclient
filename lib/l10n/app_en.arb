@@ -2,7 +2,7 @@
   "profil": "Profile",
   "tab1": "Profile",
   "tab2": "Top 100 students",
-  "tab3": "Top clubs",
+  "tab3": "About app",
   "fetchCompletedAchieveError":"Error loading completed achievements",
   "refreshTokenError": "Error during token update",
   "fetchUserError": "Error loading user information",
@@ -57,6 +57,21 @@
   "clubStudents": "Students of club",
   "completionCount": "Completion count",
   "multipleCompletedAchievements": "Multiple Achievements Completed",
+<<<<<<< Updated upstream
   "codeSendedAfter": "Код уже отправлен",
   "writeCode": "Ввести код"
+=======
+  "codeSendedAfter": "The code has already been sent, if you haven't received the code - try again in 5 minutes.",
+  "writeCode": "Write code",
+  "searchAchieves": "Search for an achievement by name",
+  "achievementTitle": "Achieving Achievements",
+  "achievementDescription": "To achieve an achievement, you must:\n• Select the achievement by tapping;\n• Click the QR code button in the bottom right corner;\n• Show the QR code to the trainer;",
+  "earnPdTitle": "Earning PD for Achievements",
+  "earnPdDescription": "You will receive experience points (PD) for each completed achievement. You will also advance in the rankings. You can compare the amount of experience gained with other students :)",
+  "multipleAchievementsTitle": "Multiple Achievements",
+  "multipleAchievementsDescription": "In addition to regular one-time achievements, there are also multiple-use achievements. \nYou can achieve them as many times as you want. \nAfter completing a multiple-use achievement, it will be displayed separately from all other achievements at the top of the list.\nTo complete a multiple-use achievement, you must click on it in this list.\n",
+  "topUsersTitle": "Top Users",
+  "topUsersDescription": "You can go to the page of the top 100 users and see your position in the leaderboard. The higher you are on the list, the cooler you are. \nYou can receive rewards for your position in the leaderboard :)"
+
+>>>>>>> Stashed changes
 }

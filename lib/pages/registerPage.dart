@@ -282,7 +282,7 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'Ошибка \n Пользователь с таким email уже зарегистрирован.',
+                  'Błąd \n Użytkownik z tym adresem e-mail jest już zarejestrowany.',
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(

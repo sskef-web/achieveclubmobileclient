@@ -2,7 +2,7 @@
   "profil": "Profil",
   "tab1": "Profil",
   "tab2": "Top 100 użytkowników",
-  "tab3": "Top kluby",
+  "tab3": "O aplikacji",
   "fetchCompletedAchieveError":"Błąd ładowania ukończonych osiągnięć",
   "refreshTokenError": "Błąd aktualizacji tokena",
   "fetchUserError": "Błąd podczas ładowania użytkownika",
@@ -58,6 +58,22 @@
   "clubStudents": "Użytkownicy w klubie",
   "completionCount": "Zrobione raz",
   "multipleCompletedAchievements": "Dokonane osiągnięcia",
+<<<<<<< Updated upstream
   "codeSendedAfter": "Код уже отправлен",
   "writeCode": "Ввести код"
 }
+=======
+  "codeSendedAfter": "Kod został już wysłany, jeśli go nie otrzymałeś - spróbuj ponownie za 5 minut.",
+  "writeCode": "Wprowadzić kod",
+  "searchAchieves": "Wyszukiwanie osiągnięcia według nazwy",
+  "achievementTitle": "Spełnianie osiągnięć",
+  "achievementDescription": "Aby zdobyć osiągnięcie, musisz:\n• Wybrać osiągnięcie poprzez dotknięcie;\n• Kliknąć przycisk kodu QR w prawym dolnym rogu;\n• Pokazać kod QR trenerowi;",
+  "earnPdTitle": "Zdobywanie PD za osiągnięcia",
+  "earnPdDescription": "Otrzymasz punkty doświadczenia (PD) za każde ukończone osiągnięcie. Będziesz również awansować w rankingach. Możesz porównywać ilość zdobytego doświadczenia z innymi uczniami :)",
+  "multipleAchievementsTitle": "Wielokrotne osiągnięcia",
+  "multipleAchievementsDescription": "Oprócz zwykłych osiągnięć jednorazowych, dostępne są także osiągnięcia wielokrotnego użytku. \nMożesz je zdobywać tyle razy, ile chcesz. \nPo ukończeniu osiągnięcia wielokrotnego użytku będzie ono wyświetlane oddzielnie od wszystkich innych osiągnięć na górze listy.\nAby ukończyć osiągnięcie wielokrotnego użytku, musisz kliknąć je na tej liście.\n",
+  "topUsersTitle": "Najlepsi użytkownicy",
+  "topUsersDescription": "Możesz przejść do strony 100 najlepszych użytkowników i zobaczyć swoją pozycję w czołówce. Im wyżej jesteś na liście, tym jesteś fajniejszy. \nMożesz otrzymać nagrody za swoją pozycję w czołówce :)"
+
+}
+>>>>>>> Stashed changes

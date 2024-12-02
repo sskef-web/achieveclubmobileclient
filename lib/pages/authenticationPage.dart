@@ -117,7 +117,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     if (response.statusCode == 200) {
       debugPrint('Password changed. Status Code: ${response.statusCode}');
       throw AlertDialog(
-        content: Text('Пароль изменен.', textAlign: TextAlign.center, ),
+        content: Text('Hasło zostało zmienione.', textAlign: TextAlign.center, ),
       );
     }
     else {
@@ -218,7 +218,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     } else {
       debugPrint('Failed registration. Status code: ${response.statusCode}. Body: ${response.body}');
       throw AlertDialog(
-        content: Text('Ошибка в поле ${response.body}'),
+        content: Text('Błąd w polu ${response.body}'),
       );
     }
   }
