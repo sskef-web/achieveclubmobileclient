@@ -235,8 +235,8 @@ class _UserPageState extends State<UserPage> {
                     Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color.fromRGBO(11, 106, 108, 0.15)
-                            : const Color.fromRGBO(11, 106, 108, 0.15),
+                            ? const Color.fromRGBO(38, 38, 38, 1)
+                            : const Color.fromRGBO(38, 38, 38, 1),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       padding: const EdgeInsets.all(16.0),
@@ -262,6 +262,11 @@ class _UserPageState extends State<UserPage> {
                                 completedAchievements.length,
                                 achievements.length) /
                                 100,
+                            color:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Color.fromRGBO(245, 110, 15, 1)
+                                : const Color.fromRGBO(245, 110, 15, 1),
+                            backgroundColor: Color.fromRGBO(208, 208, 208, 0.25),
                           ),
                         ],
                       ),

@@ -3,9 +3,9 @@ class User {
   final String firstName;
   final String lastName;
   final String avatar;
-  final int clubId;
-  final String clubName;
-  final String clubLogo;
+  // final int clubId;
+  // final String clubName;
+  // final String clubLogo;
   final int xpSum;
 
   const User({
@@ -13,9 +13,9 @@ class User {
     required this.firstName,
     required this.lastName,
     required this.avatar,
-    required this.clubId,
-    required this.clubName,
-    required this.clubLogo,
+    // required this.clubId,
+    // required this.clubName,
+    // required this.clubLogo,
     required this.xpSum
   });
 
@@ -25,9 +25,9 @@ class User {
       firstName: json['firstName'],
       lastName: json['lastName'],
       avatar: json['avatar'],
-      clubId: json['clubId'],
-      clubName: json['clubName'],
-      clubLogo: json['clubLogo'],
+      // clubId: json['clubId'],
+      // clubName: json['clubName'],
+      // clubLogo: json['clubLogo'],
       xpSum: json['xpSum'],
     );
   }

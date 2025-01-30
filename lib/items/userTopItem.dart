@@ -8,7 +8,7 @@ class UserTopItem extends StatelessWidget {
   final String firstName;
   final String lastName;
   final String avatarPath;
-  final String clubLogo;
+  // final String clubLogo;
   final int userXP;
   final int topPosition;
   final VoidCallback? onTap;
@@ -19,7 +19,7 @@ class UserTopItem extends StatelessWidget {
     required this.firstName,
     required this.lastName,
     required this.avatarPath,
-    required this.clubLogo,
+    // required this.clubLogo,
     required this.userXP,
     required this.topPosition,
     required this.onTap
@@ -29,17 +29,18 @@ class UserTopItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Theme.of(context).brightness == Brightness.dark
-          ? Color.fromRGBO(11, 106, 108, 0.25)
-          : Color.fromRGBO(255, 255, 255, 1.0),
+          ? Color.fromRGBO(38, 38, 38, 1)
+          : Color.fromRGBO(38, 38, 38, 1),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListTile(
           onTap: onTap,
-          leading: CircleAvatar(
-            radius: 25.0,
-            backgroundImage: CachedNetworkImageProvider('$baseURL/$avatarPath'),
-            backgroundColor: Colors.transparent,
-            onBackgroundImageError: (exception, stackTrace) => Icon(Icons.error, color: Colors.grey,),
+          leading: ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: '$baseURL/$avatarPath',
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
           ),
           title: Column(
             mainAxisAlignment: MainAxisAlignment.center,

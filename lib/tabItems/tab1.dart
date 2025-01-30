@@ -144,7 +144,8 @@ class _Tab1Page extends State<Tab1Page> {
       if (newCookies != null) {
         await saveCookies(newCookies);
       }
-    } else {
+    }
+    else {
       widget.logoutCallback();
       navigateToAuthPage();
       throw Exception(
@@ -168,7 +169,7 @@ class _Tab1Page extends State<Tab1Page> {
   Future<User> fetchUser() async {
     var cookies = await loadCookies();
     userId = extractUserIdFromCookies(cookies!);
-    var url = Uri.parse('${baseURL}api/users/current');
+    var url = Uri.parse('${baseURL}api/users/${userId}');
     debugPrint(url.toString());
     appTitle = AppLocalizations.of(context)!.profil;
     debugPrint(Localizations.localeOf(context).languageCode);
@@ -614,14 +615,21 @@ class _Tab1Page extends State<Tab1Page> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          radius: 80.0,
-                          backgroundImage: NetworkImage('$baseURL$Avatar'),
-                          child: InkWell(
-                            onTap: () {
-                              _uploadAvatar(context);
-                            },
+                        InkWell(
+                          child: SizedBox(
+                            width: 160.0,
+                            height: 160.0,
+                            child: ClipOval(
+                              child: CachedNetworkImage(
+                                imageUrl: '$baseURL/$Avatar',
+                                placeholder: (context, url) => CircularProgressIndicator(),
+                                errorWidget: (context, url, error) => Icon(Icons.error),
+                              ),
+                            ),
                           ),
+                          onTap: () {
+                            _uploadAvatar(context);
+                          },
                         ),
                         const SizedBox(width: 16.0),
                         Flexible(
@@ -640,8 +648,8 @@ class _Tab1Page extends State<Tab1Page> {
                     Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color.fromRGBO(11, 106, 108, 0.15)
-                            : const Color.fromRGBO(11, 106, 108, 0.15),
+                            ? const Color.fromRGBO(38, 38, 38, 1)
+                            : const Color.fromRGBO(38, 38, 38, 1),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       padding: const EdgeInsets.all(16.0),
@@ -664,9 +672,9 @@ class _Tab1Page extends State<Tab1Page> {
                           LinearProgressIndicator(
                             color:
                                 Theme.of(context).brightness == Brightness.dark
-                                    ? Color.fromRGBO(11, 106, 108, 1)
-                                    : const Color.fromRGBO(11, 106, 108, 1),
-                            backgroundColor: Color.fromRGBO(11, 106, 108, 0.25),
+                                    ? Color.fromRGBO(245, 110, 15, 1)
+                                    : const Color.fromRGBO(245, 110, 15, 1),
+                            backgroundColor: Color.fromRGBO(208, 208, 208, 0.25),
                             value: calculateCompletionPercentage(
                                     completedAchievements.length,
                                     achievements.length) /

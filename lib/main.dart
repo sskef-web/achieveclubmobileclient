@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'data/language_provider.dart';
 
 String appTitle = "";
-String baseURL = 'https://achieve.by:5000/';
+String baseURL = 'https://achieve.by:5001/';
 
 void main() {
   runApp(const MyApp());
@@ -34,17 +34,20 @@ class MyApp extends StatelessWidget {
             ],
             locale: languageProvider.locale,
             theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                  seedColor: const Color.fromRGBO(200, 200, 200, 1.0),
-                  brightness: Brightness.light
+              colorScheme: ColorScheme.light(
+                  primary: Color.fromRGBO(245, 110, 15, 1),
+                  surface: Color.fromRGBO(251, 251, 251, 1),
+                  brightness: Brightness.dark
               ),
               useMaterial3: true,
               fontFamily: 'Exo2',
             ),
             darkTheme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                  seedColor: const Color.fromRGBO(11, 106, 108, 1.0),
-                  brightness: Brightness.dark),
+              colorScheme: ColorScheme.dark(
+                primary: Color.fromRGBO(245, 110, 15, 1),
+                  surface: Color.fromRGBO(27, 26, 31, 1),
+                brightness: Brightness.dark
+              ),
               useMaterial3: true,
               fontFamily: 'Exo2',
             ),

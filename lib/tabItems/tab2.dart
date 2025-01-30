@@ -90,7 +90,7 @@ class _Tab2Page extends State<Tab2Page> {
                           lastName: user.lastName,
                           avatarPath: user.avatar,
                           userXP: user.xpSum,
-                          clubLogo: user.clubLogo,
+                          // clubLogo: user.clubLogo,
                           topPosition: index + 1,
                           id: user.id,
                         );

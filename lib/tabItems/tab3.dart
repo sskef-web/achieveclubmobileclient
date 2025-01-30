@@ -1,144 +1,105 @@
 import 'package:flutter/material.dart';
-import '../items/customDotIndicator.dart';
+
+import 'shopTabs/mainTab.dart';
+import 'shopTabs/parentalTab.dart';
+import 'shopTabs/seasonalTab.dart';
 
 class Tab3Page extends StatefulWidget {
   @override
   _Tab3PageState createState() => _Tab3PageState();
 }
 
-class _Tab3PageState extends State<Tab3Page> {
-  final PageController _pageController = PageController(viewportFraction: 1.0);
-  final List<Map<String, dynamic>> data = [
-    {
-      'title': 'Выполнение достижений',
-      'description':
-          'Чтобы выполнить достижение вам нужно:\n'
-              '• Выбрать желаемые достижения нажатием;\n'
-              '• Нажать на кнопку QR-кода справа снизу;\n'
-              '• Показать QR-код тренеру;',
-      'icon': Icons.qr_code
-    },
-    {
-      'title': 'Начисление XP за достижения',
-      'description':
-          'За каждое выполненное достижение вы будете получать опыт (XP), '
-              'так же вы будете подниматься в топе по рейтингу. Вы можете '
-              'мерится количеством опыта с другими студентами :)',
-      'icon': Icons.assistant_rounded
-    },
-    {
-      'title': 'Многоразовые достижения',
-      'description':
-          'Помимо обычных одноразовых достижений есть еще и многоразовые. \n'
-              'Их вы можете выполнять столько раз, сколько вам захочется. \n'
-              'После выполнения многоразового достижение оно будет отображаться отдельно от всех в вверху списка.\n'
-              'Для выполнения многоразового достижения нужно на него нажать в этом списке.\n',
-      'icon': Icons.auto_awesome_rounded
-    },
-    {
-      'title': 'Топ пользователей',
-      'description':
-          'Вы можете перейти на страницу топа 100 пользователей и увидеть '
-              'вашу позицию в топе. \nЧем выше вы в списке - тем вы круче. '
-              '\n За места в топе можно получать какие-то призы :)',
-      'icon': Icons.groups
-    },
-  ];
-  int _currentIndex = 0;
+class _Tab3PageState extends State<Tab3Page> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  bool _isSeasonalStoreAvailable = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+     _isSeasonalStoreAvailable = true;
+  }
+
+  void _handleTabSelection() {
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _tabController?.removeListener(_handleTabSelection);
+    _tabController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      body: Stack(
-        children: [
-          PageView.builder(
-            controller: _pageController,
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return Container(
-                padding: EdgeInsets.all(18.0),
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      size: screenWidth * 0.3,
-                      data[index]['icon'],
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      data[index]['title'],
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.07,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 8.0),
-                    Text(
-                      data[index]['description'],
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.04,
-                      ),
-                      textAlign: TextAlign.justify,
-                    ),
-                  ],
+      appBar: AppBar(
+        title: Container(
+          alignment: Alignment.center,
+          child: TabBar(
+            tabAlignment: TabAlignment.center,
+            controller: _tabController,
+            dividerColor: Colors.transparent,
+            indicator: BoxDecoration(
+              color: Colors.transparent,
+            ),
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white,
+            tabs: [
+              Tab(
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: _tabController?.index == 0 ? Border.all(width: 0) : Border.all(width: 1.0, color: const Color.fromRGBO(245,110, 15, 1)),
+                    color: _tabController?.index == 0 ? Color.fromRGBO(245,110, 15, 1) : Colors.transparent,
+                  ),
+                  child: Text(
+                    'Главная',
+                  ),
                 ),
-              );
-            },
-            onPageChanged: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
+              ),
+              Tab(
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: _tabController?.index == 1 ? Border.all(width: 0) : Border.all(width: 1.0, color: const Color.fromRGBO(245,110, 15, 1)),
+                    color: _tabController?.index == 1 ? Color.fromRGBO(245,110, 15, 1) : Colors.transparent,
+                  ),
+                  child: Text(
+                    'Сезонный',
+                  ),
+                ),
+              ),
+              Tab(
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: _tabController?.index == 2 ? Border.all(width: 0) : Border.all(width: 1.0, color: const Color.fromRGBO(245,110, 15, 1)),
+                    color: _tabController?.index == 2 ? Color.fromRGBO(245,110, 15, 1) : Colors.transparent,
+                  ),
+                  child: Text(
+                    'Родителям',
+                  ),
+                ),
+              ),
+            ],
           ),
-          Positioned(
-            left: screenWidth * 0.1,
-            bottom: screenHeight * 0.02,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back_ios),
-              onPressed: () {
-                _pageController.previousPage(
-                  duration: Duration(milliseconds: 300),
-                  curve: Curves.ease,
-                );
-              },
-            ),
-          ),
-          Positioned(
-            right: screenWidth * 0.1,
-            bottom: screenHeight * 0.02,
-            child: IconButton(
-              icon: Icon(Icons.arrow_forward_ios),
-              onPressed: () {
-                _pageController.nextPage(
-                  duration: Duration(milliseconds: 300),
-                  curve: Curves.ease,
-                );
-              },
-            ),
-          ),
-          Positioned(
-            bottom: screenHeight * 0.04,
-            left: 0.0,
-            right: 0.0,
-            child: CustomDotIndicator(
-              itemCount: data.length,
-              currentIndex: _currentIndex,
-              onDotTapped: (index) {
-                _pageController.animateToPage(
-                  index,
-                  duration: Duration(milliseconds: 300),
-                  curve: Curves.ease,
-                );
-              },
-            ),
-          ),
-        ],
+        ),
       ),
+      body: TabBarView(
+            controller: _tabController,
+            children: [
+              MainTab(),
+              SeasonalTab(isAvailable: _isSeasonalStoreAvailable,),
+              ParentalTab(),
+            ],
+          ),
     );
   }
 }
+

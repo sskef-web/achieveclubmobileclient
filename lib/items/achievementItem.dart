@@ -52,8 +52,8 @@ class _AchievementItemState extends State<AchievementItem> {
           color: isSelected ? Colors.blue : Theme
               .of(context)
               .brightness == Brightness.dark
-              ? const Color.fromRGBO(11, 106, 108, 0.25)
-              : const Color.fromRGBO(255, 255, 255, 1),
+              ? const Color.fromRGBO(38, 38, 38, 1)
+              : const Color.fromRGBO(38, 38, 38, 1),
           child: ListTile(
             contentPadding: EdgeInsets.only(
                 top: 4.0, bottom: 8.0, right: 10, left: 10),
