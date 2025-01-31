@@ -1,3 +1,4 @@
+import '../items/settingsButton.dart';
 import '../main.dart';
 import '../tabItems/tab1.dart';
 import '../tabItems/tab2.dart';
@@ -54,6 +55,9 @@ class _HomePageState extends State<HomePage> {
             widget.logoutCallback();
           },
         ),
+        actions: [
+          _currentIndex == 0 ? SettingsButton() : SizedBox(height: 0, width: 0,)
+        ],
       ),
       body: _tabs[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

@@ -464,8 +464,10 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: (_formKey.currentState?.validate() ?? false)
                   ? () {
                 widget.loginCallback();
-              }
-                  : null,
+              } : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(38,38,38, 1)
+              ),
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(

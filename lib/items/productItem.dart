@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../pages/productPage.dart';
+
 class ProductItem extends StatefulWidget {
   final List<String> imageUrls;
   final List<Color> colors;
@@ -101,7 +103,10 @@ class _ProductItemState extends State<ProductItem> {
                 padding: EdgeInsets.only(top: 8),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Обработка нажатия кнопки покупки
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProductPage()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromRGBO(245,110, 15, 1),

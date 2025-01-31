@@ -142,6 +142,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       token = extractTokenFromCookies(cookies);
       userId = extractUserIdFromCookies(cookies);
       refreshToken = extractRefreshTokenFromCookies(cookies);
+      debugPrint('Login Cookies - $cookies');
       return LoginResponse(token, userId, refreshToken, response.body);
     } else {
       final responseJson = jsonDecode(response.body);

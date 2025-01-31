@@ -22,7 +22,7 @@ class SeasonalTab extends StatelessWidget {
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('images/banner.png'),
+                    image: AssetImage('images/season-mini-banner.png'),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(12.0),
@@ -146,7 +146,7 @@ class SeasonalTab extends StatelessWidget {
             padding: EdgeInsets.only(top: 64, left: 12, right: 12, bottom: 64),
             decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('images/banner-two.png'),
+              image: AssetImage('images/season-banner.png'),
               fit: BoxFit.cover,
             ),
               borderRadius: BorderRadius.circular(30),
@@ -164,7 +164,7 @@ class SeasonalTab extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
-                        height: 0.8
+                        height: 1
                     ),
                   ),
                 ),

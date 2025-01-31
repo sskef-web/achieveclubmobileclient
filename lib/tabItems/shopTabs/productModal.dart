@@ -1,4 +1,4 @@
-import 'package:achieveclubmobileclient/tabItems/shopTabs/buyResuldModal.dart';
+import 'package:achieveclubmobileclient/tabItems/shopTabs/buyResultModal.dart';
 import 'package:flutter/material.dart';
 
 class ProductModal extends StatelessWidget {

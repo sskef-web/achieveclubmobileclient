@@ -266,7 +266,8 @@ class _UserPageState extends State<UserPage> {
                             Theme.of(context).brightness == Brightness.dark
                                 ? Color.fromRGBO(245, 110, 15, 1)
                                 : const Color.fromRGBO(245, 110, 15, 1),
-                            backgroundColor: Color.fromRGBO(208, 208, 208, 0.25),
+                            backgroundColor: Colors.white,
+                            borderRadius: BorderRadius.circular(100),
                           ),
                         ],
                       ),

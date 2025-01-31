@@ -258,6 +258,7 @@ class _Tab1Page extends State<Tab1Page> {
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Color.fromRGBO(27, 26, 31, 1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
           ),
@@ -292,6 +293,9 @@ class _Tab1Page extends State<Tab1Page> {
                     Navigator.of(dialogContext).pop();
                     _updatePage();
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromRGBO(38, 38, 38, 1)
+                  ),
                   child: Text(AppLocalizations.of(context)!.close),
                 ),
               ],
@@ -495,6 +499,9 @@ class _Tab1Page extends State<Tab1Page> {
                 ),
                 const SizedBox(height: 16.0),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromRGBO(38, 38, 38, 1)
+                  ),
                   onPressed: () {
                     selectedAchievementIds = [];
                     Navigator.of(dialogContext).pop();
@@ -672,13 +679,14 @@ class _Tab1Page extends State<Tab1Page> {
                           LinearProgressIndicator(
                             color:
                                 Theme.of(context).brightness == Brightness.dark
-                                    ? Color.fromRGBO(245, 110, 15, 1)
+                                    ? const Color.fromRGBO(245, 110, 15, 1)
                                     : const Color.fromRGBO(245, 110, 15, 1),
-                            backgroundColor: Color.fromRGBO(208, 208, 208, 0.25),
+                            backgroundColor: Colors.white,
                             value: calculateCompletionPercentage(
                                     completedAchievements.length,
                                     achievements.length) /
                                 100,
+                            borderRadius: BorderRadius.circular(100),
                           ),
                           const SizedBox(
                             height: 8.0,
@@ -686,70 +694,6 @@ class _Tab1Page extends State<Tab1Page> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 8.0),
-                    TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          searchText = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Поиск достижения по названию',
-                        prefixIcon: const Icon(Icons.search),
-                      ),
-                    ),
-                    searchText.isNotEmpty ? const SizedBox(height: 16.0) : Container(),
-                    searchText.isNotEmpty ? Stack(children: [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: achievements
-                            .where((achievement) => achievement.title
-                            .toLowerCase()
-                            .contains(searchText.toLowerCase()))
-                            .toList()
-                            .length,
-                        itemBuilder: (context, index) {
-                          final achievement = achievements
-                              .where((achievement) => achievement.title
-                              .toLowerCase()
-                              .contains(searchText.toLowerCase()))
-                              .toList()[index];
-                          final isCompleted = completedAchievements.any(
-                                  (completed) =>
-                              completed.achievementId == achievement.id);
-
-                          if (!isCompleted) {
-                            return AchievementItem(
-                              onTap: () {
-                                setState(() {
-                                  if (selectedAchievementIds
-                                      .contains(achievement.id)) {
-                                    selectedAchievementIds
-                                        .remove(achievement.id);
-                                  } else {
-                                    selectedAchievementIds
-                                        .add(achievement.id);
-                                  }
-                                  updateFloatingActionButtonVisibility();
-                                });
-                              },
-                              logo: '$baseURL${achievement.logoURL}',
-                              title: achievement.title,
-                              description: achievement.description,
-                              xp: achievement.xp,
-                              completionRatio: achievement.completionRatio,
-                              id: achievement.id,
-                              isSelected: selectedAchievementIds
-                                  .contains(achievement.id),
-                              completionCount: 0,
-                              isMultiple: false,
-                            );
-                          }
-                          return Container();
-                        },
-                      ),
-                    ]) : Container(),
                     if (multipleCompletedAchievements.isNotEmpty)
                       Text(
                         AppLocalizations.of(context)!
@@ -760,8 +704,8 @@ class _Tab1Page extends State<Tab1Page> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                    const SizedBox(height: 8.0),
-                    Stack(
+                    if (multipleCompletedAchievements.isNotEmpty) const SizedBox(height: 8.0),
+                    if (multipleCompletedAchievements.isNotEmpty) Stack(
                       children: [
                         ListView.builder(
                           shrinkWrap: true,
@@ -805,7 +749,7 @@ class _Tab1Page extends State<Tab1Page> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8.0),
+                    if (nonMultipleCompletedAchievements.isNotEmpty)const SizedBox(height: 8.0),
                     if (nonMultipleCompletedAchievements.isNotEmpty)
                       Text(
                         AppLocalizations.of(context)!.completedAchievements,
@@ -814,7 +758,7 @@ class _Tab1Page extends State<Tab1Page> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    const SizedBox(height: 8.0),
+                    if (nonMultipleCompletedAchievements.isNotEmpty)const SizedBox(height: 8.0),
                     Stack(
                       children: [
                         ListView.builder(

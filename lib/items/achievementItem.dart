@@ -49,7 +49,7 @@ class _AchievementItemState extends State<AchievementItem> {
     return Stack(
       children: [
         Card(
-          color: isSelected ? Colors.blue : Theme
+          color: isSelected ? Color.fromRGBO(222, 222, 222, 1) : Theme
               .of(context)
               .brightness == Brightness.dark
               ? const Color.fromRGBO(38, 38, 38, 1)
@@ -70,7 +70,8 @@ class _AchievementItemState extends State<AchievementItem> {
                 Text(
                   widget.title,
                   style: TextStyle(
-                      fontSize: 15
+                      fontSize: 15,
+                    color: isSelected ? Color.fromRGBO( 27, 26, 31, 1) : Colors.white,
                   ),
                 ),
                 Container(
@@ -80,8 +81,8 @@ class _AchievementItemState extends State<AchievementItem> {
                     color: Theme
                         .of(context)
                         .brightness == Brightness.dark
-                        ? const Color.fromRGBO(11, 106, 108, 1)
-                        : const Color.fromRGBO(11, 106, 108, 1),
+                        ? const Color.fromRGBO(245,110, 15, 1)
+                        : const Color.fromRGBO(245,110, 15, 1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -99,8 +100,8 @@ class _AchievementItemState extends State<AchievementItem> {
                     color: Theme
                         .of(context)
                         .brightness == Brightness.dark
-                        ? const Color.fromRGBO(11, 106, 108, 1)
-                        : const Color.fromRGBO(11, 106, 108, 1),
+                        ? const Color.fromRGBO(245,110, 15, 1)
+                        : const Color.fromRGBO(245,110, 15, 1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -120,6 +121,7 @@ class _AchievementItemState extends State<AchievementItem> {
                     style: TextStyle(
                       height: 1,
                       fontSize: 13,
+                      color: isSelected ? Color.fromRGBO( 27, 26, 31, 1) : Colors.white,
                     ),
                 )
             ),
