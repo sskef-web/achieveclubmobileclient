@@ -111,7 +111,7 @@ class _ProductItemState extends State<ProductItem> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromRGBO(245,110, 15, 1),
                     foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+                    padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),

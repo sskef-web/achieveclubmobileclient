@@ -20,6 +20,7 @@ class SeasonalTab extends StatelessWidget {
               Container(
                 height: 140,
                 padding: EdgeInsets.all(10),
+                margin: EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('images/season-mini-banner.png'),
@@ -68,11 +69,11 @@ class SeasonalTab extends StatelessWidget {
               ),
               SizedBox(height: 8.0),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0.0), // Добавляем отступы по бокам
+                padding: const EdgeInsets.symmetric(horizontal: 0.0),
                 child: Wrap(
                   alignment: WrapAlignment.spaceBetween,
-                  spacing: 16.0, // Отступы между элементами по горизонтали
-                  runSpacing: 16.0, // Отступы между элементами по вертикали
+                  spacing: 16.0,
+                  runSpacing: 16.0,
                   children: [
                     SeasonalProductItem(
                       imageUrls: [

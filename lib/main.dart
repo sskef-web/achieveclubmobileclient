@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               colorScheme: ColorScheme.light(
                   primary: Color.fromRGBO(245, 110, 15, 1),
+                  onError: Color.fromRGBO(251, 251, 251, 1),
                   surface: Color.fromRGBO(251, 251, 251, 1),
                   brightness: Brightness.dark
               ),
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
             darkTheme: ThemeData(
               colorScheme: ColorScheme.dark(
                 primary: Color.fromRGBO(245, 110, 15, 1),
+                  onError: Colors.white,
                   surface: Color.fromRGBO(27, 26, 31, 1),
                 brightness: Brightness.dark
               ),

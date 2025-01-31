@@ -10,97 +10,83 @@ class Tab3Page extends StatefulWidget {
 }
 
 class _Tab3PageState extends State<Tab3Page> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  int _selectedIndex = 0;
+
+  void _onTabSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   bool _isSeasonalStoreAvailable = false;
   bool _isParentalStoreAvailable = false;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(_handleTabSelection);
     _isSeasonalStoreAvailable = true;
     _isParentalStoreAvailable = true;
   }
 
-  void _handleTabSelection() {
-    setState(() {});
+  Widget _buildTab(int index, String text) {
+    bool isSelected = _selectedIndex == index;
+    return GestureDetector(
+      onTap: () => _onTabSelected(index),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 15.0),
+        margin: EdgeInsets.symmetric(vertical: 0, horizontal: 0.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+          border: Border.all(width: 1.0, color: const Color.fromRGBO(245, 110, 15, 1)),
+          color: isSelected
+              ? Color.fromRGBO(245, 110, 15, 1)
+              : Colors.transparent,
+        ),
+        child: Text(
+          text,
+          style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w300),
+        ),
+      ),
+    );
   }
 
-  @override
-  void dispose() {
-    _tabController?.removeListener(_handleTabSelection);
-    _tabController?.dispose();
-    super.dispose();
+  Widget _buildTabContent(int index) {
+    switch (index) {
+      case 0:
+        return MainTab();
+        break;
+      case 1:
+        return SeasonalTab(isAvailable: _isSeasonalStoreAvailable);
+        break;
+      case 2:
+        return ParentalTab(isAvailable: _isParentalStoreAvailable,);
+        break;
+      default:
+        return SizedBox();
+        break;
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Container(
-          alignment: Alignment.center,
-          child: TabBar(
-            tabAlignment: TabAlignment.center,
-            controller: _tabController,
-            dividerColor: Colors.transparent,
-            indicator: BoxDecoration(
-              color: Colors.transparent,
-            ),
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white,
-            tabs: [
-              Tab(
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.0),
-                    border: _tabController?.index == 0 ? Border.all(width: 0) : Border.all(width: 1.0, color: const Color.fromRGBO(245,110, 15, 1)),
-                    color: _tabController?.index == 0 ? Color.fromRGBO(245,110, 15, 1) : Colors.transparent,
-                  ),
-                  child: Text(
-                    'Главная',
-                  ),
-                ),
-              ),
-              Tab(
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.0),
-                    border: _tabController?.index == 1 ? Border.all(width: 0) : Border.all(width: 1.0, color: const Color.fromRGBO(245,110, 15, 1)),
-                    color: _tabController?.index == 1 ? Color.fromRGBO(245,110, 15, 1) : Colors.transparent,
-                  ),
-                  child: Text(
-                    'Сезонный',
-                  ),
-                ),
-              ),
-              Tab(
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.0),
-                    border: _tabController?.index == 2 ? Border.all(width: 0) : Border.all(width: 1.0, color: const Color.fromRGBO(245,110, 15, 1)),
-                    color: _tabController?.index == 2 ? Color.fromRGBO(245,110, 15, 1) : Colors.transparent,
-                  ),
-                  child: Text(
-                    'Родителям',
-                  ),
-                ),
-              ),
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildTab(0, 'Главный'),
+              _buildTab(1, 'Сезонный'),
+              _buildTab(2, 'Порадуй близких'),
             ],
           ),
         ),
-      ),
-      body: TabBarView(
-            controller: _tabController,
-            children: [
-              MainTab(),
-              SeasonalTab(isAvailable: _isSeasonalStoreAvailable,),
-              ParentalTab(isAvailable: _isParentalStoreAvailable,),
-            ],
+        body: Container(
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(27, 26, 31, 1)
           ),
+          child: _buildTabContent(_selectedIndex),
+        ),
     );
   }
 }

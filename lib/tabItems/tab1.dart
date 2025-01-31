@@ -16,6 +16,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../main.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+
 class Tab1Page extends StatefulWidget {
   final Function() logoutCallback;
   String locale;
@@ -622,21 +623,16 @@ class _Tab1Page extends State<Tab1Page> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        InkWell(
-                          child: SizedBox(
-                            width: 160.0,
-                            height: 160.0,
-                            child: ClipOval(
-                              child: CachedNetworkImage(
-                                imageUrl: '$baseURL/$Avatar',
-                                placeholder: (context, url) => CircularProgressIndicator(),
-                                errorWidget: (context, url, error) => Icon(Icons.error),
-                              ),
+                        SizedBox(
+                          width: 160.0,
+                          height: 160.0,
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl: '$baseURL/$Avatar',
+                              placeholder: (context, url) => CircularProgressIndicator(),
+                              errorWidget: (context, url, error) => Icon(Icons.error),
                             ),
                           ),
-                          onTap: () {
-                            _uploadAvatar(context);
-                          },
                         ),
                         const SizedBox(width: 16.0),
                         Flexible(
@@ -654,9 +650,9 @@ class _Tab1Page extends State<Tab1Page> {
                     const SizedBox(height: 16.0),
                     Container(
                       decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color.fromRGBO(38, 38, 38, 1)
-                            : const Color.fromRGBO(38, 38, 38, 1),
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Color.fromRGBO(251, 251, 251, 1)
+                            : Color.fromRGBO(38, 38, 38, 1),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       padding: const EdgeInsets.all(16.0),

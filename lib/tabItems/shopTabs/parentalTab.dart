@@ -18,7 +18,7 @@ class ParentalTab extends StatelessWidget {
               children: [
                 Container(
                     height: 140,
-                    padding: EdgeInsets.all(10),
+                    margin: EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('images/parental-mini-banner.jpg'),
@@ -148,7 +148,7 @@ class ParentalTab extends StatelessWidget {
                 alignment: Alignment.center,
                 width: double.infinity,
                 child: Text(
-                  'Магазин для\nблизких временно',
+                  'Магазин с подарками для близких',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 28,
@@ -168,7 +168,7 @@ class ParentalTab extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15)
                 ),
                 child: Text(
-                  'Недоступен',
+                  'временно недоступен',
                   style: TextStyle(
                       color: Color.fromRGBO(245,110, 15, 1),
                       fontSize: 20,

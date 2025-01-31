@@ -53,7 +53,7 @@ class UserTopItem extends StatelessWidget {
                   style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold),
                 ),
               ),
-              Text('$userXP XP', style: const TextStyle(fontSize: 12.0)),
+              Text('$userXP XP', style: const TextStyle(fontSize: 12.0, color: Color.fromRGBO(245, 110, 15, 1))),
             ],
           ),
           trailing: Row(
@@ -64,7 +64,27 @@ class UserTopItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('# $topPosition', textAlign: TextAlign.center, textScaler: const TextScaler.linear(2)),
+                    Row (
+                      children: [
+                        Text(
+                          '#',
+                          textAlign: TextAlign.center,
+                          textScaler: const TextScaler.linear(2),
+                          style: TextStyle(
+                              color: Colors.white
+                          ),
+                        ),
+                        SizedBox(width: 4,),
+                        Text(
+                          '${topPosition}',
+                          textAlign: TextAlign.center,
+                          textScaler: const TextScaler.linear(2),
+                          style: TextStyle(
+                              color: Color.fromRGBO(245, 110, 15, 1)
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ],
