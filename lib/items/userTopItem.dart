@@ -30,7 +30,7 @@ class UserTopItem extends StatelessWidget {
     return Card(
       color: Theme.of(context).brightness == Brightness.dark
           ? Color.fromRGBO(38, 38, 38, 1)
-          : Color.fromRGBO(38, 38, 38, 1),
+          : Color(0xFFDEDEDE),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListTile(
@@ -71,7 +71,7 @@ class UserTopItem extends StatelessWidget {
                           textAlign: TextAlign.center,
                           textScaler: const TextScaler.linear(2),
                           style: TextStyle(
-                              color: Colors.white
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
                           ),
                         ),
                         SizedBox(width: 4,),

@@ -37,7 +37,7 @@ class SeasonalProductItem extends StatelessWidget {
             width: 160,
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Color(0xFFDEDEDE),
                 borderRadius: BorderRadius.circular(20)
             ),
             child: Stack(

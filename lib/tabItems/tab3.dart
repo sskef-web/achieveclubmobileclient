@@ -24,8 +24,8 @@ class _Tab3PageState extends State<Tab3Page> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    _isSeasonalStoreAvailable = true;
-    _isParentalStoreAvailable = true;
+    _isSeasonalStoreAvailable = false;
+    _isParentalStoreAvailable = false;
   }
 
   Widget _buildTab(int index, String text) {
@@ -44,7 +44,11 @@ class _Tab3PageState extends State<Tab3Page> with SingleTickerProviderStateMixin
         ),
         child: Text(
           text,
-          style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.w300),
+          style: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : isSelected ? Colors.white : Colors.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w300
+          ),
         ),
       ),
     );
@@ -81,12 +85,7 @@ class _Tab3PageState extends State<Tab3Page> with SingleTickerProviderStateMixin
             ],
           ),
         ),
-        body: Container(
-          decoration: BoxDecoration(
-            color: Color.fromRGBO(27, 26, 31, 1)
-          ),
-          child: _buildTabContent(_selectedIndex),
-        ),
+        body: _buildTabContent(_selectedIndex)
     );
   }
 }

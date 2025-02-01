@@ -49,11 +49,11 @@ class _AchievementItemState extends State<AchievementItem> {
     return Stack(
       children: [
         Card(
-          color: isSelected ? Color.fromRGBO(222, 222, 222, 1) : Theme
+          color: isSelected ? Color(0xFF5B5B5B) : Theme
               .of(context)
               .brightness == Brightness.dark
               ? const Color.fromRGBO(38, 38, 38, 1)
-              : const Color.fromRGBO(38, 38, 38, 1),
+              : const Color(0xFFDEDEDE),
           child: ListTile(
             contentPadding: EdgeInsets.only(
                 top: 4.0, bottom: 8.0, right: 10, left: 10),
@@ -71,7 +71,9 @@ class _AchievementItemState extends State<AchievementItem> {
                   widget.title,
                   style: TextStyle(
                       fontSize: 15,
-                    color: isSelected ? Color.fromRGBO( 27, 26, 31, 1) : Colors.white,
+                    color: isSelected ? Color.fromRGBO( 27, 26, 31, 1) : Theme
+                        .of(context)
+                        .brightness == Brightness.dark ? Colors.white : Colors.black,
                   ),
                 ),
                 Container(
@@ -121,7 +123,9 @@ class _AchievementItemState extends State<AchievementItem> {
                     style: TextStyle(
                       height: 1,
                       fontSize: 13,
-                      color: isSelected ? Color.fromRGBO( 27, 26, 31, 1) : Colors.white,
+                      color: isSelected ? Color.fromRGBO( 27, 26, 31, 1) : Theme
+                          .of(context)
+                          .brightness == Brightness.dark ? Colors.white : Colors.black,
                     ),
                 )
             ),

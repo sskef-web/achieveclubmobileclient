@@ -501,7 +501,11 @@ class _Tab1Page extends State<Tab1Page> {
                 const SizedBox(height: 16.0),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(38, 38, 38, 1)
+                      backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(width: 1, color: Color(0xFFF56E0F)),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
                   onPressed: () {
                     selectedAchievementIds = [];
@@ -651,7 +655,7 @@ class _Tab1Page extends State<Tab1Page> {
                     Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).brightness == Brightness.light
-                            ? Color.fromRGBO(251, 251, 251, 1)
+                            ? Color(0xFFDEDEDE)
                             : Color.fromRGBO(38, 38, 38, 1),
                         borderRadius: BorderRadius.circular(8.0),
                       ),

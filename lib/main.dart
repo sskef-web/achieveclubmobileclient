@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
                   primary: Color.fromRGBO(245, 110, 15, 1),
                   onError: Color.fromRGBO(251, 251, 251, 1),
                   surface: Color.fromRGBO(251, 251, 251, 1),
-                  brightness: Brightness.dark
+                  brightness: Brightness.light
               ),
               useMaterial3: true,
               fontFamily: 'Exo2',

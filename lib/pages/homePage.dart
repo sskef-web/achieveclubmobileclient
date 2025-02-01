@@ -122,8 +122,8 @@ class _HomePageState extends State<HomePage> {
             body: _tabs[_currentIndex],
             bottomNavigationBar: BottomNavigationBar(
               showUnselectedLabels: true,
-              selectedItemColor: Colors.white,
-              unselectedItemColor: Colors.grey,
+              selectedItemColor: Color(0xFFF56E0F),
+              unselectedItemColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
               currentIndex: _currentIndex,
               onTap: (index) {
                 setState(() {

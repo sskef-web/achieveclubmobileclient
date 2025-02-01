@@ -73,7 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color.fromRGBO(38, 38, 38, 1),
+          backgroundColor: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(38, 38, 38, 1) : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
@@ -82,7 +82,10 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               Text(
                 'Вы уверены, что хотите удалить аккаунт?',
-                style: TextStyle(color: Colors.white, fontSize: 18),
+                style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                    fontSize: 18
+                ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
@@ -96,7 +99,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: Color.fromRGBO(245, 110, 15, 1),
-                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                       textStyle: TextStyle(fontSize: 18),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -113,9 +116,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       _showSecondConfirmationDialog(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(38, 38, 38, 1),
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(38, 38, 38, 1) : Colors.white,
                       side: BorderSide(color: Color.fromRGBO(245, 110, 15, 1)),
-                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                       textStyle: TextStyle(fontSize: 18),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -123,7 +126,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     child: Text(
                       'Удалить',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.w500
+                      ),
                     ),
                   ),
                 ],
@@ -140,7 +146,7 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color.fromRGBO(38, 38, 38, 1),
+          backgroundColor: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(38, 38, 38, 1) : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
@@ -149,7 +155,10 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               Text(
                 'Восстановить аккаунт будет невозможно после удаления',
-                style: TextStyle(color: Colors.white, fontSize: 18),
+                style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                    fontSize: 18
+                ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
@@ -163,7 +172,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: Color.fromRGBO(245, 110, 15, 1),
-                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                       textStyle: TextStyle(fontSize: 18),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -180,9 +189,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       Navigator.of(context).pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(38, 38, 38, 1),
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(38, 38, 38, 1) : Colors.white,
                       side: BorderSide(color: Color.fromRGBO(245, 110, 15, 1)),
-                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                       textStyle: TextStyle(fontSize: 18),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -190,7 +199,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     child: Text(
                       'Удалить',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.w500
+                      ),
                     ),
                   ),
                 ],
@@ -275,7 +287,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             height: double.infinity,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(70),
-                                color: Color.fromRGBO(27, 26, 31, 0.7)
+                                color: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(27, 26, 31, 0.7) : Color(0x99DEDEDE)
                             ),
                             child: IconButton(
                                 onPressed: () {
@@ -289,7 +301,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   SizedBox(height: 20),
                   Container(
                     decoration: BoxDecoration(
-                        color: Color.fromRGBO(38, 38, 38, 1),
+                        color: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(38, 38, 38, 1) : Colors.white,
                         borderRadius: BorderRadius.circular(15)
                     ),
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -297,15 +309,21 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: ListTile(
                       title: Text(
                         'Изменить Имя и Фамилию',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        style: TextStyle(
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                            fontSize: 18
+                        ),
                       ),
                       subtitle: Text(
                         '${user.firstName} ${user.lastName}',
-                        style: TextStyle(color: Colors.grey, fontSize: 14),
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14
+                        ),
                       ),
                       trailing: Icon(
                         Icons.navigate_next,
-                        color: Colors.white,
+                        color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                       ),
                       onTap: () {
                         showModalBottomSheet(
@@ -318,7 +336,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-                                  color: Color.fromRGBO(38, 38, 38, 1),
+                                  color: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(38, 38, 38, 1) : Colors.white,
                                 ),
                                 height: 240,
                                 child: Padding(
@@ -336,7 +354,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                               textAlign: TextAlign.left,
                                               'Имя Фамилия',
                                               style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                                   fontWeight: FontWeight.w900,
                                                   fontSize: 18
                                               ),
@@ -357,7 +375,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       TextField(
                                         decoration: InputDecoration(
                                           hintText: '${user.firstName} ${user.lastName}',
-                                          hintStyle: TextStyle(color: Colors.white),
+                                          hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(color: Color.fromRGBO(245, 110, 15, 1)),
                                             borderRadius: BorderRadius.circular(15),
@@ -367,7 +385,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                             borderRadius: BorderRadius.circular(15),
                                           ),
                                         ),
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(color:Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),
                                       ),
                                       SizedBox(height: 20),
                                       Container(
@@ -403,7 +421,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        color: Color.fromRGBO(38, 38, 38, 1),
+                        color: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(38, 38, 38, 1) : Colors.white,
                         borderRadius: BorderRadius.circular(15)
                     ),
                     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -411,15 +429,21 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: ListTile(
                       title: Text(
                         'Изменить почту',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        style: TextStyle(
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                            fontSize: 18
+                        ),
                       ),
                       subtitle: Text(
                         'example@mail.com',
-                        style: TextStyle(color: Colors.grey, fontSize: 14),
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14
+                        ),
                       ),
                       trailing: Icon(
                         Icons.navigate_next,
-                        color: Colors.white,
+                        color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                       ),
                       onTap: () {
                         showModalBottomSheet(
@@ -432,7 +456,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-                                  color: Color.fromRGBO(38, 38, 38, 1),
+                                  color: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(38, 38, 38, 1) : Colors.white,
                                 ),
                                 height: 240,
                                 child: Padding(
@@ -450,7 +474,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                               textAlign: TextAlign.left,
                                               'Почта',
                                               style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: Color.fromRGBO(38, 38, 38, 1),
                                                   fontWeight: FontWeight.w900,
                                                   fontSize: 18
                                               ),
@@ -471,7 +495,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       TextField(
                                         decoration: InputDecoration(
                                           hintText: 'example@mail.com',
-                                          hintStyle: TextStyle(color: Colors.white),
+                                          hintStyle: TextStyle(color: Color.fromRGBO(38, 38, 38, 1)),
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(color: Color.fromRGBO(245, 110, 15, 1)),
                                             borderRadius: BorderRadius.circular(15),
@@ -481,7 +505,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                             borderRadius: BorderRadius.circular(15),
                                           ),
                                         ),
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(color: Color.fromRGBO(38, 38, 38, 1)),
                                       ),
                                       SizedBox(height: 20),
                                       Container(
@@ -528,7 +552,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        backgroundColor: Color.fromRGBO(27, 26, 31, 1),
+                        backgroundColor: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(27, 26, 31, 1) : Colors.white,
                         padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                         textStyle: TextStyle(fontSize: 18),
                         shape: RoundedRectangleBorder(
@@ -539,7 +563,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Text(
                         'Удалить аккаунт',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                             fontWeight: FontWeight.w500
                         ),
                       ),

@@ -13,7 +13,7 @@ class ProductModal extends StatelessWidget {
           child:Container(
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Color.fromRGBO(38,38,38, 1),
+          color: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(38,38,38, 1) : Colors.white,
           borderRadius: BorderRadius.circular(40.0),
         ),
         child: Column(
@@ -45,7 +45,7 @@ class ProductModal extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                         ),
                       ),
                       SizedBox(height: 8.0),
@@ -53,21 +53,21 @@ class ProductModal extends StatelessWidget {
                         'Игровая мышь',
                         style: TextStyle(
                           fontSize: 14.0,
-                          color: Colors.white,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                         ),
                       ),
                       Text(
                         'Logitech G304',
                         style: TextStyle(
                           fontSize: 12.0,
-                          color: Colors.white,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                         ),
                       ),
                       Text(
                         'Цвет: Черный',
                         style: TextStyle(
                           fontSize: 12.0,
-                          color: Colors.white,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                         ),
                       ),
                       SizedBox(height: 8),
@@ -94,14 +94,19 @@ class ProductModal extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(38,38,38, 1) : Colors.white,
                       foregroundColor: Color.fromRGBO(245,110, 15, 1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                         side: BorderSide(color: Color.fromRGBO(245,110, 15, 1)),
                       ),
                     ),
-                    child: Text('Отменить'),
+                    child: Text(
+                        'Отменить',
+                      style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(

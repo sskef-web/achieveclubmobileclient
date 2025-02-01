@@ -15,7 +15,7 @@ class BuyResultModal extends StatelessWidget {
           child:Container(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Color.fromRGBO(38,38,38, 1),
+              color: Theme.of(context).brightness == Brightness.dark ? Color.fromRGBO(38,38,38, 1) : Colors.white,
               borderRadius: BorderRadius.circular(40.0),
             ),
             child: Column(
@@ -24,7 +24,7 @@ class BuyResultModal extends StatelessWidget {
                 Text(
                     'Ваш заказ',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                     fontSize: 24,
                     fontWeight: FontWeight.w900
                   ),
@@ -53,7 +53,7 @@ class BuyResultModal extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w100,
-                    color: Colors.white
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                   ),
                 ),
                 SizedBox(

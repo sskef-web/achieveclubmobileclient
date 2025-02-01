@@ -42,7 +42,7 @@ class _ProductItemState extends State<ProductItem> {
               width: 160,
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Color(0xFFDEDEDE),
                 borderRadius: BorderRadius.circular(20)
               ),
               child: Stack(
@@ -75,7 +75,7 @@ class _ProductItemState extends State<ProductItem> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: widget.colors[index],
-                            border: Border.all(color: Colors.black, width: 1.0), // Тонкая черная обводка
+                            border: Border.all(color: Colors.black, width: 1.0),
                           ),
                         );
                       }),

@@ -13,19 +13,19 @@ class _ProductPageState extends State<ProductPage> {
 
   final Map<Color, List<String>> _images = {
     Colors.black: [
-      'https://netbox.by/image/cache/catalog/products_2020/Logitech-G102-LIGHTSYNC-01-417x417.jpg',
-      'https://netbox.by/image/cache/catalog/products_2020/Logitech-G102-LIGHTSYNC-01-417x417.jpg',
-      'https://netbox.by/image/cache/catalog/products_2020/Logitech-G102-LIGHTSYNC-01-417x417.jpg',
+      'https://i.imgur.com/LDLcrux.png',
+      'https://i.imgur.com/LDLcrux.png',
+      'https://i.imgur.com/LDLcrux.png',
     ],
     Colors.deepPurpleAccent: [
-      'https://netbox.by/image/cache/catalog/Logitech/logitech-g102-lightsync-purple-1-417x417.jpg',
-      'https://netbox.by/image/cache/catalog/Logitech/logitech-g102-lightsync-purple-1-417x417.jpg',
-      'https://netbox.by/image/cache/catalog/Logitech/logitech-g102-lightsync-purple-1-417x417.jpg',
+      'https://i.imgur.com/gYxFQiv.png',
+      'https://i.imgur.com/gYxFQiv.png',
+      'https://i.imgur.com/gYxFQiv.png',
     ],
     Colors.blue: [
-      'https://maudio.by/image/cache/catalog/products/5884/logitech-g102-lightsync-goluboy-0-463x463.jpg',
-      'https://maudio.by/image/cache/catalog/products/5884/logitech-g102-lightsync-goluboy-0-463x463.jpg',
-      'https://maudio.by/image/cache/catalog/products/5884/logitech-g102-lightsync-goluboy-0-463x463.jpg',
+      'https://i.imgur.com/rn3pexQ.png',
+      'https://i.imgur.com/rn3pexQ.png',
+      'https://i.imgur.com/rn3pexQ.png',
     ],
   };
 
@@ -76,7 +76,7 @@ class _ProductPageState extends State<ProductPage> {
                         return Container(
                           padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Color(0xFFDEDEDE),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           child: ClipRRect(
@@ -145,6 +145,7 @@ class _ProductPageState extends State<ProductPage> {
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
                 ),
               ),
               SizedBox(height: 8.0),
@@ -152,8 +153,8 @@ class _ProductPageState extends State<ProductPage> {
                 'Logitech G102',
                 style: TextStyle(
                   fontSize: 20.0,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w100
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w100,
                 ),
               ),
               SizedBox(height: 16.0),
@@ -166,14 +167,14 @@ class _ProductPageState extends State<ProductPage> {
                         'Интерфейс',
                         style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.white,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                         ),
                       ),
                       Text(
                         'Беспроводная радио',
                         style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.white,
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                           fontWeight: FontWeight.w900
                         ),
                       ),
@@ -186,14 +187,14 @@ class _ProductPageState extends State<ProductPage> {
                         'Тип сенсора',
                         style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.white,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                         ),
                       ),
                       Text(
                         'Оптический',
                         style: TextStyle(
                             fontSize: 16.0,
-                            color: Colors.white,
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                             fontWeight: FontWeight.w900
                         ),
                       ),
@@ -206,14 +207,14 @@ class _ProductPageState extends State<ProductPage> {
                         'Макс. раз. сенсора',
                         style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.white,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                         ),
                       ),
                       Text(
                         '12 000 dpi',
                         style: TextStyle(
                             fontSize: 16.0,
-                            color: Colors.white,
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                             fontWeight: FontWeight.w900
                         ),
                       ),
@@ -226,14 +227,14 @@ class _ProductPageState extends State<ProductPage> {
                         'Макс. частота опроса',
                         style: TextStyle(
                           fontSize: 16.0,
-                          color: Colors.white,
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                         ),
                       ),
                       Text(
                         '1000 Гц',
                         style: TextStyle(
                             fontSize: 16.0,
-                            color: Colors.white,
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                             fontWeight: FontWeight.w900
                         ),
                       ),
