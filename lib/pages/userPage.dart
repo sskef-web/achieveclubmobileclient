@@ -234,9 +234,9 @@ class _UserPageState extends State<UserPage> {
                     const SizedBox(height: 8.0),
                     Container(
                       decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color.fromRGBO(38, 38, 38, 1)
-                            : const Color.fromRGBO(38, 38, 38, 1),
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Color(0xFFDEDEDE)
+                            : Color.fromRGBO(38, 38, 38, 1),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       padding: const EdgeInsets.all(16.0),
@@ -264,7 +264,7 @@ class _UserPageState extends State<UserPage> {
                                 100,
                             color:
                             Theme.of(context).brightness == Brightness.dark
-                                ? Color.fromRGBO(245, 110, 15, 1)
+                                ? const Color.fromRGBO(245, 110, 15, 1)
                                 : const Color.fromRGBO(245, 110, 15, 1),
                             backgroundColor: Colors.white,
                             borderRadius: BorderRadius.circular(100),

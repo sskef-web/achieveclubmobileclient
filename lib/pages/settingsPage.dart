@@ -385,7 +385,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                             borderRadius: BorderRadius.circular(15),
                                           ),
                                         ),
-                                        style: TextStyle(color:Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),
+                                        style: TextStyle(
+                                            color:Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
+                                        ),
                                       ),
                                       SizedBox(height: 20),
                                       Container(
@@ -474,7 +476,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                               textAlign: TextAlign.left,
                                               'Почта',
                                               style: TextStyle(
-                                                  color: Color.fromRGBO(38, 38, 38, 1),
+                                                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                                                   fontWeight: FontWeight.w900,
                                                   fontSize: 18
                                               ),
@@ -495,7 +497,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       TextField(
                                         decoration: InputDecoration(
                                           hintText: 'example@mail.com',
-                                          hintStyle: TextStyle(color: Color.fromRGBO(38, 38, 38, 1)),
+                                          hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(color: Color.fromRGBO(245, 110, 15, 1)),
                                             borderRadius: BorderRadius.circular(15),
@@ -505,7 +507,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                             borderRadius: BorderRadius.circular(15),
                                           ),
                                         ),
-                                        style: TextStyle(color: Color.fromRGBO(38, 38, 38, 1)),
+                                        style: TextStyle(
+                                            color:Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
+                                        ),
                                       ),
                                       SizedBox(height: 20),
                                       Container(
