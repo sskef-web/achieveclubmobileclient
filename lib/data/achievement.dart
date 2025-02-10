@@ -4,7 +4,7 @@ class Achievement {
   final String title;
   final String description;
   final String logoURL;
-  final int completionRatio;
+  // final int completionRatio;
   final bool isMultiple;
 
   Achievement({
@@ -13,7 +13,7 @@ class Achievement {
     required this.title,
     required this.description,
     required this.logoURL,
-    required this.completionRatio,
+    // required this.completionRatio,
     required this.isMultiple
   });
 
@@ -24,7 +24,7 @@ class Achievement {
       title: json['title'],
       description: json['description'],
       logoURL: json['logoURL'],
-      completionRatio: json['completionRatio'],
+      // completionRatio: json['completionRatio'],
       isMultiple: json['isMultiple']
     );
   }

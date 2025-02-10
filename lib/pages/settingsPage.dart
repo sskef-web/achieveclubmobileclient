@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -214,17 +215,28 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  String? extractTokenFromCookies(String cookies) {
+    var cookieList = cookies.split(';');
+    for (var cookie in cookieList) {
+      if (cookie.contains('X-Access-Token')) {
+        var token = cookie.split('=')[1];
+        return token;
+      }
+    }
+    return null;
+  }
+
   void _uploadAvatar(BuildContext context) async {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
     var cookies = await loadCookies();
+    var token = extractTokenFromCookies(cookies!);
 
     if (pickedImage != null) {
       var request = http.MultipartRequest(
         'POST',
         Uri.parse('${baseURL}api/avatar'),
       );
-      request.headers['Cookie'] = cookies!;
 
       request.files.add(
         await http.MultipartFile.fromPath(
@@ -232,8 +244,11 @@ class _SettingsPageState extends State<SettingsPage> {
           pickedImage.path,
         ),
       );
+      
+      request.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
 
       try {
+        debugPrint("Avatar request - ${request}");
         var streamedResponse = await request.send();
         var response = await http.Response.fromStream(streamedResponse);
 
@@ -245,7 +260,7 @@ class _SettingsPageState extends State<SettingsPage> {
           });
         } else {
           throw Exception(
-              '${AppLocalizations.of(context)!.uploadAvatarError}. Code: ${response.statusCode}');
+              '${AppLocalizations.of(context)!.uploadAvatarError}. Code: ${response.statusCode} \n ${response.headers} \n ${response.body}');
         }
       } catch (error) {
         throw Exception(

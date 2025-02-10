@@ -213,7 +213,7 @@ class _Tab1Page extends State<Tab1Page> {
         'POST',
         Uri.parse('${baseURL}api/avatar'),
       );
-      request.headers['Cookie'] = cookies!;
+      request.headers['Authorization'] = 'Bearer ${extractTokenFromCookies(cookies!)}';
 
       request.files.add(
         await http.MultipartFile.fromPath(
@@ -234,7 +234,7 @@ class _Tab1Page extends State<Tab1Page> {
           });
         } else {
           throw Exception(
-              '${AppLocalizations.of(context)!.uploadAvatarError}. Code: ${response.statusCode}');
+              '${AppLocalizations.of(context)!.uploadAvatarError}. Code: ${response.statusCode} \n ${response.body}');
         }
       } catch (error) {
         throw Exception(
@@ -737,7 +737,7 @@ class _Tab1Page extends State<Tab1Page> {
                               title: achievement.title,
                               description: achievement.description,
                               xp: achievement.xp,
-                              completionRatio: achievement.completionRatio,
+                              // completionRatio: achievement.completionRatio,
                               id: achievement.id,
                               completionCount:
                                   completedAchievement.completionCount,
@@ -781,7 +781,7 @@ class _Tab1Page extends State<Tab1Page> {
                               title: achievement.title,
                               description: achievement.description,
                               xp: achievement.xp,
-                              completionRatio: achievement.completionRatio,
+                              // completionRatio: achievement.completionRatio,
                               id: achievement.id,
                               isSelected: false,
                               completionCount:
@@ -832,7 +832,7 @@ class _Tab1Page extends State<Tab1Page> {
                                 title: achievement.title,
                                 description: achievement.description,
                                 xp: achievement.xp,
-                                completionRatio: achievement.completionRatio,
+                                // completionRatio: achievement.completionRatio,
                                 id: achievement.id,
                                 isSelected: selectedAchievementIds
                                     .contains(achievement.id),
