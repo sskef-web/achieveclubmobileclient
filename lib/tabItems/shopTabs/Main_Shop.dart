@@ -183,7 +183,7 @@ class _MainTabState extends State<MainTab> {
                           children: [
                             ProductItem(
                               id: product['id'],
-                              variants: availableVariants,
+                              variants: variants,
                               type: product['type'],
                               title: product['title'],
                               price: product['price'],

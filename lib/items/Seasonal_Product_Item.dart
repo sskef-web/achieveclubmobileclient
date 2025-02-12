@@ -27,13 +27,9 @@ class SeasonalProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<SeasonalVariant> availableVariants = variants.where((variant) => variant.available).toList();
 
-    final List<String> imageUrls = availableVariants.map((variant) => variant.photo).toList();
-    final List<Color> colors = availableVariants.map((variant) => Color(int.parse('0xFF${variant.color}'))).toList();
-
-    final bool anyVariantAvailable = availableVariants.isNotEmpty;
-
+    final List<String> imageUrls = variants.map((variant) => variant.photo).toList();
+    final List<Color> colors = variants.map((variant) => Color(int.parse('0xFF${variant.color}'))).toList();
     return Container(
       alignment: Alignment.center,
       width: 160,

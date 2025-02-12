@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../data/Product_Data.dart';
 import '../data/Variant.dart';
-import '../tabItems/shopTabs/Modal_Product.dart';
+import '../tabItems/shopTabs/Modals/Modal_Product.dart';
 
 class ProductPage extends StatefulWidget {
   final int id;

@@ -130,7 +130,7 @@ class _SeasonalTabState extends State<SeasonalTab> {
                         SeasonalProductItem(
                             seasonColor: widget.color,
                             id: product.id,
-                            variants: product.variants,
+                            variants: variants,
                             type: product.category,
                             title: product.title,
                             price: product.price
