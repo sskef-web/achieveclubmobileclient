@@ -119,7 +119,6 @@ class _UserPageState extends State<UserPage> {
     try {
       var cookies = await loadCookies();
       var url = Uri.parse('${baseURL}api/users/${widget.userId}');
-      appTitle = AppLocalizations.of(context)!.profil;
 
       var response = await http.get(url, headers: {
         'Cookie': cookies!,

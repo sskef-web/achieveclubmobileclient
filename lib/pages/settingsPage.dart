@@ -55,6 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
     var url = Uri.parse('${baseURL}api/users/${userId}');
     debugPrint(url.toString());
     debugPrint(Localizations.localeOf(context).languageCode);
+    debugPrint('Access Token - ${extractTokenFromCookies(cookies)}');
 
     var response = await http.get(url,
         headers: {'Cookie': cookies, 'Accept-Language': 'RU'});
@@ -253,6 +254,7 @@ class _SettingsPageState extends State<SettingsPage> {
         var response = await http.Response.fromStream(streamedResponse);
 
         if (response.statusCode == 200) {
+          debugPrint('Avatar request - Status Code 200');
           var imageUrl = response.body;
 
           setState(() {
@@ -296,7 +298,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       backgroundColor: Color.fromRGBO(245, 110, 15, 1),
                       child: CircleAvatar(
                           radius: 67,
-                          backgroundImage: NetworkImage('$baseURL/${widget.avatar}'),
+                          backgroundImage: CachedNetworkImageProvider('$baseURL/${widget.avatar}'),
                           child: Container(
                             width: double.infinity,
                             height: double.infinity,

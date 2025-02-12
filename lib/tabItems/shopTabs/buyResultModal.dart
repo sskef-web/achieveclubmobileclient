@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class BuyResultModal extends StatelessWidget {
+  final result;
+  final errorMessage;
 
-  final result = true;
+  BuyResultModal({required this.result,required this.errorMessage});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class BuyResultModal extends StatelessWidget {
                 SizedBox(
                   height: 8,
                 ),
-                Text(
+                result ? Text(
                   'Статус заказа отображается в профиле',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -55,6 +57,23 @@ class BuyResultModal extends StatelessWidget {
                     fontWeight: FontWeight.w100,
                     color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                   ),
+                ) : errorMessage != '' ? Text(
+                  '$errorMessage',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w100,
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                  )
+                )
+                    : Text(
+                      'Не хватает баллов на балансе',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w100,
+                        color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                      )
                 ),
                 SizedBox(
                   height: 8,
@@ -64,6 +83,7 @@ class BuyResultModal extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                       onPressed: () {
+                        Navigator.pop(context);
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(

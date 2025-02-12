@@ -96,9 +96,6 @@ class _Tab1Page extends State<Tab1Page> {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      setState(() {
-        appTitle = AppLocalizations.of(context)!.profil;
-      });
       return data.map((item) => CompletedAchievement.fromJson(item)).toList();
     } else if (response.statusCode == 401) {
       await refreshToken();
@@ -134,7 +131,6 @@ class _Tab1Page extends State<Tab1Page> {
   Future<void> refreshToken() async {
     var refreshUrl = Uri.parse('${baseURL}api/auth/refresh');
     var cookies = await loadCookies();
-    appTitle = AppLocalizations.of(context)!.profil;
 
     var response = await http.get(refreshUrl, headers: {
       'Cookie': cookies!,
@@ -172,7 +168,6 @@ class _Tab1Page extends State<Tab1Page> {
     userId = extractUserIdFromCookies(cookies!);
     var url = Uri.parse('${baseURL}api/users/${userId}');
     debugPrint(url.toString());
-    appTitle = AppLocalizations.of(context)!.profil;
     debugPrint(Localizations.localeOf(context).languageCode);
 
     var response = await http.get(url,

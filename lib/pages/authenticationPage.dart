@@ -255,7 +255,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       await prefs.setBool('isLoggedIn', true);
 
       setState(() {
-        appTitle = AppLocalizations.of(context)!.profil;
         _isLoggedIn = true;
       });
     }
@@ -283,7 +282,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     password = '';
     setState(() {
       _isLoggedIn = false;
-      appTitle = AppLocalizations.of(context)!.authorization;
     });
   }
 
@@ -368,9 +366,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   Widget _buildHomePage() {
-    setState(() {
-      appTitle = AppLocalizations.of(context)!.tab1;
-    });
     return HomePage(
       logoutCallback: _logout,
     );

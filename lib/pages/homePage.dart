@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,6 +26,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String appTitle = 'Профиль';
 
   int _currentIndex = 0;
 
@@ -40,11 +42,6 @@ class _HomePageState extends State<HomePage> {
     _userFuture = fetchUser();
   }
 
-  Future<String?> loadCookies() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('cookies');
-  }
-
   String? extractUserIdFromCookies(String cookies) {
     var cookieList = cookies.split(';');
     for (var cookie in cookieList) {
@@ -55,6 +52,12 @@ class _HomePageState extends State<HomePage> {
     }
     return null;
   }
+
+  Future<String?> loadCookies() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('cookies');
+  }
+
 
   Future<User> fetchUser() async {
     var cookies = await loadCookies();
@@ -73,6 +76,39 @@ class _HomePageState extends State<HomePage> {
       return fetchUser();
     } else {
       throw Exception(AppLocalizations.of(context)!.fetchUserError);
+    }
+  }
+
+  String? extractTokenFromCookies(String cookies) {
+    var cookieList = cookies.split(';');
+    for (var cookie in cookieList) {
+      if (cookie.contains('X-Access-Token')) {
+        var token = cookie.split('=')[1];
+        return token;
+      }
+    }
+    return null;
+  }
+
+  Future<void> fetchUserBalance() async {
+    var cookies = await loadCookies();
+    var token = extractTokenFromCookies(cookies!);
+    var url = Uri.parse('${baseURL}api/balance');
+
+    var response = await http.get(url,
+        headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
+    debugPrint('${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      return setState(() {
+        appTitle = 'Баланс: ${jsonDecode(response.body).toString()}xp';
+      });
+    }
+    else if (response.statusCode == 401) {
+      return fetchUserBalance();
+    }
+    else {
+      throw Exception('Fetch user balance error!');
     }
   }
 
@@ -136,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                       appTitle = 'Топ 100';
                       break;
                     case 2:
-                      appTitle = 'Магазин';
+                      fetchUserBalance();
                       break;
                     case 3:
                       appTitle = 'О приложении';

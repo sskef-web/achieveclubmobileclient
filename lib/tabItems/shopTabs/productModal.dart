@@ -1,7 +1,119 @@
+import 'dart:io';
+
 import 'package:achieveclubmobileclient/tabItems/shopTabs/buyResultModal.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
+import '../../main.dart';
 
 class ProductModal extends StatelessWidget {
+  final int id;
+  final int variantId;
+  final int price;
+  final String type;
+  final String title;
+  final String color;
+  final String imageUrl;
+  final int userBalance;
+
+
+  ProductModal({
+    required this.id,
+    required this.variantId,
+    required this.price,
+    required this.type,
+    required this.title,
+    required this.color,
+    required this.imageUrl,
+    required this.userBalance
+  });
+
+  Future<String?> loadCookies() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('cookies');
+  }
+
+  String? extractTokenFromCookies(String cookies) {
+    var cookieList = cookies.split(';');
+    for (var cookie in cookieList) {
+      if (cookie.contains('X-Access-Token')) {
+        var token = cookie.split('=')[1];
+        return token;
+      }
+    }
+    return null;
+  }
+
+  Future<void> _createOrder(BuildContext context) async {
+    var cookies = await loadCookies();
+    var token = extractTokenFromCookies(cookies!);
+    final response = await http.post(
+      Uri.parse('${baseURL}api/orders'),
+      body: json.encode({
+        'productId': id.toString(),
+        'variantId': variantId.toString(),
+      }),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 201) {
+      debugPrint('Order created - ${response.body} (Status code - ${response.statusCode})');
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return BuyResultModal(result: true, errorMessage: '',);
+        },
+      );
+    }
+    else if (response.statusCode == 401) {
+      refreshToken();
+      _createOrder(context);
+    }
+    else {
+      debugPrint('Order error - ${response.body} (Status code - ${response.statusCode})');
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return BuyResultModal(result: false, errorMessage: response.body);
+        },
+      );
+    }
+  }
+
+  Future<void> saveCookies(String cookies) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('cookies', cookies);
+  }
+
+
+  Future<void> refreshToken() async {
+    var refreshUrl = Uri.parse('${baseURL}api/auth/refresh');
+    var cookies = await loadCookies();
+
+    var response = await http.get(refreshUrl, headers: {
+      'Cookie': cookies!,
+    });
+
+    if (response.statusCode == 200) {
+      var newCookies = response.headers['set-cookie'];
+      if (newCookies != null) {
+        await saveCookies(newCookies);
+      }
+    }
+    else {
+      throw Exception(
+          'Error token refresh (code: ${response.statusCode}');
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -20,7 +132,7 @@ class ProductModal extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
@@ -30,10 +142,10 @@ class ProductModal extends StatelessWidget {
                     borderRadius: BorderRadius.circular(25.0),
                   ),
                   child: Image.network(
-                    'https://netbox.by/image/cache/catalog/products_2020/Logitech-G102-LIGHTSYNC-01-417x417.jpg',
+                    '${imageUrl}',
                     width: 110,
                     height: 130,
-                    fit: BoxFit.fitHeight,
+                    fit: BoxFit.contain,
                   ),
                 ),
                 Column(
@@ -41,7 +153,7 @@ class ProductModal extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '00000xp',
+                        '${price}xp',
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
@@ -50,21 +162,21 @@ class ProductModal extends StatelessWidget {
                       ),
                       SizedBox(height: 8.0),
                       Text(
-                        'Игровая мышь',
+                        '$type',
                         style: TextStyle(
                           fontSize: 14.0,
                           color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                         ),
                       ),
                       Text(
-                        'Logitech G304',
+                        '$title',
                         style: TextStyle(
                           fontSize: 12.0,
                           color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                         ),
                       ),
                       Text(
-                        'Цвет: Черный',
+                        'Цвет: $color',
                         style: TextStyle(
                           fontSize: 12.0,
                           color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
@@ -90,7 +202,6 @@ class ProductModal extends StatelessWidget {
                   height: 45,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Действие при нажатии на кнопку "Отменить"
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
@@ -113,13 +224,7 @@ class ProductModal extends StatelessWidget {
                   height: 45,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context);
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return BuyResultModal();
-                        },
-                      );
+                      _createOrder(context);
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
