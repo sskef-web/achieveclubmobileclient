@@ -1,4 +1,4 @@
-import 'package:achieveclubmobileclient/data/seasonalVariant.dart';
+import 'package:achieveclubmobileclient/data/Seasonal_Variant.dart';
 
 class SeasonalProduct {
   final int id;

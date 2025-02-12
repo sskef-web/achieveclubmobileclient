@@ -1,9 +1,9 @@
 import 'dart:convert';
-import '../items/fourDigitCodeInput.dart';
-import 'changePassPage.dart';
+import '../items/Four_Digit_Code_Input.dart';
+import 'Change_Password_Page.dart';
 import 'package:http/http.dart' as http;
 import '../main.dart';
-import '../pages/registerPage.dart';
+import '../pages/Registration_Page.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

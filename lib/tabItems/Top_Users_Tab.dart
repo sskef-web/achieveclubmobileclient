@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import '../data/user.dart';
-import '../items/userTopItem.dart';
+import '../data/User.dart';
+import '../items/User_Top_Item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../main.dart';
-import '../pages/userPage.dart';
+import '../pages/User_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

@@ -1,4 +1,4 @@
-import 'package:achieveclubmobileclient/data/photo.dart';
+import 'package:achieveclubmobileclient/data/Photo.dart';
 
 class Variant {
   final int id;

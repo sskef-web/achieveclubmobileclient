@@ -1,9 +1,9 @@
-import 'package:achieveclubmobileclient/data/seasonalVariant.dart';
+import 'package:achieveclubmobileclient/data/Seasonal_Variant.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../data/seasonalProduct.dart';
-import '../../items/seasonalProductItem.dart';
+import '../../data/Seasonal_Product.dart';
+import '../../items/Seasonal_Product_Item.dart';
 import '../../main.dart';
 
 class SeasonalTab extends StatefulWidget {

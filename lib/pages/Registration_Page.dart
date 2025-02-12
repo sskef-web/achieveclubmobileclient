@@ -1,12 +1,12 @@
 import 'dart:convert';
-import '../data/club.dart';
+import '../data/Club.dart';
 import '../main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../items/fourDigitCodeInput.dart';
+import '../items/Four_Digit_Code_Input.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function() registerCallback;

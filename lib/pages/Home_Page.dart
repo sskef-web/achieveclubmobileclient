@@ -3,15 +3,15 @@ import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/user.dart';
-import '../items/settingsButton.dart';
+import '../data/User.dart';
+import '../items/Settings_Button.dart';
 import '../main.dart';
-import '../tabItems/tab1.dart';
-import '../tabItems/tab2.dart';
+import '../tabItems/Profile_Tab.dart';
+import '../tabItems/Top_Users_Tab.dart';
 import 'package:flutter/material.dart';
 
-import '../tabItems/tab3.dart';
-import '../tabItems/tab4.dart';
+import '../tabItems/Shop_Tab.dart';
+import '../tabItems/About_Tab.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

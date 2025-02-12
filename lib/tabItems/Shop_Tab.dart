@@ -6,9 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import '../main.dart';
-import 'shopTabs/mainTab.dart';
-import 'shopTabs/parentalTab.dart';
-import 'shopTabs/seasonalTab.dart';
+import 'shopTabs/Main_Shop.dart';
+import 'shopTabs/Parental_Shop.dart';
+import 'shopTabs/Season_Shop.dart';
 
 class Tab3Page extends StatefulWidget {
 

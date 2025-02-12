@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../items/customDotIndicator.dart';
+import '../items/Custom_Dot_Indicator.dart';
 
 class Tab4Page extends StatefulWidget {
   @override

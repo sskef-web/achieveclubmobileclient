@@ -1,4 +1,4 @@
-import 'package:achieveclubmobileclient/data/variant.dart';
+import 'package:achieveclubmobileclient/data/Variant.dart';
 
 class ProductData {
   final int id;

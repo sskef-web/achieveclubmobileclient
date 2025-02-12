@@ -6,10 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-import '../data/achievement.dart';
-import '../data/completedachievement.dart';
-import '../data/user.dart';
-import '../items/achievementItem.dart';
+import '../data/Achievement.dart';
+import '../data/Completed_Achievement.dart';
+import '../data/User.dart';
+import '../items/Achievement_Item.dart';
 
 class UserPage extends StatefulWidget {
   int userId;

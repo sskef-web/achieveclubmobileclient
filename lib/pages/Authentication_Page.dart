@@ -1,8 +1,8 @@
 import 'dart:convert';
-import '../data/loginresponse.dart';
+import '../data/Login_Response.dart';
 import 'package:http/http.dart' as http;
-import 'homePage.dart';
-import 'loginPage.dart';
+import 'Home_Page.dart';
+import 'Login_Page.dart';
 import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';

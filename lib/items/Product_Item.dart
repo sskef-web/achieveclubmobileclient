@@ -2,7 +2,7 @@ import 'package:achieveclubmobileclient/main.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../pages/productPage.dart';
+import '../pages/Product_Page.dart';
 
 class ProductItem extends StatefulWidget {
   final int id;

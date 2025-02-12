@@ -1,8 +1,8 @@
-import 'package:achieveclubmobileclient/pages/settingsPage.dart';
+import 'package:achieveclubmobileclient/pages/Settings_Page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../data/user.dart';
+import '../data/User.dart';
 
 class SettingsButton extends StatefulWidget {
 

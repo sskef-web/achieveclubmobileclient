@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/user.dart';
+import '../data/User.dart';
 import '../main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'homePage.dart';
+import 'Home_Page.dart';
 
 class SettingsPage extends StatefulWidget {
 

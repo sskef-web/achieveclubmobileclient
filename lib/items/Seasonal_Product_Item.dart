@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
-import '../pages/productPage.dart';
-import '../data/seasonalVariant.dart';
+import '../pages/Product_Page.dart';
+import '../data/Seasonal_Variant.dart';
 
 class SeasonalProductItem extends StatelessWidget {
   final String seasonColor;
