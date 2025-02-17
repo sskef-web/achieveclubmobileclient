@@ -58,11 +58,7 @@ class _AchievementItemState extends State<AchievementItem> {
             contentPadding: EdgeInsets.only(
                 top: 4.0, bottom: 8.0, right: 10, left: 10),
             onTap: widget.onTap,
-             leading: CachedNetworkImage(
-              imageUrl: widget.logo,
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-            ),
+             leading: Image.network(widget.logo),
             title: Wrap(
               alignment: WrapAlignment.start,
               spacing: 8.0,

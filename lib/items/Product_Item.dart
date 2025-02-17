@@ -1,15 +1,16 @@
-import 'package:achieveclubmobileclient/main.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
 import '../pages/Product_Page.dart';
+import '../main.dart';
 
-class ProductItem extends StatefulWidget {
+class ProductItem extends StatelessWidget {
   final int id;
   final List<dynamic> variants;
   final String type;
   final String title;
   final int price;
+  final int balance;
+  final bool available;
 
   ProductItem({
     required this.id,
@@ -17,20 +18,19 @@ class ProductItem extends StatefulWidget {
     required this.type,
     required this.title,
     required this.price,
+    required this.balance,
+    required this.available
   });
 
   @override
-  _ProductItemState createState() => _ProductItemState();
-}
-
-class _ProductItemState extends State<ProductItem> {
-  int _selectedImageIndex = 0;
-  final PageController _pageController = PageController(initialPage: 0);
-
-  @override
   Widget build(BuildContext context) {
-    List<String> imageUrls = widget.variants.map<String>((variant) => variant['photo']).toList();
-    List<Color> colors = widget.variants.map<Color>((variant) => Color(int.parse('0xFF${variant['color']}'))).toList();
+
+    bool isAvailable = balance >= price;
+    int _selectedImageIndex = 0;
+
+    List<String> imageUrls = variants.map<String>((variant) => variant['photo']).toList();
+    List<Color> colors = variants.map<Color>((variant) => Color(int.parse('0xFF${variant['color']}'))).toList();
+    final PageController _pageController = PageController(initialPage: 0);
 
     return Container(
       alignment: Alignment.center,
@@ -94,14 +94,14 @@ class _ProductItemState extends State<ProductItem> {
           Padding(
             padding: const EdgeInsets.only(top: 4, bottom: 2, left: 0, right: 16),
             child: Text(
-              widget.type,
+              type,
               style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 2, bottom: 4, left: 0, right: 16),
             child: Text(
-              widget.title,
+              title,
               style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.normal),
             ),
           ),
@@ -109,12 +109,12 @@ class _ProductItemState extends State<ProductItem> {
             width: 250,
             padding: EdgeInsets.only(top: 8),
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: isAvailable ? available ? ()  {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ProductPage(id: widget.id)),
+                  MaterialPageRoute(builder: (context) => ProductPage(id: id)),
                 );
-              },
+              } : null : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color.fromRGBO(245, 110, 15, 1),
                 foregroundColor: Colors.white,
@@ -123,8 +123,11 @@ class _ProductItemState extends State<ProductItem> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              child: Text(
-                '${widget.price}xp',
+              child: available ? Text(
+                '$price xp',
+                style: TextStyle(fontSize: 16.0),
+              ) : Text(
+                'Нет в наличии',
                 style: TextStyle(fontSize: 16.0),
               ),
             ),

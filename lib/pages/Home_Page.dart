@@ -53,11 +53,6 @@ class _HomePageState extends State<HomePage> {
     return null;
   }
 
-  Future<String?> loadCookies() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('cookies');
-  }
-
 
   Future<User> fetchUser() async {
     var cookies = await loadCookies();
@@ -77,6 +72,11 @@ class _HomePageState extends State<HomePage> {
     } else {
       throw Exception(AppLocalizations.of(context)!.fetchUserError);
     }
+  }
+
+  Future<String?> loadCookies() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('cookies');
   }
 
   String? extractTokenFromCookies(String cookies) {

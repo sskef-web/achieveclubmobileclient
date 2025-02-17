@@ -12,6 +12,8 @@ class SeasonalProductItem extends StatelessWidget {
   final String type;
   final String title;
   final int price;
+  final int balance;
+  final bool available;
 
   SeasonalProductItem({
     required this.seasonColor,
@@ -20,6 +22,8 @@ class SeasonalProductItem extends StatelessWidget {
     required this.type,
     required this.title,
     required this.price,
+    required this.balance,
+    required this.available
   });
 
   int _selectedImageIndex = 0;
@@ -27,6 +31,8 @@ class SeasonalProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    bool isAvailable = balance >= price;
 
     final List<String> imageUrls = variants.map((variant) => variant.photo).toList();
     final List<Color> colors = variants.map((variant) => Color(int.parse('0xFF${variant.color}'))).toList();
@@ -109,12 +115,12 @@ class SeasonalProductItem extends StatelessWidget {
                 width: 250,
                 padding: EdgeInsets.only(top: 8),
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: isAvailable ? available ? ()  {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => ProductPage(id: id)),
                     );
-                  },
+                  }: null : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(int.parse("0xFF$seasonColor")),
                     foregroundColor: Colors.white,
@@ -123,8 +129,11 @@ class SeasonalProductItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
-                  child: Text(
+                  child: available ? Text(
                     '$price xp',
+                    style: TextStyle(fontSize: 16.0),
+                  ) : Text(
+                    'Нет в наличии',
                     style: TextStyle(fontSize: 16.0),
                   ),
                 ),
