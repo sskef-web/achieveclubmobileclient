@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -70,7 +69,7 @@ class _UserPageState extends State<UserPage> {
       }
     } else {
       throw Exception(
-          '${AppLocalizations.of(context)!.refreshTokenError} (Code: ${response.statusCode})\n${response.body}');
+          'Ошибка при обновлении токена (Code: ${response.statusCode})\n${response.body}');
     }
   }
 
@@ -89,7 +88,7 @@ class _UserPageState extends State<UserPage> {
       await refreshToken();
       return fetchCompletedAchievements();
     } else {
-      throw Exception(AppLocalizations.of(context)!.fetchCompletedAchieveError);
+      throw Exception('Ошибка при получении выполненных достижений');
     }
   }
 
@@ -111,7 +110,7 @@ class _UserPageState extends State<UserPage> {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((item) => Achievement.fromJson(item)).toList();
     } else {
-      throw Exception(AppLocalizations.of(context)!.fetchAchievementError);
+      throw Exception('Ошибка при получении всех достижений');
     }
   }
 
@@ -134,7 +133,7 @@ class _UserPageState extends State<UserPage> {
         await refreshToken();
         return fetchUser();
       } else {
-        throw Exception(AppLocalizations.of(context)!.fetchUserError);
+        throw Exception('Ошибка при получении пользователя');
       }
     }
     catch (e) {
@@ -164,7 +163,7 @@ class _UserPageState extends State<UserPage> {
       appBar: AppBar(
         title:  Center(
           child: Text(
-            AppLocalizations.of(context)!.userProfile,
+            'Профиль пользователя',
             textAlign: TextAlign.center,
           ),
         ),
@@ -242,14 +241,14 @@ class _UserPageState extends State<UserPage> {
                       child: Column(
                         children: [
                           Text(
-                            '${AppLocalizations.of(context)!.completedAchievements}: ${completedAchievements.length}',
+                            'Выполненные достижения: ${completedAchievements.length}',
                             style: const TextStyle(
                               fontSize: 18.0,
                             ),
                           ),
                           const SizedBox(height: 8.0),
                           Text(
-                            '${AppLocalizations.of(context)!.percentCompletedAchievements}: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
+                            'Процент выполненных достижений: ${calculateCompletionPercentage(completedAchievements.length, achievements.length)}%',
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18.0,
@@ -273,7 +272,7 @@ class _UserPageState extends State<UserPage> {
                     ),
                     const SizedBox(height: 8.0),
                     if (completedAchievements.isNotEmpty) Text(
-                      AppLocalizations.of(context)!.completedAchievements,
+                      'Выполненные достижения',
                       style: const TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -312,7 +311,7 @@ class _UserPageState extends State<UserPage> {
                     ),
                     const SizedBox(height: 8.0),
                     Text(
-                      '${AppLocalizations.of(context)!.unCompletedAchievements}:',
+                      'Невыполненные достижения:',
                       style: const TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
@@ -356,7 +355,7 @@ class _UserPageState extends State<UserPage> {
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}\n ${snapshot.stackTrace}'),
+              child: Text('Ошибка при построении страницы: ${snapshot.error}\n ${snapshot.stackTrace}'),
             );
           } else {
             return const Center(

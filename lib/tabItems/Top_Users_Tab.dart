@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import '../data/User.dart';
 import '../items/User_Top_Item.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../main.dart';
 import '../pages/User_Page.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +41,7 @@ class _Tab2Page extends State<Tab2Page> {
       }
       return users;
     } else {
-      throw Exception(AppLocalizations.of(context)!.fetchUserError);
+      throw Exception('Ошибка при получении пользователя');
     }
   }
 
@@ -101,7 +100,7 @@ class _Tab2Page extends State<Tab2Page> {
               ),
             );
           } else if (snapshot.hasError) {
-            return Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}');
+            return Text('Ошибка при построении страницы: ${snapshot.error}');
           } else {
             return const Center (child:CircularProgressIndicator());
           }
