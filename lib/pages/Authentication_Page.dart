@@ -198,7 +198,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     var body = jsonEncode({
       'firstName': firstName,
       'lastName': lastName,
-      'clubId': 1,
       'password': password,
       'avatarURL': avatarPath,
       'emailAddress': email,

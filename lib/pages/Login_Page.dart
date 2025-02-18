@@ -397,6 +397,27 @@ class _LoginPageState extends State<LoginPage> {
                       errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
                           ? AppLocalizations.of(context)!.emailError
                           : null,
+                      errorStyle: const TextStyle(color: Color(0xFFD7181D)),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: _emailController.text.isNotEmpty && !EmailValidator.validate(_emailController.text)
+                              ? const Color(0xFFD7181D)
+                              : const Color.fromRGBO(245, 110, 15, 1),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: _emailController.text.isNotEmpty && !EmailValidator.validate(_emailController.text)
+                              ? const Color(0xFFD7181D)
+                              : const Color.fromRGBO(245, 110, 15, 1),
+                        ),
+                      ),
                     ),
                     keyboardType: TextInputType.emailAddress,
                     textAlign: TextAlign.left,
@@ -430,7 +451,28 @@ class _LoginPageState extends State<LoginPage> {
                       errorText: widget.password.isNotEmpty && (widget.password.length < 6 || !_isPasswordValid(widget.password))
                           ? AppLocalizations.of(context)!.passwordError
                           : null,
+                      errorStyle: const TextStyle(color: Color(0xFFD7181D)),
                       errorMaxLines: 2,
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: _passwordController.text.isNotEmpty && (_passwordController.text.length < 6 || !_isPasswordValid(_passwordController.text))
+                              ? const Color(0xFFD7181D)
+                              : const Color.fromRGBO(245, 110, 15, 1),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: _passwordController.text.isNotEmpty && (_passwordController.text.length < 6 || !_isPasswordValid(_passwordController.text))
+                              ? const Color(0xFFD7181D)
+                              : const Color.fromRGBO(245, 110, 15, 1),
+                        ),
+                      ),
                     ),
                     obscureText: isPasswordHidden,
                     keyboardType: TextInputType.text,

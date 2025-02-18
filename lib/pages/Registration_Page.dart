@@ -67,7 +67,6 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    fetchClubs();
   }
 
   @override
@@ -109,41 +108,6 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  Future<List<Club>> fetchClubs() async {
-    final url = Uri.parse('${baseURL}api/clubs');
-
-    try {
-      final response = await http.get(url, headers: {
-        'Accept-Language': Localizations
-            .localeOf(context)
-            .languageCode,
-      });
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final List<Club> clubs = [];
-
-        for (var clubData in data) {
-          final club = Club(
-              id: clubData['id'],
-              title: clubData['title'],
-              avgXp: 0,
-              logoURL: clubData['logoURL'],
-              description: '',
-              address: '');
-          clubs.add(club);
-        }
-
-        return clubs;
-      } else {
-        throw Exception(
-            '${AppLocalizations.of(context)!.fetchClubsError}: ${response
-                .statusCode}');
-      }
-    } catch (e) {
-      throw Exception('${AppLocalizations.of(context)!.fetchClubsError}: $e');
-    }
-  }
 
   void _updateProofCode(String value) {
     setState(() {
@@ -407,200 +371,288 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<List<Club>>(
-          future: fetchClubs(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 8.0),
-                  Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.always,
-                    onChanged: () {
-                      setState(() {
-                        isButtonEnabled =
-                            _formKey.currentState?.validate() ?? false;
-                      });
-                    },
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!.name,
-                            errorText: widget.firstName.isNotEmpty &&
-                                widget.firstName.length < 2
-                                ? AppLocalizations.of(context)!.nameError
-                                : null,
-                          ),
-                          keyboardType: TextInputType.text,
-                          textAlign: TextAlign.left,
-                          textDirection: TextDirection.ltr,
-                          onChanged: (value) {
-                            setState(() {
-                              firstName = value;
-                            });
-                            widget.updateFirstName(firstName!);
-                          },
-                          validator: (value) {
-                            if (value?.isEmpty ?? true) {
-                              return AppLocalizations.of(context)!.emptyName;
-                            }
-                            if (value!.length < 2) {
-                              return AppLocalizations.of(context)!.nameError;
-                            }
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!.surname,
-                            errorText: widget.lastName.isNotEmpty &&
-                                widget.lastName.length < 5
-                                ? AppLocalizations.of(context)!.surnameError
-                                : null,
-                          ),
-                          keyboardType: TextInputType.text,
-                          textAlign: TextAlign.left,
-                          textDirection: TextDirection.ltr,
-                          onChanged: (value) {
-                            setState(() {
-                              lastName = value;
-                            });
-                            widget.updateLastName(lastName!);
-                          },
-                          validator: (value) {
-                            if (value?.isEmpty ?? true) {
-                              return AppLocalizations.of(context)!.emptySurname;
-                            }
-                            if (value!.length <= 4) {
-                              return AppLocalizations.of(context)!.surnameError;
-                            }
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'E-mail',
-                            errorText: widget.email.isNotEmpty &&
-                                !EmailValidator.validate(widget.email)
-                                ? AppLocalizations.of(context)!.emailError
-                                : null,
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          controller: emailController,
-                          textAlign: TextAlign.left,
-                          textDirection: TextDirection.ltr,
-                          onChanged: (value) {
-                            setState(() {
-                              email = value;
-                            });
-                            widget.updateEmail(email!);
-                          },
-                          validator: (value) {
-                            if (value?.isEmpty ?? true) {
-                              return AppLocalizations.of(context)!.emptyEmail;
-                            }
-                            if (!EmailValidator.validate(value!)) {
-                              return AppLocalizations.of(context)!.emailError;
-                            }
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!.password,
-                            errorText: widget.password.isNotEmpty &&
-                                (widget.password.length < 6 ||
-                                    !_isPasswordValid(widget.password))
-                                ? AppLocalizations.of(context)!.passwordError
-                                : null,
-                            errorMaxLines: 2,
-                          ),
-                          keyboardType: TextInputType.text,
-                          controller: passwordController,
-                          obscureText: true,
-                          textAlign: TextAlign.left,
-                          textDirection: TextDirection.ltr,
-                          onChanged: (value) {
-                            setState(() {
-                              password = value;
-                            });
-                            widget.updatePassword(password!);
-                          },
-                          validator: (value) {
-                            if (value?.isEmpty ?? true) {
-                              return AppLocalizations.of(context)!
-                                  .emptyPassword;
-                            }
-                            if (value!.length < 6 || !_isPasswordValid(value)) {
-                              return AppLocalizations.of(context)!
-                                  .passwordError;
-                            }
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          controller: confirmPasswordController,
-                          decoration: InputDecoration(
-                            labelText:
-                            AppLocalizations.of(context)!.confirmPassword,
-                            errorText: confirmPasswordController.text !=
-                                passwordController.text
-                                ? AppLocalizations.of(context)!
-                                .confirmPasswordError
-                                : null,
-                          ),
-                          keyboardType: TextInputType.text,
-                          obscureText: true,
-                          textAlign: TextAlign.left,
-                          textDirection: TextDirection.ltr,
-                          onChanged: (value) {
-                            setState(() {
-                              confirmPassword = value;
-                            });
-                            updateButtonEnabled();
-                          },
-                          validator: (value) {
-                            if (value?.isEmpty ?? true) {
-                              return AppLocalizations.of(context)!
-                                  .emptyConfirmPassword;
-                            }
-                            if (value != passwordController.text) {
-                              return AppLocalizations.of(context)!
-                                  .confirmPasswordError;
-                            }
-                            return null;
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: (_formKey.currentState?.validate() ?? false) ? () {
-                      sendProofCode(email!);
-                    }
+        child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 8.0),
+          Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.always,
+            onChanged: () {
+              setState(() {
+                isButtonEnabled =
+                    _formKey.currentState?.validate() ?? false;
+              });
+            },
+            child: Column(
+              spacing: 8,
+              children: [
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.name,
+                    errorText: widget.firstName.isNotEmpty && widget.firstName.length < 2
+                        ? AppLocalizations.of(context)!.nameError
                         : null,
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text(
-                        AppLocalizations.of(context)!.registrate,
-                        style: TextStyle(fontSize: 18),
+                    errorStyle: const TextStyle(color: Color(0xFFD7181D)),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: widget.firstName.isNotEmpty && widget.firstName.length < 2
+                            ? const Color(0xFFD7181D)
+                            : Colors.grey,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: widget.firstName.isNotEmpty && widget.firstName.length < 2
+                            ? const Color(0xFFD7181D)
+                            : Colors.blue,
                       ),
                     ),
                   ),
-                ],
-              );
-            } else if (snapshot.hasError) {
-              return Text(AppLocalizations.of(context)!.loadingPageError);
-            } else {
-              return const Center(child: CircularProgressIndicator());
+                  keyboardType: TextInputType.text,
+                  textAlign: TextAlign.left,
+                  textDirection: TextDirection.ltr,
+                  onChanged: (value) {
+                    setState(() {
+                      firstName = value;
+                    });
+                    widget.updateFirstName(firstName!);
+                  },
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return AppLocalizations.of(context)!.emptyName;
+                    }
+                    if (value!.length < 2) {
+                      return AppLocalizations.of(context)!.nameError;
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.surname,
+                    errorText: widget.lastName.isNotEmpty && widget.lastName.length < 5
+                        ? AppLocalizations.of(context)!.surnameError
+                        : null,
+                    errorStyle: const TextStyle(color: Color(0xFFD7181D)),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: widget.lastName.isNotEmpty && widget.lastName.length < 5
+                            ? const Color(0xFFD7181D)
+                            : Colors.grey,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: widget.lastName.isNotEmpty && widget.lastName.length < 5
+                            ? const Color(0xFFD7181D)
+                            : Colors.blue,
+                      ),
+                    ),
+                  ),
+                  keyboardType: TextInputType.text,
+                  textAlign: TextAlign.left,
+                  textDirection: TextDirection.ltr,
+                  onChanged: (value) {
+                    setState(() {
+                      lastName = value;
+                    });
+                    widget.updateLastName(lastName!);
+                  },
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return AppLocalizations.of(context)!.emptySurname;
+                    }
+                    if (value!.length <= 4) {
+                      return AppLocalizations.of(context)!.surnameError;
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'E-mail',
+                    errorText: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
+                        ? AppLocalizations.of(context)!.emailError
+                        : null,
+                    errorStyle: const TextStyle(color: Color(0xFFD7181D)),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
+                            ? const Color(0xFFD7181D)
+                            : Colors.grey,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: widget.email.isNotEmpty && !EmailValidator.validate(widget.email)
+                            ? const Color(0xFFD7181D)
+                            : Colors.blue,
+                      ),
+                    ),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  controller: emailController,
+                  textAlign: TextAlign.left,
+                  textDirection: TextDirection.ltr,
+                  onChanged: (value) {
+                    setState(() {
+                      email = value;
+                    });
+                    widget.updateEmail(email!);
+                  },
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return AppLocalizations.of(context)!.emptyEmail;
+                    }
+                    if (!EmailValidator.validate(value!)) {
+                      return AppLocalizations.of(context)!.emailError;
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.password,
+                    errorText: widget.password.isNotEmpty &&
+                        (widget.password.length < 6 || !_isPasswordValid(widget.password))
+                        ? AppLocalizations.of(context)!.passwordError
+                        : null,
+                    errorStyle: const TextStyle(color: Color(0xFFD7181D)),
+                    errorMaxLines: 2,
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: widget.password.isNotEmpty &&
+                            (widget.password.length < 6 || !_isPasswordValid(widget.password))
+                            ? const Color(0xFFD7181D)
+                            : Colors.grey,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: widget.password.isNotEmpty &&
+                            (widget.password.length < 6 || !_isPasswordValid(widget.password))
+                            ? const Color(0xFFD7181D)
+                            : Colors.blue,
+                      ),
+                    ),
+                  ),
+                  keyboardType: TextInputType.text,
+                  controller: passwordController,
+                  obscureText: true,
+                  textAlign: TextAlign.left,
+                  textDirection: TextDirection.ltr,
+                  onChanged: (value) {
+                    setState(() {
+                      password = value;
+                    });
+                    widget.updatePassword(password!);
+                  },
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return AppLocalizations.of(context)!.emptyPassword;
+                    }
+                    if (value!.length < 6 || !_isPasswordValid(value)) {
+                      return AppLocalizations.of(context)!.passwordError;
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: confirmPasswordController,
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.confirmPassword,
+                    errorText: confirmPasswordController.text != passwordController.text
+                        ? AppLocalizations.of(context)!.confirmPasswordError
+                        : null,
+                    errorStyle: const TextStyle(color: Color(0xFFD7181D)),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: confirmPasswordController.text != passwordController.text
+                            ? const Color(0xFFD7181D)
+                            : Colors.grey,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: confirmPasswordController.text != passwordController.text
+                            ? const Color(0xFFD7181D)
+                            : Colors.blue,
+                      ),
+                    ),
+                  ),
+                  keyboardType: TextInputType.text,
+                  obscureText: true,
+                  textAlign: TextAlign.left,
+                  textDirection: TextDirection.ltr,
+                  onChanged: (value) {
+                    setState(() {
+                      confirmPassword = value;
+                    });
+                    updateButtonEnabled();
+                  },
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return AppLocalizations.of(context)!.emptyConfirmPassword;
+                    }
+                    if (value != passwordController.text) {
+                      return AppLocalizations.of(context)!.confirmPasswordError;
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          ElevatedButton(
+            onPressed: (_formKey.currentState?.validate() ?? false) ? () {
+              sendProofCode(email!);
             }
-          },
-        ),
+                : null,
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(38,38,38, 1)
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                AppLocalizations.of(context)!.registrate,
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ),
+        ],
       ),
-    );
+    ),);
   }
 }
