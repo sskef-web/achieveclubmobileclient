@@ -727,7 +727,7 @@ class _Tab1Page extends State<Tab1Page> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 16.0, horizontal: 0.0),
-                              child: Text('Выполненные', style: TextStyle(color: Colors.white),),
+                              child: Text('Выполненные', style: TextStyle(color: _showCompletedAchievements ? Colors.white : Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),),
                             ),
                           ),
                           ElevatedButton(
@@ -752,7 +752,7 @@ class _Tab1Page extends State<Tab1Page> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 16.0, horizontal: 0.0),
-                              child: Text('Невыполненные', style: TextStyle(color: Colors.white),),
+                              child: Text('Невыполненные', style: TextStyle(color: !_showCompletedAchievements ? Colors.white : Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,)),
                             ),
                           ),
                         ],
@@ -786,7 +786,7 @@ class _Tab1Page extends State<Tab1Page> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 16.0, horizontal: 10.0),
-                              child: Text('Все категории', style: TextStyle(color: Colors.white)),
+                              child: Text('Все категории', style: TextStyle(color: _selectedCategoryId == null ? Colors.white : Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)),
                             ),
                           ),
                           ...categories.map((category) {
@@ -812,7 +812,7 @@ class _Tab1Page extends State<Tab1Page> {
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 16.0, horizontal: 10.0),
-                                child: Text(category.title, style: TextStyle(color: Colors.white)),
+                                child: Text(category.title, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)),
                               ),
                             );
                           }).toList(),
