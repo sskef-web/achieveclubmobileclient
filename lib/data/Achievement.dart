@@ -16,7 +16,7 @@ class Achievement {
     required this.logoURL,
     // required this.completionRatio,
     required this.isMultiple,
-    required this.tagId
+    required this.tagId,
   });
 
   factory Achievement.fromJson(Map<String, dynamic> json) {
@@ -28,7 +28,7 @@ class Achievement {
       logoURL: json['logoURL'],
       // completionRatio: json['completionRatio'],
       isMultiple: json['isMultiple'],
-      tagId: json['tagId']
+      tagId: json['tagId'],
     );
   }
 

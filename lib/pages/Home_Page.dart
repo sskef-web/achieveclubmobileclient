@@ -59,6 +59,7 @@ class _HomePageState extends State<HomePage> {
     userId = extractUserIdFromCookies(cookies!);
     var url = Uri.parse('${baseURL}api/users/${userId}');
     debugPrint(url.toString());
+    debugPrint('Cookies - $cookies');
     debugPrint(Localizations.localeOf(context).languageCode);
 
     var response = await http.get(url,

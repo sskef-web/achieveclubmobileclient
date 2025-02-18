@@ -881,6 +881,12 @@ class _Tab1Page extends State<Tab1Page> {
                                   itemCount: filteredAchievements.length,
                                   itemBuilder: (context, index) {
                                     final achievement = filteredAchievements[index];
+
+                                    final completedAchievement = completedAchievements.firstWhere(
+                                          (completed) => completed.achievementId == achievement.id,
+                                      orElse: () => CompletedAchievement(achievementId: -1, nextTryUnix: null, completionCount: 0),
+                                    );
+
                                     return AchievementItem(
                                       onTap: () {
                                         setState(() {
@@ -898,11 +904,9 @@ class _Tab1Page extends State<Tab1Page> {
                                       xp: achievement.xp,
                                       id: achievement.id,
                                       isSelected: selectedAchievementIds.contains(achievement.id),
-                                      completionCount: completedAchievements.any(
-                                              (completed) => completed.achievementId == achievement.id)
-                                          ? 1
-                                          : 0,
+                                      completionCount: completedAchievement.completionCount,
                                       isMultiple: false,
+                                      nextTryUnix: completedAchievement.nextTryUnix,
                                     );
                                   },
                                 ),

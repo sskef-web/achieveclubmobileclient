@@ -1,16 +1,19 @@
 class CompletedAchievement {
   final int achievementId;
   final int completionCount;
+  final int? nextTryUnix;
 
   CompletedAchievement({
     required this.achievementId,
-    required this.completionCount
+    required this.completionCount,
+    required this.nextTryUnix
   });
 
   factory CompletedAchievement.fromJson(Map<String, dynamic> json) {
     return CompletedAchievement(
       achievementId: json['achieveId'],
-      completionCount: json['completionCount']
+      completionCount: json['completionCount'],
+        nextTryUnix: json['nextTryUnix']
     );
   }
 }

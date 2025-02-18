@@ -304,6 +304,7 @@ class _UserPageState extends State<UserPage> {
                               isSelected: false,
                               completionCount: completedAchievement.completionCount,
                               isMultiple: achievement.isMultiple,
+                              nextTryUnix: null,
                             );
                           },
                         ),
@@ -342,6 +343,7 @@ class _UserPageState extends State<UserPage> {
                                 isSelected: false,
                                 completionCount: 0,
                                 isMultiple: false,
+                                nextTryUnix: null,
                               );
                             }
                             return Container();
