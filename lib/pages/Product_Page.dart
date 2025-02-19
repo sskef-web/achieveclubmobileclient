@@ -6,9 +6,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '../Modals/Modal_Product.dart';
 import '../data/Product_Data.dart';
 import '../data/Variant.dart';
-import '../tabItems/shopTabs/Modals/Modal_Product.dart';
 
 class ProductPage extends StatefulWidget {
   final int id;
