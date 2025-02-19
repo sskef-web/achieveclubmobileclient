@@ -109,12 +109,12 @@ class ProductItem extends StatelessWidget {
             width: 250,
             padding: EdgeInsets.only(top: 8),
             child: ElevatedButton(
-              onPressed: isAvailable ? available ? ()  {
+              onPressed: isAvailable ? ()  {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ProductPage(id: id)),
                 );
-              } : null : null,
+              } :  null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color.fromRGBO(245, 110, 15, 1),
                 foregroundColor: Colors.white,
@@ -123,13 +123,10 @@ class ProductItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              child: available ? Text(
+              child: Text(
                 '$price xp',
                 style: TextStyle(fontSize: 16.0),
-              ) : Text(
-                'Нет в наличии',
-                style: TextStyle(fontSize: 16.0),
-              ),
+              )
             ),
           ),
         ],

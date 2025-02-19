@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '../../data/Seasonal_Product.dart';
-import '../../data/Seasonal_Variant.dart';
-import '../../items/Product_Item.dart';
-import '../../items/Seasonal_Product_Item.dart';
-import '../../main.dart';
+import '../data/Seasonal_Product.dart';
+import '../data/Seasonal_Variant.dart';
+import '../items/Product_Item.dart';
+import '../items/Seasonal_Product_Item.dart';
+import '../main.dart';
 
 class ShopPage extends StatefulWidget {
   final int categoryId;

@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../main.dart';
-import 'shopTabs/Shop_Page.dart';
+import '../pages/Shop_Page.dart';
 
 class Tab3Page extends StatefulWidget {
   @override
