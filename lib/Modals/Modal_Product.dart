@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:achieveclubmobileclient/tabItems/shopTabs/Modals/Modal_Buy_Result.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import '../../../main.dart';
+import 'Modal_Buy_Result.dart';
 
 class ProductModal extends StatelessWidget {
   final int id;
