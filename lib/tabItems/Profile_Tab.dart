@@ -40,7 +40,6 @@ class _Tab1Page extends State<Tab1Page> {
   List<CompletedAchievement> multipleCompletedAchievements = [];
   List<CompletedAchievement> nonMultipleCompletedAchievements = [];
   List<Category> categories = [];
-  String searchText = '';
   int? _selectedCategoryId;
 
   @override

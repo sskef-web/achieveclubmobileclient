@@ -40,7 +40,6 @@ class _AchievementItemState extends State<AchievementItem> {
   void initState() {
     super.initState();
     isSelected = widget.isSelected;
-    debugPrint('Dates - ${widget.nextTryUnix}');
   }
 
   @override
@@ -149,6 +148,7 @@ class _AchievementItemState extends State<AchievementItem> {
         if (nextTryDate != null) ...[
           Positioned.fill(
             child: Container(
+              margin: EdgeInsets.zero,
               decoration: BoxDecoration(
                 color: Color.fromRGBO(0, 0, 0, 0.8),
                 borderRadius: BorderRadius.circular(15)

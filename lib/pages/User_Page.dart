@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import '../data/Category.dart';
 import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -28,6 +29,10 @@ class _UserPageState extends State<UserPage> {
   late Future<User> _userFuture;
   late Future<List<Achievement>> _achieveFuture;
   late Future<List<CompletedAchievement>> _completedAchievementsFuture;
+  late Future<List<Category>> _categoriesFuture;
+  List<Category> categories = [];
+  int? _selectedCategoryId;
+  bool _showCompletedAchievements = false;
   late String Avatar = '';
   String locale = "";
 
@@ -42,6 +47,18 @@ class _UserPageState extends State<UserPage> {
     });
     _achieveFuture = fetchAchievements();
     _completedAchievementsFuture = fetchCompletedAchievements();
+    _categoriesFuture = fetchCategories();
+  }
+
+  Future<List<Category>> fetchCategories() async {
+    final response = await http.get(Uri.parse('${baseURL}api/tags'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((item) => Category.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load categories');
+    }
   }
 
   Future<void> saveCookies(String cookies) async {
@@ -169,7 +186,7 @@ class _UserPageState extends State<UserPage> {
         ),
       ),
       body: FutureBuilder(
-        future: Future.wait([_userFuture, _achieveFuture, _completedAchievementsFuture]),
+        future: Future.wait([_userFuture, _achieveFuture, _completedAchievementsFuture, _categoriesFuture]),
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
           currentSnapshot = snapshot;
           if (snapshot.hasData) {
@@ -177,6 +194,23 @@ class _UserPageState extends State<UserPage> {
             final achievements = snapshot.data![1] as List<Achievement>;
             final completedAchievements =
             snapshot.data![2] as List<CompletedAchievement>;
+
+            final categories = snapshot.data![3] as List<Category>;
+
+            Map<Category, List<Achievement>> categorizedAchievements = {};
+
+            for (var category in categories) {
+              categorizedAchievements[category] = [];
+            }
+
+            for (var achievement in achievements) {
+              var category =
+              categories.firstWhere((cat) => cat.id == achievement.tagId);
+              if (category != null) {
+                categorizedAchievements[category]!.add(achievement);
+              }
+            }
+
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -267,90 +301,220 @@ class _UserPageState extends State<UserPage> {
                             backgroundColor: Colors.white,
                             borderRadius: BorderRadius.circular(100),
                           ),
+                          const SizedBox(height: 8,)
                         ],
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    if (completedAchievements.isNotEmpty) Text(
-                      'Выполненные достижения',
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        spacing: 8,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _showCompletedAchievements = true;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _showCompletedAchievements
+                                  ? const Color.fromRGBO(245, 110, 15, 1)
+                                  : null,
+                              foregroundColor: Colors.white,
+                              side: BorderSide(
+                                color: const Color.fromRGBO(245, 110, 15, 1),
+                                width: _showCompletedAchievements ? 0 : 1,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 0.0),
+                              child: Text('Выполненные', style: TextStyle(color: _showCompletedAchievements ? Colors.white : Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _showCompletedAchievements = false;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: !_showCompletedAchievements
+                                  ? const Color.fromRGBO(245, 110, 15, 1)
+                                  : null,
+                              foregroundColor: Colors.white,
+                              side: BorderSide(
+                                color: const Color.fromRGBO(245, 110, 15, 1),
+                                width: !_showCompletedAchievements ? 0 : 1,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 0.0),
+                              child: Text('Невыполненные', style: TextStyle(color: !_showCompletedAchievements ? Colors.white : Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,)),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 8.0),
-                    Stack(
-                      children: [
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: completedAchievements.length,
-                          itemBuilder: (context, index) {
-                            final completedAchievement =
-                            completedAchievements[index];
-                            final achievement = achievements.firstWhere(
-                                    (achieve) =>
-                                achieve.id ==
-                                    completedAchievement.achievementId);
-
-                            return AchievementItem(
-                              onTap: null,
-                              logo: '$baseURL/${achievement.logoURL}',
-                              title: achievement.title,
-                              description: achievement.description,
-                              xp: achievement.xp,
-                              // completionRatio: achievement.completionRatio,
-                              id: achievement.id,
-                              isSelected: false,
-                              completionCount: completedAchievement.completionCount,
-                              isMultiple: achievement.isMultiple,
-                              nextTryUnix: null,
+                    const SizedBox(height: 16.0),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        spacing: 8,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedCategoryId = null;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _selectedCategoryId == null
+                                  ? const Color.fromRGBO(245, 110, 15, 1)
+                                  : null,
+                              foregroundColor: Colors.white,
+                              side: BorderSide(
+                                color: const Color.fromRGBO(245, 110, 15, 1),
+                                width: 1,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 10.0),
+                              child: Text('Все категории', style: TextStyle(color: _selectedCategoryId == null ? Colors.white : Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)),
+                            ),
+                          ),
+                          ...categories.map((category) {
+                            return ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  _selectedCategoryId = category.id;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: _selectedCategoryId == category.id
+                                    ? const Color.fromRGBO(245, 110, 15, 1)
+                                    : null,
+                                foregroundColor: Colors.white,
+                                side: BorderSide(
+                                  color: const Color.fromRGBO(245, 110, 15, 1),
+                                  width: 1,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 16.0, horizontal: 10.0),
+                                child: Text(category.title, style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)),
+                              ),
                             );
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      'Невыполненные достижения:',
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
+                          }).toList(),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 8.0),
-                    Stack(
-                      children: [
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: achievements.length,
-                          itemBuilder: (context, index) {
-                            final achievement = achievements[index];
-                            final isCompleted = completedAchievements.any(
-                                    (completed) =>
-                                completed.achievementId == achievement.id);
+                    const SizedBox(height: 16.0),
+                    ...categorizedAchievements.entries.map((entry) {
+                      final category = entry.key;
+                      final categoryAchievements = entry.value;
 
-                            if (!isCompleted) {
-                              return AchievementItem(
-                                onTap: null,
-                                logo: '$baseURL/${achievement.logoURL}',
-                                title: achievement.title,
-                                description: achievement.description,
-                                xp: achievement.xp,
-                                // completionRatio: achievement.completionRatio,
-                                id: achievement.id,
-                                isSelected: false,
-                                completionCount: 0,
-                                isMultiple: false,
-                                nextTryUnix: null,
-                              );
-                            }
-                            return Container();
-                          },
-                        ),
-                      ],
-                    ),
+                      if ((_selectedCategoryId != null && _selectedCategoryId != category.id) ||
+                          categoryAchievements.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      final filteredAchievements = categoryAchievements.where((achievement) {
+                        final isCompleted = completedAchievements.any(
+                              (completed) => completed.achievementId == achievement.id,
+                        );
+                        return _showCompletedAchievements == isCompleted;
+                      }).toList();
+
+                      if (filteredAchievements.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Color(int.parse('0xFF${category.color}')),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                            child: Text(
+                              category.title,
+                              style: const TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8, right: 0, left: 0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                border: Border.all(
+                                  width: 2,
+                                  color: Color(int.parse('0xFF${category.color}')),
+                                ),
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: filteredAchievements.length,
+                                  itemBuilder: (context, index) {
+                                    final achievement = filteredAchievements[index];
+
+                                    final completedAchievement = completedAchievements.firstWhere(
+                                          (completed) => completed.achievementId == achievement.id,
+                                      orElse: () => CompletedAchievement(achievementId: -1, nextTryUnix: null, completionCount: 0),
+                                    );
+
+                                    return AchievementItem(
+                                      onTap: () {
+
+                                      },
+                                      logo: '$baseURL${achievement.logoURL}',
+                                      title: achievement.title,
+                                      description: achievement.description,
+                                      xp: achievement.xp,
+                                      id: achievement.id,
+                                      isSelected: false,
+                                      completionCount: completedAchievement.completionCount,
+                                      isMultiple: false,
+                                      nextTryUnix: completedAchievement.nextTryUnix,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }).toList(),
                   ],
                 ),
               ),
