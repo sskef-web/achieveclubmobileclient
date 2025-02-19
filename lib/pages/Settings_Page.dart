@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/User.dart';
+import '../items/Four_Digit_Code_Input.dart';
 import '../main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -25,11 +27,27 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   var userId;
   late Future<User> _userFuture;
+  String email = '';
+  String username = '';
+  String proofCode = '';
 
   @override
   void initState() {
     super.initState();
     _userFuture = fetchUser();
+  }
+
+  void _updateProofCode(String value) {
+    setState(() {
+      proofCode = value;
+    });
+    saveProofCode();
+    debugPrint('NEW proof-code - ${proofCode}');
+  }
+
+  Future<bool> saveProofCode() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('proofCode', proofCode);
   }
 
   Future<String?> loadCookies() async {
@@ -51,7 +69,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<User> fetchUser() async {
     var cookies = await loadCookies();
     userId = extractUserIdFromCookies(cookies!);
-    var url = Uri.parse('${baseURL}api/users/${userId}');
+    var url = Uri.parse('${baseURL}api/users/current');
     debugPrint(url.toString());
     debugPrint(Localizations.localeOf(context).languageCode);
     debugPrint('Access Token - ${extractTokenFromCookies(cookies)}');
@@ -66,6 +84,69 @@ class _SettingsPageState extends State<SettingsPage> {
       return fetchUser();
     } else {
       throw Exception(AppLocalizations.of(context)!.fetchUserError);
+    }
+  }
+
+  Future<void> changeEmail(String email, var proofCode) async {
+    var cookies = await loadCookies();
+    var token = extractTokenFromCookies(cookies!);
+    var url = Uri.parse('${baseURL}api/users/change_email');
+
+    var body = jsonEncode({
+      'proofCode': proofCode,
+      'emailAddress': email,
+    });
+    var response = await http.patch(url, body: body, headers: {
+      'Content-Type': 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token'
+    });
+
+    if (response.statusCode == 204) {
+      Navigator.pop(context);
+
+    } else {
+      debugPrint('${response.body}, Status code: ${response.statusCode}');
+      throw showDialog(context: context, builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text('Ошибка: ${response.body}'),
+          actions: [
+            TextButton(onPressed: (){Navigator.pop(context);}, child: Text('Закрыть'))
+          ],
+        );
+      });
+    }
+  }
+
+  Future<void> changeUsername(String firstname, String lastName) async {
+    var cookies = await loadCookies();
+    var url = Uri.parse('${baseURL}api/users/change_name');
+
+    var body;
+
+    if (firstname.isNotEmpty) {
+      body = jsonEncode({
+        'firstName': firstname,
+      });
+    }
+    else {
+      body = jsonEncode({
+        'lastName': lastName,
+      });
+    }
+
+    var response = await http.patch(url, body: body, headers: {
+      'Content-Type': 'application/json',
+      'Cookie': cookies!
+    });
+
+    if (response.statusCode == 200) {
+      Navigator.pop(context);
+
+    } else {
+      debugPrint('Ошибка при смене имени или фамилии - ${response.body}. SC - ${response.statusCode}');
+      throw AlertDialog(
+        content: Text('Ошибка: ${response.body}'),
+      );
     }
   }
 
@@ -290,6 +371,217 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  void showProofCodeDialog(BuildContext context, String email) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.confirmEmail,
+                  textAlign: TextAlign.center,
+                  textScaler: TextScaler.linear(1.2),
+                ),
+                Text(
+                  '${AppLocalizations.of(context)!.codeSended} - \n$email',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16.0),
+                FourDigitCodeInput(updateProofCode: _updateProofCode),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                ElevatedButton(
+                  onPressed: proofCode != 4
+                      ? () {
+                    Navigator.of(dialogContext).pop();
+                    changeEmail(email, proofCode);
+                  }
+                      : null,
+                  child: Text(AppLocalizations.of(context)!.send),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> sendProofCode(String email) async {
+    var cookies = await loadCookies();
+    var token = extractTokenFromCookies(cookies!);
+    var url = Uri.parse('${baseURL}api/email/change_email');
+
+    var body = jsonEncode(
+      email,
+    );
+
+    var response = await http.post(url, body: body, headers: {
+      'Content-Type': 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token'
+    });
+
+    if (response.statusCode == 204) {
+      debugPrint('code send to $email');
+      showProofCodeDialog(context, email);
+    }
+    else if (response.statusCode == 409) {
+      debugPrint('${response.body}, Status code: ${response.statusCode}');
+      if (response.body.contains('email')) {
+        showEmailErrorDialog(context);
+      }
+      else {
+        debugPrint('${response.body}, Status code: ${response.statusCode}');
+        showResultDialog(context, true, true);
+      }
+    }
+    else {
+      showResultDialog(context, true, true);
+      debugPrint('${response.body}, Status code: ${response.statusCode}');
+      throw response.body;
+    }
+  }
+
+  void showEmailErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Ошибка \n Пользователь с таким email уже зарегистрирован.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                  },
+                  child: Center(
+                      child: Text(AppLocalizations.of(context)!.close)),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showResultDialog(BuildContext context, bool isValidate,
+      bool isCodeSended) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                isCodeSended
+                    ? Text(
+                  '${AppLocalizations.of(context)!.error}\n${AppLocalizations
+                      .of(context)!.codeSendedAfter}',
+                  textAlign: TextAlign.center,
+                )
+                    : isValidate != false
+                    ? Text(
+                  AppLocalizations.of(context)!.emailConfirmed,
+                  textAlign: TextAlign.center,
+                )
+                    : Text(
+                    '${AppLocalizations.of(context)!.error}!\n${AppLocalizations
+                        .of(context)!.wrongCode}',
+                    textAlign: TextAlign.center),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      width: 8.0,
+                    ),
+                    isCodeSended
+                        ? Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                            showProofCodeDialog(context, email);
+                          },
+                          child: Center(
+                              child: Text(
+                                  AppLocalizations.of(context)!.writeCode)),
+                        ),
+                        const SizedBox(width: 8.0,),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                          },
+                          child: Center(
+                              child: Text(
+                                  AppLocalizations.of(context)!.close)),
+                        )
+                      ],
+                    )
+                        : isValidate == false
+                        ? ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        showProofCodeDialog(context, email);
+                      },
+                      child: Center(
+                          child: Text(
+                              AppLocalizations.of(context)!.repeat)),
+                    )
+                        : ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        if (isValidate == true) {
+                          saveProofCode();
+                          changeEmail(email, proofCode);
+                        }
+                      },
+                      child: Center(
+                          child: Text(AppLocalizations.of(context)!
+                              .continued)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -357,7 +649,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     child: ListTile(
                       title: Text(
-                        'Изменить Имя и Фамилию',
+                        'Изменить Имя',
                         style: TextStyle(
                             color:
                                 Theme.of(context).brightness == Brightness.dark
@@ -366,7 +658,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             fontSize: 18),
                       ),
                       subtitle: Text(
-                        '${user.firstName} ${user.lastName}',
+                        '${user.firstName}',
                         style: TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                       trailing: Icon(
@@ -376,6 +668,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             : Colors.black,
                       ),
                       onTap: () {
+                        final TextEditingController usernameController = TextEditingController();
+
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
@@ -410,7 +704,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                             margin: EdgeInsets.only(left: 11),
                                             child: Text(
                                               textAlign: TextAlign.left,
-                                              'Имя Фамилия',
+                                              'Имя',
                                               style: TextStyle(
                                                   color: Theme.of(context)
                                                               .brightness ==
@@ -437,9 +731,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                         height: 16,
                                       ),
                                       TextField(
+                                        controller: usernameController,
                                         decoration: InputDecoration(
                                           hintText:
-                                              '${user.firstName} ${user.lastName}',
+                                              '${user.firstName}',
                                           hintStyle: TextStyle(
                                               color: Theme.of(context)
                                                           .brightness ==
@@ -473,7 +768,32 @@ class _SettingsPageState extends State<SettingsPage> {
                                         width: double.infinity,
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            Navigator.pop(context);
+                                            final username = usernameController.text;
+                                            if (username.length >= 1) {
+                                              changeUsername(usernameController.text, '');
+                                              Navigator.pop(context);
+                                            } else {
+                                              showDialog<void>(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: const Text('Ошибка изменения'),
+                                                    content: const Text(
+                                                      'Вы указали слишком короткое Имя и Фамилию.',
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        style: TextButton.styleFrom(textStyle: Theme.of(context).textTheme.labelLarge),
+                                                        child: const Text('Закрыть'),
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }
                                           },
                                           style: ElevatedButton.styleFrom(
                                             foregroundColor: Colors.white,
@@ -515,16 +835,16 @@ class _SettingsPageState extends State<SettingsPage> {
                     margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     child: ListTile(
                       title: Text(
-                        'Изменить почту',
+                        'Изменить Фамилию',
                         style: TextStyle(
                             color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
                             fontSize: 18),
                       ),
                       subtitle: Text(
-                        'example@mail.com',
+                        '${user.lastName}',
                         style: TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                       trailing: Icon(
@@ -534,6 +854,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             : Colors.black,
                       ),
                       onTap: () {
+                        final TextEditingController usernameController = TextEditingController();
+
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
@@ -541,14 +863,14 @@ class _SettingsPageState extends State<SettingsPage> {
                             return Padding(
                               padding: EdgeInsets.only(
                                   bottom:
-                                      MediaQuery.of(context).viewInsets.bottom),
+                                  MediaQuery.of(context).viewInsets.bottom),
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(30),
                                       topRight: Radius.circular(30)),
                                   color: Theme.of(context).brightness ==
-                                          Brightness.dark
+                                      Brightness.dark
                                       ? Color.fromRGBO(38, 38, 38, 1)
                                       : Colors.white,
                                 ),
@@ -558,21 +880,21 @@ class _SettingsPageState extends State<SettingsPage> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           Container(
                                             margin: EdgeInsets.only(left: 11),
                                             child: Text(
                                               textAlign: TextAlign.left,
-                                              'Почта',
+                                              'Фамилия',
                                               style: TextStyle(
                                                   color: Theme.of(context)
-                                                              .brightness ==
-                                                          Brightness.dark
+                                                      .brightness ==
+                                                      Brightness.dark
                                                       ? Colors.white
                                                       : Colors.black,
                                                   fontWeight: FontWeight.w900,
@@ -595,12 +917,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                         height: 16,
                                       ),
                                       TextField(
+                                        controller: usernameController,
                                         decoration: InputDecoration(
-                                          hintText: 'example@mail.com',
+                                          hintText:
+                                          '${user.lastName}',
                                           hintStyle: TextStyle(
                                               color: Theme.of(context)
-                                                          .brightness ==
-                                                      Brightness.dark
+                                                  .brightness ==
+                                                  Brightness.dark
                                                   ? Colors.white
                                                   : Colors.black),
                                           enabledBorder: OutlineInputBorder(
@@ -608,40 +932,65 @@ class _SettingsPageState extends State<SettingsPage> {
                                                 color: Color.fromRGBO(
                                                     245, 110, 15, 1)),
                                             borderRadius:
-                                                BorderRadius.circular(15),
+                                            BorderRadius.circular(15),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 color: Color.fromRGBO(
                                                     245, 110, 15, 1)),
                                             borderRadius:
-                                                BorderRadius.circular(15),
+                                            BorderRadius.circular(15),
                                           ),
                                         ),
                                         style: TextStyle(
                                             color:
-                                                Theme.of(context).brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white
-                                                    : Colors.black),
+                                            Theme.of(context).brightness ==
+                                                Brightness.dark
+                                                ? Colors.white
+                                                : Colors.black),
                                       ),
                                       SizedBox(height: 20),
                                       Container(
                                         width: double.infinity,
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            Navigator.pop(context);
+                                            final username = usernameController.text;
+                                            if (username.length >= 1) {
+                                              changeUsername('',usernameController.text);
+                                              Navigator.pop(context);
+                                            } else {
+                                              showDialog<void>(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: const Text('Ошибка изменения'),
+                                                    content: const Text(
+                                                      'Вы указали слишком короткую Фамилию.',
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        style: TextButton.styleFrom(textStyle: Theme.of(context).textTheme.labelLarge),
+                                                        child: const Text('Закрыть'),
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }
                                           },
                                           style: ElevatedButton.styleFrom(
                                             foregroundColor: Colors.white,
                                             backgroundColor:
-                                                Color.fromRGBO(245, 110, 15, 1),
+                                            Color.fromRGBO(245, 110, 15, 1),
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 40, vertical: 20),
                                             textStyle: TextStyle(fontSize: 18),
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(15),
+                                              BorderRadius.circular(15),
                                             ),
                                           ),
                                           child: Text(
@@ -649,6 +998,207 @@ class _SettingsPageState extends State<SettingsPage> {
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Color.fromRGBO(38, 38, 38, 1)
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: ListTile(
+                      title: Text(
+                        'Изменить почту',
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                            fontSize: 18),
+                      ),
+                      subtitle: Text(
+                        '${user.email}',
+                        style: TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
+                      trailing: Icon(
+                        Icons.navigate_next,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                      onTap: () {
+                        final TextEditingController emailController = TextEditingController();
+
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (BuildContext context) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).viewInsets.bottom),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(30),
+                                      topRight: Radius.circular(30)),
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? Color.fromRGBO(38, 38, 38, 1)
+                                      : Colors.white,
+                                ),
+                                height: 240,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.only(left: 11),
+                                            child: Text(
+                                              textAlign: TextAlign.left,
+                                              'Почта',
+                                              style: TextStyle(
+                                                  color: Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 18),
+                                            ),
+                                          ),
+                                          IconButton(
+                                            style: IconButton.styleFrom(
+                                                backgroundColor: Color.fromRGBO(91, 91, 91, 1)),
+                                            icon: Icon(Icons.close, color: Colors.white),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      TextFormField(
+                                        controller: emailController,
+                                        decoration: InputDecoration(
+                                          hintText: '${user.email}',
+                                          errorText: emailController.text.isNotEmpty && !EmailValidator.validate(emailController.text)
+                                              ? AppLocalizations.of(context)!.emailError
+                                              : null,
+                                          errorStyle: const TextStyle(color: Color(0xFFD7181D)),
+                                          hintStyle: TextStyle(
+                                              color: Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                                  ? Colors.white
+                                                  : Colors.black),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: emailController.text.isNotEmpty && !EmailValidator.validate(emailController.text)
+                                                  ? const Color(0xFFD7181D)
+                                                  : const Color.fromRGBO(245, 110, 15, 1),
+                                            ),
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                          focusedErrorBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                          errorBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(color: Color(0xFFD7181D)),
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: emailController.text.isNotEmpty && !EmailValidator.validate(emailController.text)
+                                                  ? const Color(0xFFD7181D)
+                                                  : const Color.fromRGBO(245, 110, 15, 1),
+                                            ),
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                        ),
+                                        keyboardType: TextInputType.emailAddress,
+                                        textAlign: TextAlign.left,
+                                        textDirection: TextDirection.ltr,
+                                        validator: (value) {
+                                          if (value?.isEmpty ?? true) {
+                                            return AppLocalizations.of(context)!.emptyEmail;
+                                          }
+                                          if (!EmailValidator.validate(value!)) {
+                                            return AppLocalizations.of(context)!.emailError;
+                                          }
+                                          return null;
+                                        },
+                                        onChanged: (value) {
+                                          email = value;
+                                        },
+                                        style: TextStyle(
+                                            color: Theme.of(context).brightness == Brightness.dark
+                                                ? Colors.white
+                                                : Colors.black),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Container(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            final email = emailController.text;
+                                            if (EmailValidator.validate(email)) {
+                                              sendProofCode(emailController.text);
+                                              Navigator.pop(context);
+                                            } else {
+                                              showDialog<void>(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: const Text('Ошибка смены почты'),
+                                                    content: const Text(
+                                                      'Указанная почта не валидна.',
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        style: TextButton.styleFrom(textStyle: Theme.of(context).textTheme.labelLarge),
+                                                        child: const Text('Закрыть'),
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            foregroundColor: Colors.white,
+                                            backgroundColor: Color.fromRGBO(245, 110, 15, 1),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 40, vertical: 20),
+                                            textStyle: TextStyle(fontSize: 18),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(15),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Сохранить',
+                                            style: TextStyle(
+                                                color: Colors.white, fontWeight: FontWeight.w500),
                                           ),
                                         ),
                                       ),

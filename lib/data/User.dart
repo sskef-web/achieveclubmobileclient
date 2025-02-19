@@ -7,6 +7,7 @@ class User {
   // final String clubName;
   // final String clubLogo;
   final int xpSum;
+  final String? email;
 
   const User({
     required this.id,
@@ -16,7 +17,8 @@ class User {
     // required this.clubId,
     // required this.clubName,
     // required this.clubLogo,
-    required this.xpSum
+    required this.xpSum,
+    required this.email
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class User {
       // clubName: json['clubName'],
       // clubLogo: json['clubLogo'],
       xpSum: json['xpSum'],
+      email: json['email']
     );
   }
 }
