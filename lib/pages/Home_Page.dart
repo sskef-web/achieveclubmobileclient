@@ -153,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               actions: [
-                _currentIndex == 0 ? SettingsButton(user: user,) : SizedBox(height: 0, width: 0,)
+                _currentIndex == 0 ? SettingsButton(user: user, logoutCallback: widget.logoutCallback,) : SizedBox(height: 0, width: 0,)
               ],
             ),
             body: _tabs[_currentIndex],

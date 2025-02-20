@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import '../data/User.dart';
 
 class SettingsButton extends StatefulWidget {
-
+  final Function() logoutCallback;
   User user;
 
-  SettingsButton({super.key, required this.user});
+  SettingsButton({super.key, required this.user, required this.logoutCallback});
 
   @override
   _SettingsButtonState createState() => _SettingsButtonState();
@@ -25,7 +25,7 @@ class _SettingsButtonState extends State<SettingsButton> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => SettingsPage(avatar: widget.user.avatar,)
+          builder: (context) => SettingsPage(avatar: widget.user.avatar,logoutCallback: widget.logoutCallback,)
       ),
     );
   }

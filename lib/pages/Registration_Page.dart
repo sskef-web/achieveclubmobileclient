@@ -202,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
       'Content-Type': 'application/json',
     });
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 204) {
       debugPrint('code send to $email');
       showProofCodeDialog(context, email);
     }

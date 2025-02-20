@@ -16,9 +16,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'Home_Page.dart';
 
 class SettingsPage extends StatefulWidget {
+  final Function() logoutCallback;
   String avatar;
 
-  SettingsPage({super.key, required this.avatar});
+  SettingsPage({super.key, required this.avatar, required this.logoutCallback});
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -104,6 +105,32 @@ class _SettingsPageState extends State<SettingsPage> {
     if (response.statusCode == 204) {
       Navigator.pop(context);
 
+    } else {
+      debugPrint('${response.body}, Status code: ${response.statusCode}');
+      throw showDialog(context: context, builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text('Ошибка: ${response.body}'),
+          actions: [
+            TextButton(onPressed: (){Navigator.pop(context);}, child: Text('Закрыть'))
+          ],
+        );
+      });
+    }
+  }
+
+  Future<void> deleteUser() async {
+    var cookies = await loadCookies();
+    var token = extractTokenFromCookies(cookies!);
+    var url = Uri.parse('${baseURL}api/users');
+
+    var response = await http.delete(url, headers: {
+      'Content-Type': 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer $token'
+    });
+
+    if (response.statusCode == 204) {
+      Navigator.pop(context);
+      widget.logoutCallback();
     } else {
       debugPrint('${response.body}, Status code: ${response.statusCode}');
       throw showDialog(context: context, builder: (BuildContext context) {
@@ -282,7 +309,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      // Действие при нажатии на "Удалить"
+                      deleteUser();
                       Navigator.of(context).pop();
                     },
                     style: ElevatedButton.styleFrom(
