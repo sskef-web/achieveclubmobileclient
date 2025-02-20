@@ -1,0 +1,2 @@
+/home/sskef/Документы/GitHub/achieveclubmobileclient/android/app/.cxx/RelWithDebInfo/2b2v3y6b/arm64-v8a/CMakeFiles/edit_cache.dir
+/home/sskef/Документы/GitHub/achieveclubmobileclient/android/app/.cxx/RelWithDebInfo/2b2v3y6b/arm64-v8a/CMakeFiles/rebuild_cache.dir
