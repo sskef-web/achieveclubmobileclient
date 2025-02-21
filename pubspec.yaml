@@ -45,6 +45,7 @@ dependencies:
   email_validator: ^3.0.0
   cached_network_image: any
   provider: ^6.1.2
+  backdoor_flutter: any
 
 dev_dependencies:
   flutter_test:
