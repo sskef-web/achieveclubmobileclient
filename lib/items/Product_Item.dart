@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../pages/Product_Page.dart';
 import '../main.dart';
 
-class ProductItem extends StatelessWidget {
+class ProductItem extends StatefulWidget {
   final int id;
   final List<dynamic> variants;
   final String type;
@@ -23,19 +23,49 @@ class ProductItem extends StatelessWidget {
   });
 
   @override
+  _ProductItemState createState() => _ProductItemState();
+}
+
+class _ProductItemState extends State<ProductItem> {
+  int _selectedImageIndex = 0;
+  final PageController _pageController = PageController(initialPage: 0);
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToSelectedColor(_selectedImageIndex);
+    });
+  }
+
+  void _scrollToSelectedColor(int index) {
+    final double itemSize = 24.0;
+    final double offset = index * itemSize;
+    final double halfScreen = MediaQuery.of(context).size.width / 2;
+    final double scrollOffset = offset - halfScreen + itemSize / 2;
+
+    _scrollController.animateTo(
+      scrollOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    bool isAvailable = widget.balance >= widget.price;
 
-    bool isAvailable = balance >= price;
-    int _selectedImageIndex = 0;
+    List<String> imageUrls = widget.variants.map<String>((variant) {
+      return variant['photo'] != null ? variant['photo']! : '';
+    }).toList();
 
-    List<String> imageUrls = variants.map<String>((variant) => variant['photo']).toList();
-    List<Color> colors = variants.map<Color>((variant) => Color(int.parse('0xFF${variant['color']}'))).toList();
-    final PageController _pageController = PageController(initialPage: 0);
+    List<Color> colors = widget.variants.map<Color>((variant) => Color(int.parse('0xFF${variant['color']}'))).toList();
 
     return Container(
       alignment: Alignment.center,
       width: 160,
-      height: 350,
+      height: 360,
       margin: EdgeInsets.all(5.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -57,7 +87,10 @@ class ProductItem extends StatelessWidget {
                 PageView(
                   controller: _pageController,
                   onPageChanged: (index) {
-                    _selectedImageIndex = index;
+                    setState(() {
+                      _selectedImageIndex = index;
+                    });
+                    _scrollToSelectedColor(index);
                   },
                   children: imageUrls.map((url) {
                     return CachedNetworkImage(
@@ -72,20 +105,27 @@ class ProductItem extends StatelessWidget {
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(imageUrls.length, (index) {
-                      return Container(
-                        width: 10.0,
-                        height: 10.0,
-                        margin: EdgeInsets.symmetric(horizontal: 4.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: colors[index],
-                          border: Border.all(color: Colors.black, width: 1.0),
-                        ),
-                      );
-                    }),
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(imageUrls.length, (index) {
+                        return Container(
+                          width: 16.0,
+                          height: 16.0,
+                          margin: EdgeInsets.symmetric(horizontal: 4.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: colors[index],
+                            border: Border.all(
+                              color: _selectedImageIndex == index ? Colors.black : Colors.transparent,
+                              width: 2.0,
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
                   ),
                 ),
               ],
@@ -94,27 +134,27 @@ class ProductItem extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 4, bottom: 2, left: 0, right: 16),
             child: Text(
-              type,
+              widget.type,
               style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 2, bottom: 4, left: 0, right: 16),
             child: Text(
-              title,
-              style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.normal),
+              widget.title,
+              style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal),
             ),
           ),
           Container(
             width: 250,
             padding: EdgeInsets.only(top: 8),
             child: ElevatedButton(
-              onPressed: isAvailable ? ()  {
+              onPressed: isAvailable ? () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ProductPage(id: id)),
+                  MaterialPageRoute(builder: (context) => ProductPage(id: widget.id)),
                 );
-              } :  null,
+              } : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color.fromRGBO(245, 110, 15, 1),
                 foregroundColor: Colors.white,
@@ -124,9 +164,9 @@ class ProductItem extends StatelessWidget {
                 ),
               ),
               child: Text(
-                '$price xp',
+                '${widget.price} xp',
                 style: TextStyle(fontSize: 16.0),
-              )
+              ),
             ),
           ),
         ],

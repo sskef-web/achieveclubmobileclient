@@ -167,58 +167,61 @@ class _ProductPageState extends State<ProductPage> {
                 ],
               ),
               SizedBox(height: 16.0),
-              Row(
-                children: List.generate(colors.length, (index) {
-                  final isSelected = _selectedColorIndex == index;
-                  final isAvailable = variants[index].isAvailable;
-                  return GestureDetector(
-                    onTap: () {
-                      if (isAvailable) {
-                        setState(() {
-                          _selectedColorIndex = index;
-                        });
-                      }
-                    },
-                    child: Stack(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 4.0),
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: colors[index],
-                            shape: BoxShape.rectangle,
-                            border: Border.all(
-                              color: isSelected ? Color.fromRGBO(245, 110, 15, 1) : Colors.transparent,
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        if (!isAvailable)
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(colors.length, (index) {
+                    final isSelected = _selectedColorIndex == index;
+                    final isAvailable = variants[index].isAvailable;
+                    return GestureDetector(
+                      onTap: () {
+                        if (isAvailable) {
+                          setState(() {
+                            _selectedColorIndex = index;
+                          });
+                        }
+                      },
+                      child: Stack(
+                        children: [
                           Container(
                             margin: EdgeInsets.symmetric(horizontal: 4.0),
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
+                              color: colors[index],
+                              shape: BoxShape.rectangle,
                               border: Border.all(
-                                color: Color.fromRGBO(245, 110, 15, 1),
+                                color: isSelected ? Color.fromRGBO(245, 110, 15, 1) : Colors.transparent,
                                 width: 2.0,
                               ),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Center(
-                              child: Icon(
-                                Icons.close,
-                                color: Color.fromRGBO(245, 110, 15, 1),
-                                size: 20,
+                          ),
+                          if (!isAvailable)
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 4.0),
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Color.fromRGBO(245, 110, 15, 1),
+                                  width: 2.0,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  Icons.close,
+                                  color: Color.fromRGBO(245, 110, 15, 1),
+                                  size: 20,
+                                ),
                               ),
                             ),
-                          ),
-                      ],
-                    ),
-                  );
-                }),
+                        ],
+                      ),
+                    );
+                  }),
+                ),
               ),
               SizedBox(height: 16.0),
               Text(

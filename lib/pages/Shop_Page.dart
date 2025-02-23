@@ -250,85 +250,86 @@ class _ShopPageState extends State<ShopPage> {
                 ),
               ),
             if (!isSeasonal)
-              Container(
-                height: 160,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: _orders.map((order) {
-                    return Container(
-                      width: 310,
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Color.fromRGBO(38, 38, 38, 1)
-                            : Color(0xFFDEDEDE),
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 100,
-                              height: 100,
-                              margin: EdgeInsets.only(right: 16),
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child:
-                                  Image.network('${baseURL}/${order['photo']}'),
-                            ),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    order['deliveryStatus'],
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w900,
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${order['productType']}\n${order['productTitle']}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w100,
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                    softWrap: true,
-                                  ),
-                                  Text(
-                                    'Ожидаем ${DateTime.parse(order['orderDate']).day.toString().padLeft(2, '0')}.${DateTime.parse(order['orderDate']).month.toString().padLeft(2, '0')}.${DateTime.parse(order['orderDate']).year}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w900,
-                                      color: Color.fromRGBO(245, 110, 15, 1),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+              if (_orders.isNotEmpty)
+                Container(
+                  height: 160,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: _orders.map((order) {
+                      return Container(
+                        width: 310,
+                        padding: EdgeInsets.all(10),
+                        margin: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Color.fromRGBO(38, 38, 38, 1)
+                              : Color(0xFFDEDEDE),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 100,
+                                height: 100,
+                                margin: EdgeInsets.only(right: 16),
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child:
+                                Image.network('${baseURL}/${order['photo']}'),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      order['deliveryStatus'],
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w900,
+                                        color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${order['productType']}\n${order['productTitle']}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w100,
+                                        color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                      softWrap: true,
+                                    ),
+                                    Text(
+                                      'Заказан ${DateTime.parse(order['orderDate']).day.toString().padLeft(2, '0')}.${DateTime.parse(order['orderDate']).month.toString().padLeft(2, '0')}.${DateTime.parse(order['orderDate']).year}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w900,
+                                        color: Color.fromRGBO(245, 110, 15, 1),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
             if (_isLoading)
               Center(child: CircularProgressIndicator())
             else
