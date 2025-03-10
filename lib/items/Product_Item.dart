@@ -64,7 +64,7 @@ class _ProductItemState extends State<ProductItem> {
 
     return Container(
       alignment: Alignment.center,
-      width: 160,
+      width: 145,
       height: 360,
       margin: EdgeInsets.all(5.0),
       decoration: BoxDecoration(

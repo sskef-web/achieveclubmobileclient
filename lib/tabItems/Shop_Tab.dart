@@ -88,11 +88,15 @@ class _Tab3PageState extends State<Tab3Page> with SingleTickerProviderStateMixin
     return Scaffold(
       appBar: AppBar(
         title: !_isLoading
-            ? Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(
-            _categories.length,
-                (index) => _buildTab(index),
+            ? SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            spacing: 5,
+            children: List.generate(
+              _categories.length,
+                  (index) => _buildTab(index),
+            ),
           ),
         )
             : Container(),
